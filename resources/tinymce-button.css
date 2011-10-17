@@ -1,0 +1,6 @@
+.wp_themeSkin span.mce_Welocally {
+	background:url('images/welocally_places_button_bw.png') no-repeat 0 0;
+}
+.wp_themeSkin span.mce_Welocally:hover {
+	background:url('images/welocally_places_button_color.png') no-repeat 0 0;
+}
