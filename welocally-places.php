@@ -3,7 +3,7 @@
 Plugin Name: Welocally Places
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
 Description: The Welocally Places plugin lets easily associate places for our 21M POI database without geocoding. The map widget makes it easy for your users to find the places your are writing about on a map.
-Version: 1.0.10.BETA
+Version: 1.0.12
 Author: Welocally Inc. 
 Author URI: http://welocally.com
 License: GPL2 
@@ -11,7 +11,6 @@ License: GPL2
 
 register_activation_hook(__FILE__, 'welocally_activate');
 add_action( 'admin_head', 'welocally_requirements_check' );
-
 
 
 //ajax proxy calls
@@ -88,9 +87,9 @@ function welocally_getkey() {
 function wl_do_curl($url,$selectedPostJson,$headers) {
 	$result_json = '';
 	if ( preg_match("/https/", $url) ) {
-	    $result_json = wl_do_curl_https($url,$selectedPostJson);
+	    $result_json = wl_do_curl_https($url,$selectedPostJson,$headers);
 	} else {
-	    $result_json = wl_do_curl_http($url,$selectedPostJson);
+	    $result_json = wl_do_curl_http($url,$selectedPostJson,$headers);
 	}
 	
 	return $result_json;
@@ -119,10 +118,10 @@ function wl_do_curl_https($https_url,$selectedPostJson,$headers) {
 	//open connection
 	$ch = curl_init();	
 	
-	curl_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2); 
-	curl_setopt(curl,CURLOPT_SSL_VERIFYPEER, 0); 
-	curl_setopt(curl,CURLOPT_CAINFO, NULL); 
-	curl_setopt(curl,CURLOPT_CAPATH, NULL); 
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); 
+	curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, 0); 
+	curl_setopt($ch,CURLOPT_CAINFO, NULL); 
+	curl_setopt($ch,CURLOPT_CAPATH, NULL); 
 	
 	//set the url, number of POST vars, POST data
 	curl_setopt($ch,CURLOPT_URL,$https_url);
@@ -180,14 +179,20 @@ function welocally_add_place() {
 
 
 function welocally_requirements_check() {
-  if ( version_compare( PHP_VERSION, "5.1", "<") ) { 
-    echo "<div class='error'>Welocally Places requires PHP 5.1 or greater.  Please de-activate Welocally Places.</div>";
-  }
+ 	
+  	if ( version_compare( PHP_VERSION, "5.1", "<") ) { 
+    	echo "<div class='error fade'>Welocally Places requires PHP 5.1 or greater.  Please de-activate Welocally Places.</div>";
+ 	}
   
-  if(!welocally_is_curl_installed()){
-  	echo "<div class='error'>Welocally Places requires libCURL be installed.  Please de-activate Welocally Places or install.</div>";
-  }  
-   
+  	if(!welocally_is_curl_installed()){
+  		echo "<div class='error fade'>Welocally Places requires libCURL be installed.  Please de-activate Welocally Places or install.</div>";
+  	}
+  
+	if(get_theme_view_dir() == 'default') {
+		echo "<div class='updated fade'>The theme ".get_current_theme()." is not tested with Welocally Places. Goto the ".
+			"<a href='admin.php?page=welocally-places-about'>" . __( 'About Settings' ) . "</a> for more information.</div>";
+	}	
+
 }
 
 function welocally_is_curl_installed() {

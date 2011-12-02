@@ -5,7 +5,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	 */
 	class WelocallyPlaces {
 		
-		const VERSION 				= '1.0.10.BETA';
+		const VERSION 				= '1.0.12';
 		const WLERROROPT			= '_welocally_errors';
 		const CATEGORYNAME	 		= 'Place';
 		const OPTIONNAME 			= 'wl_place_options';
@@ -82,24 +82,33 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		
 
 		public function templateChooser() {
-			
-			$showPlacesMap = true;
 
 			$cat_map_layout_type = $this->getSingleOption('cat_map_layout');
-			if($cat_map_layout_type == 'none') {
-				return;
-			}
-							
-			if( is_feed() ) {
-				return;
-			}
-			global $wp_query;
-			if ( $this->in_category() && $showPlacesMap) {
-				
-				if( '' == locate_template( array( 'places/places-map.php' ), true ) ) {
-					$cat_ID = get_query_var( 'cat' );
 					
-					load_template( dirname( __FILE__ ) . '/views/places-map.php' );
+			if($cat_map_layout_type == 'none' 
+				|| is_Feed()) {
+				return;
+			}
+			
+			$cat_ID = get_query_var( 'cat' );
+			
+			$places_in_category_posts = get_places_posts_for_category($cat_ID);			
+			
+			error_log("got place count:".count($places_in_category_posts), 0);
+			
+			if(count($places_in_category_posts) == 0)
+				return;
+	
+			
+					
+			global $wp_query;
+			if ( $this->in_category()) {
+				
+				if( '' == locate_template( array( 'places/category-places-map.php' ), true ) ) {
+									
+					$theme_dir = get_theme_view_dir();	
+									
+					load_template( dirname( __FILE__ ) . '/views/themes/'.$theme_dir.'/category-places-map.php' );
 				}
 				exit;	
 			} else {
@@ -107,23 +116,19 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 		}
 		
+		
+		
 		/**
 		 * @return 
 		 */
 		public function in_category() {
 			
 			$cat_id = get_query_var( 'cat' );
+			
 			if( !is_singular() && $cat_id ) {
 				return true;
 			}
-			/*$cats = get_categories('child_of=' . $this->placeCategory());
-			$is_child = false;
-			foreach( $cats as $cat ) {
-				if( is_category( $cat->name ) ) {
-					$is_child = true;
-				}
-			}
-			return $is_child;*/
+
 		}
 		
 		/**
@@ -148,11 +153,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		}
 
 		
-		//----------
-
-
-		
-		
+		//----------		
 		public function loadDomainStylesScripts() {
 		
 			
@@ -183,8 +184,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 			wp_enqueue_script('media-upload');
 			wp_enqueue_script('thickbox');
-			wp_register_script('wl-upload', WP_PLUGIN_URL.'/welocally-places/resources/upload.js', array('jquery','media-upload','thickbox'));
-			wp_enqueue_script('wl-upload');
+			/*wp_register_script('wl-upload', WP_PLUGIN_URL.'/welocally-places/resources/upload.js', array('jquery','media-upload','thickbox'));
+			wp_enqueue_script('wl-upload');*/
 			
 			//color picker
 			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));
@@ -280,17 +281,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		
 		
 
-		/* Callback for adding to the post itself
-		 * @return void
-		 */
-		/*public function addPostPlaceInfo( ) {
-			global $post;
-			$postId = $post->ID;
-			$PlaceSelected = get_post_meta( $post->ID, '_PlaceSelected', true );
-			$ShowPlaceAddress = get_post_meta( $post->ID, '_ShowPlaceAddress', true );
-			include( dirname( __FILE__ ) . '/views/place-content-template.php' );
-		}*/
-		
+
 	
 		
 		/* Callback for adding to the post itself
@@ -302,9 +293,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$ShowPlaceAddress = get_post_meta( $postId, '_ShowPlaceAddress', true );
 			
 			$showmap='true';
+			$cat_ID = get_query_var( 'cat' );
 			if(is_single()){
 				$showmap='true';
-			} else if(is_home()){
+			} else if(is_home() || isset($cat_ID)){
 				$showmap='false';
 			}
 			
@@ -320,6 +312,11 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 			$template = file_get_contents(dirname( __FILE__ ) . '/views/place-content-template.php');
 			
+			
+			
+			$map_post_div= '<div id="map_canvas_post"></div>';
+			
+			
 			/*
 			%1$d - $postId
 			%2$s - $PlaceSelected
@@ -334,7 +331,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			%11$s - $option["font_place_address"]
 			%12$s - $option["color_place_address"]
 			%13$s - $option["size_place_address"]
-			%14$s - where image file				
+			%14$s - where image file
+							
 			*/
 			
 			$resultContent = sprintf ( 
@@ -352,7 +350,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				wl_get_option("font_place_address"),
 				wl_get_option("color_place_address"),
 				wl_get_option("size_place_address"),
-				$whereImage				
+				$whereImage			
 				);		
 					
 			return $resultContent;
@@ -405,8 +403,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 		public function addPlaceMeta( $postId, $action ) {
 
-			if( isset( $_POST['PlaceSelected'] ) && isset( $_POST['isWLPlace'] )
+			if( !empty( $_POST['PlaceSelected'] ) && isset( $_POST['isWLPlace'] )
 				&& $_POST['isWLPlace'] == 'true' ) {
+
+				error_log("save case 1: [".$_POST['PlaceSelected']."]", 0);
 
 				$category_id = $this->create_category_if_not_exists();				
 							
@@ -434,11 +434,16 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 									
 				} 
 							
-			} 
-			
-			else if($_POST['isWLPlace'] == 'true') {
+			} 			
+			/*else if($_POST['isWLPlace'] == 'true') {
 				update_post_meta( $postId, '_isWLPlace', 'true' );
-			} else if($_POST['isWLPlace'] == 'false' || !isset( $_POST['isWLPlace']) ) {
+			}*/
+			else if($_POST['isWLPlace'] == 'true' && empty( $_POST['PlaceSelected'] )) {
+				error_log("save case 2", 0);
+				update_post_meta( $postId, '_isWLPlace', 'false' );
+			} 
+			else if($_POST['isWLPlace'] == 'false' || !isset( $_POST['isWLPlace']) ) {
+				error_log("save case 3", 0);
 				update_post_meta( $postId, '_isWLPlace', 'false' );
 			}
 			

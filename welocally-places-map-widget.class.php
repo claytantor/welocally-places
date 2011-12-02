@@ -29,6 +29,7 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 				extract( $args );
 
 				/* User-selected settings. */
+				$style = $instance['style'];
 				$title = apply_filters('widget_title', $instance['title'] );
 				$limit = 20;
 				
@@ -42,8 +43,11 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 					/* Display list of places. */
 						if( function_exists( 'get_places' ) ) {
 							$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
+							
+							$theme_dir = get_theme_view_dir();	
+							
 							$templateLoc = $templateOverride ? $templateOverride : dirname( __FILE__ ) . 
-								'/views/welocally-places-map-widget-display.php';
+								'/views/themes/'.$theme_dir.'/welocally-places-map-widget-display.php';
 
 							//view
 							include( $templateLoc );
@@ -62,6 +66,7 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 
 					/* Strip tags (if needed) and update the widget settings. */
 					$instance['title'] = strip_tags( $new_instance['title'] );
+					$instance['style'] = strip_tags( $new_instance['style'] );
 					
 
 					return $instance;
@@ -69,7 +74,7 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 		
 			function form( $instance ) {
 				/* Set up default widget settings. */
-				$defaults = array( 'title' => 'Published Items', 'limit' => '5', 'start' => 'on', 'start-time' => '','end' => '', 'end-time' => '', 'venue' => '', 'country' => 'on', 'address' => '', 'city' => 'on', 'state' => 'on', 'province' => 'on', 'zip' => '', 'phone' => '', 'cost' => '');
+				$defaults = array( 'style'=>'aside', 'title' => 'Published Items', 'limit' => '5', 'start' => 'on', 'start-time' => '','end' => '', 'end-time' => '', 'venue' => '', 'country' => 'on', 'address' => '', 'city' => 'on', 'state' => 'on', 'province' => 'on', 'zip' => '', 'phone' => '', 'cost' => '');
 				$instance = wp_parse_args( (array) $instance, $defaults );			
 				include( dirname( __FILE__ ) . '/views/welocally-places-map-widget-admin.php' );
 			}

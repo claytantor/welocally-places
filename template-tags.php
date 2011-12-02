@@ -5,7 +5,28 @@
 **/
 if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 
-
+	function get_theme_view_dir(){
+	
+			$theme_name = get_current_theme();				
+			$theme_lookup = get_supported_themes();
+			foreach ($theme_lookup as $theme)
+			{
+			  if($theme_name == $theme["themeName"])
+				return $theme["themeDirectory"];
+			}
+							
+			return 'default';
+	}
+	
+	function get_supported_themes(){
+					
+			$theme_lookup_json = 
+				file_get_contents(dirname( __FILE__ ) . '/resources/themes.json');
+			
+			$theme_lookup = json_decode($theme_lookup_json,true);
+									
+			return $theme_lookup;
+	}
 	
 	/**
 	 * DELEGATE
@@ -28,11 +49,22 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		$default_font = 'Sorts Mill Goudy'; 
 		$default_font_color = '000000'; 
 		$default_font_size = '1.2'; 
-		$default_cat_map_layout = 'right'; 
+		$default_cat_map_layout = 'center'; 
 		$default_cat_map_select_width = '160'; 
 		$default_cat_map_select_height = '160'; 
-		$default_api_endpoint = 'http://api.welocally.com'; 
+		$default_api_endpoint = 'https://api.welocally.com'; 
+		$default_slider_amount = '100' ; 
 		
+		$default_infobox_title_link = 'off';
+		$default_infobox_thumbnail = 'on';
+		$default_infobox_thumb_width = '64';
+		$default_infobox_thumb_height = '64';
+		
+		$default_cat_map_select_show = 'on';
+		$default_cat_map_select_title= 'on';
+		$default_cat_map_select_excerpt= 'on';
+		
+
 			
 		// Set current version level. Because this can be used to detect version changes (and to what extent), this
 		// information may be useful in future upgrades
@@ -44,6 +76,13 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		// always check each option - if not set, apply default
 		if ( !array_key_exists( 'default_search_addr', $options ) ) { $options[ 'default_search_addr' ] = $default_search_address; $changed = true; }
 		if ( !array_key_exists( 'default_search_radius', $options ) ) { $options[ 'default_search_radius' ] = $default_search_radius; $changed = true; }		
+		
+
+		if ( !array_key_exists( 'infobox_title_link', $options ) ) { $options[ 'infobox_title_link' ] = $default_infobox_title_link; $changed = true; }
+		if ( !array_key_exists( 'infobox_thumbnail', $options ) ) { $options[ 'infobox_thumbnail' ] = $default_infobox_thumbnail; $changed = true; }
+		if ( !array_key_exists( 'infobox_thumb_width', $options ) ) { $options[ 'infobox_thumb_width' ] = $default_infobox_thumb_width; $changed = true; }
+		if ( !array_key_exists( 'infobox_thumb_height', $options ) ) { $options[ 'infobox_thumb_height' ] = $default_infobox_thumb_height; $changed = true; }		
+		
 		if ( !array_key_exists( 'map_default_marker', $options ) ) { $options[ 'map_default_marker' ] = $default_marker_icon; $changed = true; }
 		if ( !array_key_exists( 'map_infobox_marker', $options ) ) { $options[ 'map_infobox_marker' ] = $default_infobox_marker; $changed = true; }
 		if ( !array_key_exists( 'map_infobox_close', $options ) ) { $options[ 'map_infobox_close' ] = $default_infobox_close; $changed = true; }
@@ -58,11 +97,19 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		if ( !array_key_exists( 'font_place_address', $options ) ) { $options[ 'font_place_address' ] = $default_font; $changed = true; }
 		if ( !array_key_exists( 'color_place_address', $options ) ) { $options[ 'color_place_address' ] = $default_font_color; $changed = true; }
 		if ( !array_key_exists( 'size_place_address', $options ) ) { $options[ 'size_place_address' ] = $default_font_size; $changed = true; }
+		
+
+		if ( !array_key_exists( 'cat_map_select_show', $options ) ) { $options[ 'cat_map_select_show' ] = $default_cat_map_select_show; $changed = true; }
+		if ( !array_key_exists( 'cat_map_select_title', $options ) ) { $options[ 'cat_map_select_title' ] = $default_cat_map_select_title; $changed = true; }
+		if ( !array_key_exists( 'cat_map_select_excerpt', $options ) ) { $options[ 'cat_map_select_excerpt' ] = $default_cat_map_select_excerpt; $changed = true; }
+		
+		
 		if ( !array_key_exists( 'cat_map_layout', $options ) ) { $options[ 'cat_map_layout' ] = $default_cat_map_layout; $changed = true; }
 		if ( !array_key_exists( 'cat_map_select_width', $options ) ) { $options[ 'cat_map_select_width' ] = $default_cat_map_select_width; $changed = true; }
 		if ( !array_key_exists( 'cat_map_select_height', $options ) ) { $options[ 'cat_map_select_height' ] = $default_cat_map_select_height; $changed = true; }
-		if ( !array_key_exists( 'cat_map_select_height', $options ) ) { $options[ 'cat_map_select_height' ] = $default_cat_map_select_height; $changed = true; }
 		if ( !array_key_exists( 'api_endpoint', $options ) ) { $options[ 'api_endpoint' ] = $default_api_endpoint; $changed = true; }
+		//welocally_cat_map_infobox_text_scale
+		if ( !array_key_exists( 'cat_map_infobox_text_scale', $options ) ) { $options[ 'cat_map_infobox_text_scale' ] = $default_slider_amount; $changed = true; }
 		
 	
 		// Update the options, if changed, and return the result
@@ -159,6 +206,74 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		return $return;
 	}
 	
+	/*
+	 * given a specific category, no matter what it is, return the
+	 * post ids within it that are also place posts. this essentially
+	 * acts as a place filter for posts in a category so that only 
+	 * those will be shown on the map
+	 * 
+	 */
+	function get_places_posts_for_category($categoryId){
+				
+		global $wpdb, $wlPlaces;
+		$wlPlaces->setOptions();
+		
+		$categoryPlacesId = $wlPlaces->placeCategory();
+		
+		$categories_query = "select 
+                        $wpdb->posts.*
+                        from $wpdb->term_taxonomy, $wpdb->term_relationships, $wpdb->posts, $wpdb->terms 
+                        where $wpdb->term_taxonomy.term_taxonomy_id = $wpdb->term_relationships.term_taxonomy_id
+                        AND $wpdb->term_taxonomy.term_id = $wpdb->terms.term_id
+                        AND $wpdb->posts.id = $wpdb->term_relationships.object_id
+                        AND $wpdb->term_taxonomy.term_id = $categoryId
+                        AND $wpdb->term_taxonomy.taxonomy = 'category' 
+                        AND $wpdb->posts.post_status = 'publish'
+                        AND $wpdb->posts.id in (select $wpdb->posts.ID  
+                                FROM $wpdb->posts 
+                                LEFT JOIN $wpdb->postmeta as d1 ON($wpdb->posts.ID = d1.post_id) 
+                                LEFT JOIN $wpdb->term_relationships ON($wpdb->posts.ID = $wpdb->term_relationships.object_id) 
+                                LEFT JOIN $wpdb->term_taxonomy ON($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id) 
+                                WHERE $wpdb->term_taxonomy.term_id = $categoryPlacesId
+                                AND $wpdb->term_taxonomy.taxonomy = 'category' 
+                                AND $wpdb->posts.post_status = 'publish' 
+                                GROUP BY $wpdb->posts.ID)";
+									
+		$return = $wpdb->get_results($categories_query, OBJECT);
+		return $return;
+	}
+	
+	function get_place_post_ids_by_category( $orderBy = null, $orderDir = null, $categoryId = null ) {
+
+		global $wpdb, $wlPlaces;
+		$wlPlaces->setOptions();
+		
+		$categoryPlacesId = $wlPlaces->placeCategory();
+		
+		//error_log("cat id:".$categoryId, 0);
+
+		//get the posts of s specific category
+		$categoryQuery = "
+			SELECT $wpdb->posts.ID
+			 	FROM $wpdb->posts 
+			LEFT JOIN $wpdb->postmeta as d1 ON($wpdb->posts.ID = d1.post_id)
+			LEFT JOIN $wpdb->term_relationships ON($wpdb->posts.ID = $wpdb->term_relationships.object_id)
+			LEFT JOIN $wpdb->term_taxonomy ON($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)
+			WHERE $wpdb->term_taxonomy.term_id = $categoryId
+			AND $wpdb->term_taxonomy.taxonomy = 'category'
+			AND $wpdb->posts.post_status = 'publish' " .
+			"GROUP BY $wpdb->posts.ID";
+		
+		//iterate through those, we could probably come up with a query here 
+		//because we are effectively creating a join, but this is already a pretty
+		//complex query, this should probably be improved later
+			
+			
+			
+		$return = $wpdb->get_results($placesQuery, OBJECT);
+		return $return;
+	}
+	
 	function get_place_by_post_id( $postId = null) {
 		global $wpdb;
 			
@@ -217,13 +332,9 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		global $wlPlaces;
 		$mainPlacesCat = $wlPlaces->placeCategory();
 		$currentCat = get_query_var( 'cat' );
-		$cat_id = cat_is_ancestor_of( $mainPlacesCat, $currentCat ) ? $currentCat : $mainPlacesCat;
-		$link = get_category_link( $cat_id );
-		if( '' == get_option('permalink_structure') || 'off' == placesGetOptionValue('useRewriteRules','on') ) {
-			return add_query_arg( array('placeDisplay'=>'all'), $link );
-		} else {
-			return trailingslashit( $link ) . 'all';
-		}
+		$link = get_category_link( $wlPlaces->placeCategory() );
+		return $link;
+		
 	}
 	
 	

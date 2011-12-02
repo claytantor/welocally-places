@@ -118,7 +118,7 @@ function getPublisherInfoFromWelocally(){
 	data.siteName = jQuery("#siteName").val();
 	data.siteDescription = jQuery("#siteDescription").val();
 	data.siteEmail = jQuery("#siteEmail").val();
-	data.iconUrl = 'http://media.welocally.com.s3.amazonaws.com/assets/c1da06473823/oaklandly/icon64.png';
+	data.iconUrl = jQuery("#iconUrl").val();
 			
 	jQuery.ajax({
 	  type: 'POST',

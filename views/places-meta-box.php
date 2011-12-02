@@ -4,7 +4,14 @@
 var jsonObjFeatures = []; //declare features array
 var selectedFeatureIndex = 0;
 var selectedCategories='';
-
+var isSelected = false;
+	
+var tags=[<?php $tags = wp_get_post_tags($post->ID); 
+foreach( $tags as $tag ){  
+	echo "'"; 
+	print_r(str_replace("'", "\'",$tag->name)); 
+	echo "',"; 
+} ?>];
 
 
 function getLocationsByAddress(address, keyword, radiusKm) {	
@@ -13,32 +20,16 @@ function getLocationsByAddress(address, keyword, radiusKm) {
 	jQuery('#selectable').empty();
 	jsonObjFeatures = [];
 	
-	
-	var missingRequired = false;
-	var fields = '';
-	if (!jQuery("#place-address").val().match(/\S/)) {
-		missingRequired = true;
-		fields = fields+'Place Address - ';
-	}
-	if (!jQuery("#place-search").val().match(/\S/)) {
-		missingRequired = true;
-		fields = fields+'Search Term - ';
-	}
-	
-	
-	if(missingRequired){
-		buildMissingFieldsErrorMessages(fields);
-		return false;
-	}
+
 	    
     var options = {
 		action: 'get_places',
 		siteKey : '<?php echo wl_get_option('siteKey',null) ?>',
 		siteToken : '<?php echo wl_get_option('siteToken',null) ?>',
 		baseurl : '<?php echo wl_get_option('siteHome',get_bloginfo('home')); ?>',
-		address : address,
+		address : address.replace(/'/g, ''),
 		radius: radiusKm,
-		query : keyword
+		query : keyword.replace(/'/g, '')
 	};
 				
 	jQuery.ajax({
@@ -53,21 +44,33 @@ function getLocationsByAddress(address, keyword, radiusKm) {
 	  },
 	  success : function(data, textStatus, jqXHR) {
 	  		jQuery('#welocally-post-error').html('');
-	  		if(data.places != null && data.places.length == 0) {
+
+	  		if(data != null && data.places != null && data.places.length == 0) {
 	  			jQuery('#welocally-post-error').append('<div class="welocally-context-help"><a href="http://www.welocally.com/wordpress/?page_id=104#info_201" target="_new"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/context_help_16.png" alt="" title="Get help" height="16px" width="16px" border="0px"/></a></div>');
 	  			jQuery('#welocally-post-error').append('Sorry no places were found that match your query, try again or add this as a new place.');
 	  			jQuery('#welocally-post-error').addClass('welocally-update updated fade');
 	  			
-	  		} else if(data.places != null && data.places.length > 0) {
+	  		} else if(data != null && data.places != null && data.places.length > 0) {
 				jQuery.each(data.places, function(i,item){
 					console.log(JSON.stringify(item));
 					jsonObjFeatures.push(item);	    		
 					jQuery('#selectable').append(buildListItemForPlace(item,i));
 					jQuery("#results").show();	
 				});
-			} else if(data.places == null && data.errors != null) {
+			} else if(data != null && data.places == null && data.errors != null) {
 			
 				buildErrorMessages(data.errors);	
+					
+			} else if(data == null) {
+				
+				var errors = new Array();
+				var errorEmpty = { 
+					errorCode: 108,
+					errorMessage: "Problem connecting to Welocally, please contact us."
+				};
+				errors.push(errorEmpty);
+			
+				buildErrorMessages(errors);	
 					
 			}
 	  }
@@ -109,6 +112,9 @@ function buildCategorySelectionsForPlace(place, container) {
 
 
 function setSelectedPlaceInfo(selectedItem) {
+	//set selected
+	isSelected=true;
+	
 	//hide the selection area
 	jQuery("#place-selector").hide();	
 	jQuery("#add-place-form").hide();	
@@ -146,7 +152,35 @@ function buildMissingFieldsErrorMessages(fields) {
 	jQuery('#welocally-post-error').addClass('welocally-error error fade');		
 }
 
+function autoload(tags) {
+	jQuery.each(tags, function(i,tag){
+		if(tag != 'Autoload' && isSelected){
+			jQuery("#place-search").val(convertChars(tag));
+			jQuery("#welocally_default_search_radius").val(<?php echo wl_get_option('default_search_radius',null) ?>);
+			jQuery("#place-address").val('<?php echo wl_get_option('default_search_addr',null) ?>');
+			
+			getLocationsByAddress('<?php echo wl_get_option('default_search_addr',null) ?>', convertChars(tag), <?php echo wl_get_option('default_search_radius',null) ?>);
+			jQuery("#place-selector").show();
+		}
+	});
+
+}
+
+function convertChars(mystring){
+	return mystring.replace(/&amp;/g, '&').replace(/&gt;/g, '>' ).replace(/&lt;/g, '<' ).replace(/&quot;/g, '\"' );
+}
+
+
 jQuery(document).ready(function(jQuery) {
+	
+	//is this an autoload?
+	jQuery.each(tags, function(i,tag){
+		if(tag == 'Autoload'){
+			console.log('Autoload Found');
+			jQuery("input[name='isWLPlace']").val('true');
+			autoload(tags);			
+		}
+	});
 	
 	 if (typeof(jQuery.fn.parseJSON) == "undefined" || typeof(jQuery.parseJSON) != "function") { 
 
@@ -185,6 +219,23 @@ jQuery(document).ready(function(jQuery) {
 	jQuery("#welocally_default_search_radius").val('<?php echo wl_get_option('default_search_radius',null) ?>');
 	
 	jQuery( "#search-places-action" ).click(function() {
+		var missingRequired = false;
+		var fields = '';
+		if (!jQuery("#place-address").val().match(/\S/)) {
+			missingRequired = true;
+			fields = fields+'Place Address - ';
+		}
+		if (!jQuery("#place-search").val().match(/\S/)) {
+			missingRequired = true;
+			fields = fields+'Search Term - ';
+		}
+		
+		
+		if(missingRequired){
+			buildMissingFieldsErrorMessages(fields);
+			return false;
+		}
+		
 		getLocationsByAddress(
 			jQuery('#place-address').val(),
 			jQuery('#place-search').val(),
@@ -215,6 +266,7 @@ jQuery(document).ready(function(jQuery) {
 
     
     jQuery( "#btn-new-select" ).click(function() {  
+    	isSelected=false;
     	jQuery("#selected-place").hide();
     	jQuery("#place-selector").show();    	     
         return false;
@@ -306,6 +358,9 @@ jQuery(document).ready(function(jQuery) {
     
     jQuery("input[name='isWLPlace']").change(function(){
     	if (jQuery("input[name='isWLPlace']:checked").val() == 'true') { 
+    		
+    		
+    		  		
         	jQuery("#placeForm").show();
         	
         	//no place has been selected yet

@@ -26,6 +26,7 @@ if( !class_exists( 'WelocallyPlaces_Widget' ) ) {
 				extract( $args );
 
 				/* User-selected settings. */
+				$style = $instance['style'];
 				$title = apply_filters('widget_title', $instance['title'] );
 				$limit = $instance['limit'];
 				$order_by = $instance['order_by'];
@@ -41,31 +42,33 @@ if( !class_exists( 'WelocallyPlaces_Widget' ) ) {
 				if( $posts ) {
 					/* Display list of places. */
 						if( function_exists( 'get_places' ) ) {
-						
-							echo '<li class="sidebar-item"><div><h3>'.$title.'</h3><ul class="wl-places-list">';
+							$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
+							
+							$theme_dir = get_theme_view_dir();	
+							
+							$templateLoc = $templateOverride ? $templateOverride : dirname( __FILE__ ) . 
+								'/views/themes/'.$theme_dir.'/welocally-places-list-widget-display.php';
 
-							$templateOverride = locate_template( array( 'places/places-list-widget-display.php' ) );
-							$templateLoc = $templateOverride ? $templateOverride : dirname( __FILE__ ) . '/views/welocally-places-list-widget-display.php';
-							global $lastPostId;
-							foreach( $posts as $post ) {
-								setup_postdata($post);
-								include( $templateLoc );
-							}
-							echo "</ul></div></li>";
-
-							$wp_query->set('placeDisplay', $old_display);
+							//view
+							include( $templateLoc );
+							
+							$wp_query->set('placeMapDisplay', $old_display);
 						}
 					
 						
-				} else _e('There are no places at this time.', $this->pluginDomain);
+				} else if( !$noUpcomingEvents ) _e('There are no places.', $this->pluginDomain);
+
 
 				
 			}	
+			
+			
 		
 			function update( $new_instance, $old_instance ) {
 					$instance = $old_instance;
 
 					/* Strip tags (if needed) and update the widget settings. */
+					$instance['style'] = strip_tags( $new_instance['style'] );
 					$instance['title'] = strip_tags( $new_instance['title'] );
 					$instance['limit'] = strip_tags( $new_instance['limit'] );
 					$instance['order_by'] = strip_tags( $new_instance['order_by'] );
@@ -77,7 +80,7 @@ if( !class_exists( 'WelocallyPlaces_Widget' ) ) {
 		
 			function form( $instance ) {
 				/* Set up default widget settings. */
-				$defaults = array( 'title' => 'Published Items', 'limit' => '5', 'start' => 'on', 'start-time' => '','end' => '', 'end-time' => '', 'venue' => '', 'country' => 'on', 'address' => '', 'city' => 'on', 'state' => 'on', 'province' => 'on', 'zip' => '', 'phone' => '', 'cost' => '');
+				$defaults = array( 'style'=>'aside',  'title' => 'Published Items', 'limit' => '5', 'start' => 'on', 'start-time' => '','end' => '', 'end-time' => '', 'venue' => '', 'country' => 'on', 'address' => '', 'city' => 'on', 'state' => 'on', 'province' => 'on', 'zip' => '', 'phone' => '', 'cost' => '');
 				$instance = wp_parse_args( (array) $instance, $defaults );			
 				include( dirname( __FILE__ ) . '/views/welocally-places-list-widget-admin.php' );
 			}

@@ -36,7 +36,15 @@ function buildContentForInfoForList(place, index, permalink, webicon, directions
 				content = content+'<a href="'+
 					website+'" target="_new"><img src="'+webicon+'" border="0" class="wl-link-image"/></a>';
 					
-		}	
+		} else if(place.url != null && place.url != '') {
+			var website = place.url;
+			if(place.url.indexOf('http://') == -1) {
+				website = 'http://'+place.url;
+			}					
+			content = content+'<a href="'+
+				website+'" target="_new"><img src="'+webicon+'" border="0" class="wl-link-image"/></a>';
+		}
+		
 		
 		if(place.city != null && place.state != null){
 			var qS = place.city+" "+place.state;
@@ -169,9 +177,9 @@ function buildListItemForPlace(position, place, marker, excerpt, link) {
 }
 
 function buildContentForSelector(place,excerpt,position,link) {
-		var content= '<div class="wl-place-name wl-place-widget-name title-selectable-place">'+'<a href="'+
+		var content= '<div class="wl-infobox-text_scale wl-place-name title-selectable-place wl-infobox-text_scale">'+'<a href="'+
 				link+'" >'+place.name+'</a>'+'</div>'+
-			'<div class="wl-place-excerpt">'+excerpt+'</div>';	
+			'<div class="wl-infobox-text_scale wl-place-excerpt">'+excerpt+'</div>';	
 		return content;
 }
 

@@ -17,16 +17,16 @@ add_action( 'admin_menu','wl_menu_initialise' );
 add_filter( 'plugin_row_meta', 'wl_set_plugin_meta', 10, 2 );
 
 function wl_places_subscribe() {
-	include_once( WP_PLUGIN_DIR . "/welocally-places/includes/subscribe.php" );
+	include_once( WP_PLUGIN_DIR . "/welocally-places/options/subscribe.php" );
 }
 
 
 function wl_general_options() {
-	include_once( WP_PLUGIN_DIR . "/welocally-places/includes/options-general.php" );
+	include_once( WP_PLUGIN_DIR . "/welocally-places/options/options-general.php" );
 }
 
 function wl_support_about() {
-	include_once( WP_PLUGIN_DIR . "/welocally-places/includes/about.php" );
+	include_once( WP_PLUGIN_DIR . "/welocally-places/options/about.php" );
 }
    
 
@@ -71,4 +71,5 @@ function wl_add_submenu( $page_title, $menu_title, $menu_slug, $function ) {
 	return;
 }
 
+?>
 ?>

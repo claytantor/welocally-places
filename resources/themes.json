@@ -1,0 +1,24 @@
+[
+    {
+        "themeName": "Twenty Ten",
+        "themeDirectory": "twentyten"
+    },
+    {
+        "themeName": "Twenty Eleven",
+        "themeDirectory": "twentyeleven"
+    },
+    {
+        "themeName": "LightWord",
+        "themeDirectory": "lightword"
+    },
+    {
+        "themeName": "Suffusion",
+        "themeDirectory": "suffusion"
+    },
+    {
+        "themeName": "Chateau",
+        "themeDirectory": "chateau"
+    }
+    
+    
+]

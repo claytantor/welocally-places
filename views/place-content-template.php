@@ -3,6 +3,11 @@
 var map_post = null;
 jQuery(document).ready(function(jQuery) {
 	
+	//themes can screw up google maps
+	jQuery('#map_canvas_post img').css('max-width' ,'1030px');
+	jQuery('.gmnoprint img').css('max-width' ,'1030px');
+	
+	
 	 if (typeof(jQuery.fn.parseJSON) == "undefined" || typeof(jQuery.parseJSON) != "function") { 
 
 	    //extensions, this is because prior to 1.4 there was no parse json function
@@ -54,6 +59,18 @@ jQuery(document).ready(function(jQuery) {
 					'<img src="%6$s" border="0"/></a></td>'+
 					'<td class="wl-place-link-item"><a href="'+
 					website+'" target="_new">website</a></td></tr></table>');
+	} else if(place.url != null && place.url != '') {
+		var website = place.url;
+		if(place.url.indexOf('http://') == -1) {
+			website = 'http://'+place.url;
+		}					
+		jQuery('#place-website-%1$d')
+			.html(
+				'<table><tr><td class="wl-place-link-item"><a href="'+
+				website+'">'+
+				'<img src="%6$s" border="0"/></a></td>'+
+				'<td class="wl-place-link-item"><a href="'+
+				website+'" target="_new">website</a></td></tr></table>');
 	}
 	
 	if(place.city != null && place.state != null){

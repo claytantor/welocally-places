@@ -19,7 +19,12 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	
 	$options[ 'default_search_addr' ] = $_POST[ 'welocally_default_search_addr' ];
 	$options[ 'default_search_radius' ] = $_POST[ 'welocally_default_search_radius' ];
-
+	
+	$options[ 'infobox_title_link' ] = $_POST[ 'welocally_infobox_title_link' ];
+	$options[ 'infobox_thumbnail' ] = $_POST[ 'welocally_infobox_thumbnail' ];
+	$options[ 'infobox_thumb_width' ] = $_POST[ 'welocally_infobox_thumb_width' ];
+	$options[ 'infobox_thumb_height' ] = $_POST[ 'welocally_infobox_thumb_height' ];
+	
 	$options[ 'map_default_marker' ] = $_POST[ 'welocally_map_default_marker' ];
 	$options[ 'map_infobox_marker' ] = $_POST[ 'welocally_map_infobox_marker' ];
 	$options[ 'map_infobox_close' ] = $_POST[ 'welocally_map_infobox_close' ];
@@ -35,9 +40,16 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	$options[ 'color_place_address' ] = $_POST[ 'welocally_color_place_address' ];
 	$options[ 'size_place_address' ] = $_POST[ 'welocally_size_place_address' ];
 	
+	
+	$options[ 'cat_map_select_show' ] = $_POST[ 'welocally_cat_map_select_show' ];
+	$options[ 'cat_map_select_title' ] = $_POST[ 'welocally_cat_map_select_title' ];
+	$options[ 'cat_map_select_excerpt' ] = $_POST[ 'welocally_cat_map_select_excerpt' ];
+	
 	$options[ 'cat_map_select_width' ] = $_POST[ 'welocally_cat_map_select_width' ];
 	$options[ 'cat_map_select_height' ] = $_POST[ 'welocally_cat_map_select_height' ];
 	$options[ 'cat_map_layout' ] = $_POST[ 'welocally_cat_map_layout' ];
+	$options[ 'cat_map_infobox_text_scale' ] = $_POST[ 'welocally_cat_map_infobox_text_scale' ];
+	
 	
 	
 	wl_save_options($options);
@@ -68,10 +80,13 @@ $options = wl_set_general_defaults();
 
 	#selectable .ui-selecting {  }
 	#selectable .ui-selected { border: 3px solid #777777; margin: 0px; }
+	
+	#slider_amount {margin:5px; color: #888888; font-variant: small-caps; font:1.2em Verdana, Arial, Helvetica, sans-serif; text-transform:uppercase}
 
 </style>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script type="text/javascript" charset="utf-8">
+var wl_options_imgfield = '';
 jQuery(document).ready(function() {
 	jQuery("#welocally_size_place_name").val('<?php echo $options[ 'size_place_name' ]; ?>');
 	jQuery("#welocally_size_place_address").val('<?php echo $options[ 'size_place_address' ]; ?>');
@@ -85,6 +100,62 @@ jQuery(document).ready(function() {
 		   		jQuery( "#welocally_cat_map_layout" ).val(type);
 		   }
 	});
+	
+	jQuery('#upload_image_button_1').click(function() {
+	 console.log('click');
+	 wl_options_imgfield = jQuery('#welocally_map_default_marker').attr('name');
+	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
+	 return false;
+	});
+	
+	jQuery('#upload_image_button_2').click(function() {
+	 console.log('click');
+	 wl_options_imgfield = jQuery('#welocally_map_infobox_marker').attr('name');
+	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
+	 return false;
+	});
+	
+	jQuery('#upload_image_button_3').click(function() {
+	 console.log('click');
+	 wl_options_imgfield = jQuery('#welocally_map_infobox_close').attr('name');
+	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
+	 return false;
+	});
+	
+	jQuery('#upload_image_button_4').click(function() {
+	 console.log('click');
+	 wl_options_imgfield = jQuery('#welocally_map_icon_web').attr('name');
+	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
+	 return false;
+	});
+	
+	jQuery('#upload_image_button_5').click(function() {
+	 console.log('click');
+	 wl_options_imgfield = jQuery('#welocally_map_icon_directions').attr('name');
+	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
+	 return false;
+	});
+	
+	jQuery("#slider").slider(
+		{ 
+			min: 0, 
+			max: 200,
+			stop: function(event, ui) {
+				var value = jQuery("#slider").slider( "option", "value" );
+				jQuery("#welocally_cat_map_infobox_text_scale").val(value);	
+				jQuery("#slider_amount").html(value+"%");
+							
+			} 
+		}
+	);
+	
+	jQuery("#slider").slider( "option", "value", <?php echo $options[ 'cat_map_infobox_text_scale' ]; ?> );
+	
+	window.send_to_editor = function(html) {
+	 imgurl = jQuery('img',html).attr('src');
+	 jQuery("#"+wl_options_imgfield).val(imgurl);
+	 tb_remove();
+	}
 	
 });
 </script>
@@ -123,7 +194,23 @@ jQuery(document).ready(function() {
 <span class="wl_options_heading"><?php _e( 'Map Options' ); ?></span>
 
 <table class="form-table">
-
+	<tr valign="top">
+		<th scope="row"><?php _e('Toggel Options' ); ?></th>
+		<td>
+			<ul>
+				<li><input type="checkbox" id="welocally_infobox_title_link" name="welocally_infobox_title_link" <?php if($options[ 'infobox_title_link' ]=='on') { echo 'checked';  }  ?>>Infobox Link Place Name To Post</li>
+				<li><input type="checkbox" id="welocally_infobox_thumbnail" name="welocally_infobox_thumbnail" <?php if($options[ 'infobox_thumbnail' ]=='on') { echo 'checked';  }  ?>>Show Thumbnail In Infobox</li>
+			</ul>
+		</td>
+	</tr>
+    <th scope="row"><?php _e( 'Infobox Thumbnail Box Size' ); ?></th>
+		<td>
+			<input id="welocally_infobox_thumb_width" name="welocally_infobox_thumb_width"  type="text" size="4" 
+				value="<?php echo $options[ 'infobox_thumb_width' ]; ?>" /> <span class="description"><?php _e( 'width in pixels' ); ?></span>&nbsp;
+			<input id="welocally_infobox_thumb_height" name="welocally_infobox_thumb_height"  type="text" size="4" 
+				value="<?php echo $options[ 'infobox_thumb_height' ]; ?>" /> <span class="description"><?php _e( 'height in pixels' ); ?></span>
+		</td>			
+	</tr>
 	<tr valign="top">
 		<th scope="row"><?php _e( 'Default Marker Image' ); ?></th>
 		<td>
@@ -217,6 +304,17 @@ jQuery(document).ready(function() {
 <span class="wl_options_heading"><?php _e( 'Category Map' ); ?></span>
 
 <table class="form-table">
+	<tr valign="top">
+		<th scope="row"><?php _e('Toggel Options' ); ?></th>
+		<td>
+			<ul>
+				<li><input type="checkbox" id="welocally_cat_map_select_show" name="welocally_cat_map_select_show" <?php if($options[ 'cat_map_select_show' ]=='on') { echo 'checked';  } ?>> Show Select Boxes</li>
+				<li><input type="checkbox" id="welocally_cat_map_select_title" name="welocally_cat_map_select_title" <?php  if($options[ 'cat_map_select_title' ]=='on') { echo 'checked';  }  ?>> Show Post Title</li>
+				<li><input type="checkbox" id="welocally_cat_map_select_excerpt" name="welocally_cat_map_select_excerpt" <?php if($options[ 'cat_map_select_excerpt' ]=='on') { echo 'checked';  } ?>> Show Excerpt Content</li>
+			</ul>
+		</td>
+	</tr>
+
 	<tr>
 	<th scope="row"><?php _e( 'Select Box Size' ); ?></th>
 		<td>
@@ -227,7 +325,17 @@ jQuery(document).ready(function() {
 		</td>			
 	</tr>
 	<tr>
-	<th scope="row"><?php _e( 'Map Layout' ); ?></th>
+	<th scope="row"><?php _e( 'Select Box Text Scaling' ); ?></th>
+		<td>
+			<input id="welocally_cat_map_infobox_text_scale" name="welocally_cat_map_infobox_text_scale"  type="hidden"  
+				value="<?php echo $options[ 'cat_map_infobox_text_scale' ]; ?>" />
+			<div id="slider_amount" style="width:300px; text-align:center;"><?php echo $options[ 'cat_map_infobox_text_scale' ]; ?>%</div>
+			<div id="slider" style="width: 300px;"></div>
+		</td>			
+	</tr>
+	
+	<tr>
+	<th scope="row"><?php _e( 'Category Map' ); ?></th>
 		<td>
 			<input id="welocally_cat_map_layout" name="welocally_cat_map_layout"  type="hidden"  
 				value="<?php echo $options[ 'cat_map_layout' ]; ?>" />
@@ -235,13 +343,12 @@ jQuery(document).ready(function() {
 					<ol id="selectable">
 						<li id="welocally_cat_map_none" class="ui-widget-content">&nbsp;</li>
 						<li id="welocally_cat_map_center" class="ui-widget-content">&nbsp;</li>
-						<li id="welocally_cat_map_left" class="ui-widget-content">&nbsp;</li>
-						<li id="welocally_cat_map_right" class="ui-widget-content">&nbsp;</li>
 					</ol>
 			</div>
 
 		</td>			
-	</tr>	
+	</tr>
+		
 	
 </table>
 

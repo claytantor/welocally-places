@@ -1,7 +1,7 @@
 === Welocally Places ===
-Contributors: clay@welocally.com 
+Contributors: claytantor 
 Tags: hyperlocal, geocoding, places, maps
-Requires at least: 2.8, libCURL installed, jQuery 1.4.1 or >
+Requires at least: 2.8, libCURL installed, jQuery 1.4.1 or greater
 Tested up to: 3.2.1
 Stable tag: trunk
 License: GPL v2 (GNU General Public License v2)
@@ -22,7 +22,18 @@ Welocally Places For WordPress makes it simple to attach real places to your con
 * Integrated driving directions
 * Category based map
 
-This product is in BETA, which means its not perfect (we need your help) and we will be only allowing the first 20 sites to participate in the beta program. To participate and receive 6 Months of free service you will need to sign up at http://eepurl.com/fBEfg. When you sign up you will receive an offer code with the signup confirmation that will allow you get the special deal, Please help us make this product better by filing issue reports http://bit.ly/psDThd.
+We have moved to a new "theme support" model. If your theme is not listed here that does not mean that the plug- in will not work please give it a try, it works with most themes. Please contact us if you would like us to support your theme.
+
+Currently supported themes:
+
+* Twenty Eleven
+* Twenty Ten
+* Suffusion
+* Light Word
+* Chateau
+
+Please goto http://www.welocally.com/?page_id=520 for a complete list of supported themes.
+
 
 == Installation ==
 
@@ -52,8 +63,27 @@ A:We have not tested our internationally, but there are POIs in countries outsid
 
 
 == Changelog ==
-1.0.10
 
+1.0.12
+354	critical	P1	Archive summaries are showing javascript for theme.
+353	critical	P1	Setting "Yes" to place with no selection should not persist on Update
+352	enhancement	P1	Picman still broken in some themes
+351	enhancement	P2	Improve theme support in About options
+
+1.0.11
+349	maj	P1	Map is Showing Up On Category Archive	1.0.11
+346	maj	P2	Add Place Appends Extra to website prefix	---
+344	cri	P1	Place Name Links To Incorrect Post	1.0.11
+343	enh	P1	Bypass Filter When No Category Hits	1.0.11
+341	enh	P2	Some theme img css effects map tiles	1.0.11
+
+1.0.10
+333	FIXE	1.0.9	Need to quote templated javascript
+334	FIXE	1.0.9	Where marker not showing up on non custom maps
+336	FIXE	1.0.9	HTTPS support for all ajax calls
+337	FIXE	1.0.9	Url and Website Confusion
+338	WORK	1.0.9	Cannot exit add place mode
+340	FIXE	1.0.9	Plugin causes problem when inserting images
 
 1.0.9
 332	FIXE	1.0.8	Jquery version < 1.4 is not parsing JSON
