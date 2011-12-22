@@ -63,7 +63,7 @@ A:We have not tested our internationally, but there are POIs in countries outsid
 == Changelog ==
 
 1.0.15
-Fixed problem with theme activation message
+361 Options settings to suppress the display of the the select boxes
 
 1.0.12
 354	critical	P1	Archive summaries are showing javascript for theme.
