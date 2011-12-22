@@ -60,9 +60,10 @@ A:Some plugins charge a single fee to download, others are free. Our plugin is f
 Q:Is your plugin supported internationally?
 A:We have not tested our internationally, but there are POIs in countries outside of the USA. We are in the process of creating a table of international coverage and multilingual support.
 
-
-
 == Changelog ==
+
+1.0.15
+Fixed problem with theme activation message
 
 1.0.12
 354	critical	P1	Archive summaries are showing javascript for theme.
