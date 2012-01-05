@@ -18,7 +18,10 @@
     {
         "themeName": "Chateau",
         "themeDirectory": "chateau"
+    },
+    {
+        "themeName": "Delicate",
+        "themeDirectory": "delicate"
     }
-    
     
 ]
