@@ -22,6 +22,10 @@
     {
         "themeName": "Delicate",
         "themeDirectory": "delicate"
+    },
+    {
+        "themeName": "ColorWay",
+        "themeDirectory": "colorway"
     }
     
 ]
