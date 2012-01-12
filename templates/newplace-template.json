@@ -1,0 +1,1 @@
+{ "_id": "%1$s", "properties": { "name": "%2$s", "address": "%3$s","city": "%4$s","province": "%5$s","postcode": "%6$s", "country": "US", "phone": "%7$s", "website": "%8$s", "owner": "welocally", "classifiers": [{"category": "%9$s", "subcategory": "%10$s", "type": "%11$s"}]},"type": "Place","geometry": {"type": "Point", "coordinates": [%13$s,%12$s] } }

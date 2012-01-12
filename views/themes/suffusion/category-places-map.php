@@ -18,8 +18,14 @@ $suffusion->set_content_layout($suf_category_excerpt);
 get_header();
 
 /* include  */
+
 $places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
 include($places_list_include);
+
+$infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
+include($infobox_include);
+
+
 
 suffusion_query_posts();
 ?>

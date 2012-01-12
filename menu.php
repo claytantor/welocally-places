@@ -72,4 +72,3 @@ function wl_add_submenu( $page_title, $menu_title, $menu_slug, $function ) {
 }
 
 ?>
-?>

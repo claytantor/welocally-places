@@ -1,6 +1,5 @@
 <?php
-
-
+global $wlPlaces;
 ?>
 <script type="text/javascript">
 
@@ -54,7 +53,7 @@ function wl_get_subscriber_info(){
  	  error : function(jqXHR, textStatus, errorThrown) {
 			jQuery('#wl-options-error').append('<div class="error fade">ERROR 100: '+
 				textStatus+'</div>');
-			Query("#publisher-status").html('ERROR 100: '+textStatus);	
+			jQuery("#publisher-status").html('ERROR 100: '+textStatus);	
 	  },	  
 	  success: function(keydata) {
 		
@@ -112,7 +111,7 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 			if(buttonToken != null) {
 				jQuery("#hosted_button_id").val(buttonToken);
 			} else { 
-				jQuery("#hosted_button_id").val('CYUU2TQ7EJYFY');
+				jQuery("#hosted_button_id").val('WKLRWF9WC9UZY');
 			}
 			
 			jQuery("#token-section").hide();
@@ -163,7 +162,7 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 			if(buttonToken != null) {
 				jQuery("#hosted_button_id").val(buttonToken);
 			} else {
-				jQuery("#hosted_button_id").val('CYUU2TQ7EJYFY');
+				jQuery("#hosted_button_id").val('WKLRWF9WC9UZY');
 			}
 			
 			jQuery("#offer-section").show();
@@ -301,8 +300,14 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 
 
 <div class="wrap">
+
 <div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
 <h2>Welocally Places Subscribe</h2>
+<?php 
+$menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
+include($menubar_include);
+?>
+
 <?php
 // If options have been updated on screen, update the database
 
@@ -391,14 +396,14 @@ if(!is_subscribed()) {
 								</div>
 								</form>
 							</div>
-							<!-- PAYPAL subscribe form -->
+							<!-- PAYPAL subscribe form WKLRWF9WC9UZY -->
 							<div id="paypal-subscribe" style="display:none;">	
-								<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" id="paypal-form">
+								<form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="paypal-form">
 									<input type="hidden" name="cmd" value="_s-xclick">
-									<input type="hidden" name="hosted_button_id" id="hosted_button_id" value="CYUU2TQ7EJYFY">
+									<input type="hidden" name="hosted_button_id" id="hosted_button_id" value="WKLRWF9WC9UZY">
 									<input type="hidden" name="custom" id="paypal-custom">
-									<input id="paypal-subscribe-img" type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-									<img id="paypal-pixel-img" alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+									<input id="paypal-subscribe-img" type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+									<img id="paypal-pixel-img" alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 								</form>
 							</div>				
 						</div>

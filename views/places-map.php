@@ -192,7 +192,8 @@ jQuery(document).ready(function(jQuery) {
 <?php $index=$index+1; ?>	
 	//console.log('<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>');
 	places[<?php echo $index; ?>] = jQuery.parseJSON( '<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>' );	
-	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].latitude, places[<?php echo $index; ?>].longitude);
+	
+	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].geometry.coordinates[1], places[<?php echo $index; ?>]..geometry.coordinates[0]);
 	bounds.extend(latlng);
 	
 	/*
@@ -247,7 +248,7 @@ jQuery(document).ready(function(jQuery) {
 		   selected: function(event, ui) { 
 		   		var index = ui.selected.id.replace("item","");
 		   		var selectedItem = items[index];
-		   		var placeLatLng = new google.maps.LatLng(selectedItem.place.latitude, selectedItem.place.longitude);
+		   		var placeLatLng = new google.maps.LatLng(selectedItem.place.geometry.coordinates[1], selectedItem.place.geometry.coordinates[0]);
 		   		map.panTo(placeLatLng);
 				boxText.innerHTML = buildContentForInfoWindow(selectedItem.place, ",", selectedItem.marker.webicon, selectedItem.marker.directionsicon);
 				ib.open(map, selectedItem.marker);

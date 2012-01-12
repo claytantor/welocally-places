@@ -1,10 +1,13 @@
 <?php
-
+global $wlPlaces;
 ?>
 <div class="wrap">
 <div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
 <h2>Welocally Places Options</h2>
-
+<?php 
+$menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
+include($menubar_include);
+?>
 <?php
 // If options have been updated on screen, update the database
 
@@ -44,6 +47,7 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	$options[ 'cat_map_select_show' ] = $_POST[ 'welocally_cat_map_select_show' ];
 	$options[ 'cat_map_select_title' ] = $_POST[ 'welocally_cat_map_select_title' ];
 	$options[ 'cat_map_select_excerpt' ] = $_POST[ 'welocally_cat_map_select_excerpt' ];
+	$options[ 'cat_map_infobox_marker' ] = $_POST[ 'welocally_cat_map_infobox_marker' ];
 	
 	$options[ 'cat_map_select_width' ] = $_POST[ 'welocally_cat_map_select_width' ];
 	$options[ 'cat_map_select_height' ] = $_POST[ 'welocally_cat_map_select_height' ];
@@ -63,7 +67,6 @@ $options = wl_set_general_defaults();
 ?>
 
 <?php if(is_subscribed()):?>
-<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" />
 <style>
 	#selectable { list-style-type: none; margin: 0; padding: 0; width: 100%; }
 	#selectable li { 
@@ -84,7 +87,6 @@ $options = wl_set_general_defaults();
 	#slider_amount {margin:5px; color: #888888; font-variant: small-caps; font:1.2em Verdana, Arial, Helvetica, sans-serif; text-transform:uppercase}
 
 </style>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script type="text/javascript" charset="utf-8">
 var wl_options_imgfield = '';
 jQuery(document).ready(function() {
@@ -102,35 +104,33 @@ jQuery(document).ready(function() {
 	});
 	
 	jQuery('#upload_image_button_1').click(function() {
-	 console.log('click');
 	 wl_options_imgfield = jQuery('#welocally_map_default_marker').attr('name');
 	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
 	 return false;
 	});
 	
 	jQuery('#upload_image_button_2').click(function() {
-	 console.log('click');
+
 	 wl_options_imgfield = jQuery('#welocally_map_infobox_marker').attr('name');
 	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
 	 return false;
 	});
 	
 	jQuery('#upload_image_button_3').click(function() {
-	 console.log('click');
+
 	 wl_options_imgfield = jQuery('#welocally_map_infobox_close').attr('name');
 	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
 	 return false;
 	});
 	
 	jQuery('#upload_image_button_4').click(function() {
-	 console.log('click');
+	 
 	 wl_options_imgfield = jQuery('#welocally_map_icon_web').attr('name');
 	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
 	 return false;
 	});
 	
 	jQuery('#upload_image_button_5').click(function() {
-	 console.log('click');
 	 wl_options_imgfield = jQuery('#welocally_map_icon_directions').attr('name');
 	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
 	 return false;
@@ -159,6 +159,8 @@ jQuery(document).ready(function() {
 	
 });
 </script>
+
+
 <p><?php _e( 'These are the general settings for Welocally Places.' ); ?></p>
 
 <form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-general' ?>">
@@ -219,6 +221,8 @@ jQuery(document).ready(function() {
 		<span class="description"><?php _e( 'This is the marker maps will use for places' ); ?></span>
 		</td>
 	</tr>	
+	<?php 
+	/* disabled for now
 	<tr valign="top">
 		<th scope="row"><?php _e( 'Infobox Marker Image' ); ?></th>
 		<td>
@@ -226,7 +230,8 @@ jQuery(document).ready(function() {
 		<input id="upload_image_button_2" type="button" value="Upload Image" /><br/>
 		<span class="description"><?php _e( 'This is the image that maps infoboxes use to show the location.' ); ?></span>
 		</td>
-	</tr>
+	</tr> */
+	?>
     <tr valign="top">
 		<th scope="row"><?php _e( 'Infobox Close Icon' ); ?></th>
 		<td>
@@ -309,7 +314,6 @@ jQuery(document).ready(function() {
 		<td>
 			<ul>
 				<li><input type="checkbox" id="welocally_cat_map_select_show" name="welocally_cat_map_select_show" <?php if($options[ 'cat_map_select_show' ]=='on') { echo 'checked';  } ?>> Show Select Boxes</li>
-				<li><input type="checkbox" id="welocally_cat_map_select_title" name="welocally_cat_map_select_title" <?php  if($options[ 'cat_map_select_title' ]=='on') { echo 'checked';  }  ?>> Show Post Title</li>
 				<li><input type="checkbox" id="welocally_cat_map_select_excerpt" name="welocally_cat_map_select_excerpt" <?php if($options[ 'cat_map_select_excerpt' ]=='on') { echo 'checked';  } ?>> Show Excerpt Content</li>
 			</ul>
 		</td>

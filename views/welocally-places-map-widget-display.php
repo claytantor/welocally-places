@@ -165,7 +165,7 @@ foreach( $posts as $post ) { ?>
 		jQuery.parseJSON( 
 			'<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>' );		
 	
-	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].latitude, places[<?php echo $index; ?>].longitude);
+	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].geometry.coordinates[1], places[<?php echo $index; ?>].§geometry.coordinates[0]);
 	bounds.extend(latlng);
 	
 	/*

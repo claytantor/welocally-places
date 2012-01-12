@@ -18,7 +18,9 @@
     {
         "themeName": "Chateau",
         "themeDirectory": "chateau"
-    }
-    
-    
+    },
+    {
+        "themeName": "Sight",
+        "themeDirectory": "sight"
+    }  
 ]

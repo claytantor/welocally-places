@@ -35,22 +35,22 @@ jQuery(document).ready(function(jQuery) {
 	var showMap = %3$s;
 	var customStyle = %4$s;
 	
-	jQuery('#place-name-%1$d').html(place.name);
+	jQuery('#place-name-%1$d').html(place.properties.name);
 	
 	jQuery('#place-address-%1$d').html(
-		place.address+", "+
-		place.city+" "+
-		place.state+" "+
-		place.postalCode);
+		place.properties.address+", "+
+		place.properties.city+" "+
+		place.properties.province+" "+
+		place.properties.postcode);
 			
-	if(place.phone != null) {
-		jQuery('#place-phone-%1$d').html(place.phone);
+	if(place.properties.phone != null) {
+		jQuery('#place-phone-%1$d').html(place.properties.phone);
 	}
 	
-	if(place.website != null && place.website != '' ) {
-		var website = place.website;
-		if(place.website.indexOf('http://') == -1) {
-			website = 'http://'+place.website;
+	if(place.properties.website != null && place.properties.website != '' ) {
+		var website = place.properties.website;
+		if(place.properties.website.indexOf('http://') == -1) {
+			website = 'http://'+place.properties.website;
 		}
 		jQuery('#place-website-%1$d')
 				.html(
@@ -59,26 +59,16 @@ jQuery(document).ready(function(jQuery) {
 					'<img src="%6$s" border="0"/></a></td>'+
 					'<td class="wl-place-link-item"><a href="'+
 					website+'" target="_new">website</a></td></tr></table>');
-	} else if(place.url != null && place.url != '') {
-		var website = place.url;
-		if(place.url.indexOf('http://') == -1) {
-			website = 'http://'+place.url;
-		}					
-		jQuery('#place-website-%1$d')
-			.html(
-				'<table><tr><td class="wl-place-link-item"><a href="'+
-				website+'">'+
-				'<img src="%6$s" border="0"/></a></td>'+
-				'<td class="wl-place-link-item"><a href="'+
-				website+'" target="_new">website</a></td></tr></table>');
-	}
+	} 
 	
-	if(place.city != null && place.state != null){
-			var qS = place.city+" "+place.state;
-			if(place.address != null)
-				qs=place.address+" "+qS;
-			if(place.postalCode != null)
-				qs=qs+" "+place.postalCode;
+	
+	
+	if(place.properties.city != null && place.properties.province != null){
+			var qS = place.properties.city+" "+place.properties.province;
+			if(place.properties.address != null)
+				qs=place.properties.address+" "+qS;
+			if(place.properties.postcode != null)
+				qs=qs+" "+place.properties.postcode;
 			var qVal = qs.replace(" ","+");
 			
 			jQuery('#place-driving-%1$d')
@@ -90,7 +80,9 @@ jQuery(document).ready(function(jQuery) {
 	 }
 	 
 	 if(showMap && customStyle ){
-	 	var latlng = new google.maps.LatLng(place.latitude, place.longitude);
+	 	
+	 	
+	 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
 	
 		var welocallyMapStyle = %5$s;
 		
@@ -127,7 +119,7 @@ jQuery(document).ready(function(jQuery) {
 		jQuery('#map_canvas_post').show();
 	 
 	 } else if(showMap && !customStyle ){
-	 	var latlng = new google.maps.LatLng(place.latitude, place.longitude);
+	 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
 	
 		var mapOptions = {
 		  zoom: 12,

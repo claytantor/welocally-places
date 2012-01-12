@@ -62,10 +62,10 @@
 }
 	
 .wl-place-widget-links { text-align:right; }
-.wl-left-sidebar { width: 140px }
+.wl-left-sidebar { width: 100% }
 	
-#wl-sidebar-1 {  width: 140px, display: inline-block;}	
-#wl-map-content {  width: 700px, display: inline-block;}
+#wl-sidebar-1 {  width: 100%, display: inline-block;}	
+#wl-map-content {  width: 100%, display: inline-block;}
 
 .title-selectable-place { 
 		position:relative; 	
@@ -104,10 +104,10 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 #map_canvas { font-size:  <?php echo wl_get_option("cat_map_infobox_text_scale", "100"); ?>%; }
 
 </style>
-<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" />			
+<link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" />			
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script type="text/javascript" charset="utf-8">
-var map = null;
+var wl_map_main = null;
 var lastindex = null;
 var items = [];
 
@@ -118,9 +118,46 @@ function Item (place, content, marker, link) {
    	this.link = link;
 }
 
+//only used by category map
+function addItemForCategoryPlace(
+	index, 
+	place, 
+	wl_map_main,  
+	image, 
+	title, 
+	link, 
+	excerpt,
+	webicon,
+	directionsicon,
+	showLink,
+	showThumb,
+	thumbUrl) {
+	
+	var marker = addItemMarker(
+		'category-map',
+		index, 
+		place, 
+		wl_map_main,  
+		image, 
+		title, 
+		link, 
+		excerpt,
+		webicon,
+		directionsicon,
+		showLink,
+		link,
+		showThumb,
+		thumbUrl);  	
+	
+		
+	return buildListItemForPlace(index, place, marker, excerpt, link, <?php if(wl_get_option('cat_map_select_excerpt') == 'on') { echo 'true'; } else { echo 'false';} ?>);	
+}	
+
+
 jQuery(document).ready(function(jQuery) {
 	
-	 if (typeof(jQuery.fn.parseJSON) == "undefined" || typeof(jQuery.parseJSON) != "function") { 
+	//parse json has been missing in some versions of jquery
+	if (typeof(jQuery.fn.parseJSON) == "undefined" || typeof(jQuery.parseJSON) != "function") { 
 
 	    //extensions, this is because prior to 1.4 there was no parse json function
 		jQuery.extend({
@@ -141,14 +178,14 @@ jQuery(document).ready(function(jQuery) {
 			}
 		});
 	}	
-
-
-//setup the bounds
+	
+	//setup the bounds
 	var bounds = new google.maps.LatLngBounds();
 	
+	//basic size of the map
 	jQuery('#map_canvas').height( 400 );
-	
-	<?php if(wl_get_option('map_custom_style') != '') : ?>	
+		
+<?php if(wl_get_option('map_custom_style') != '') : ?>	
 
 	var welocallyMapStyle = <?php printf(base64_decode(wl_get_option("map_custom_style")))  ?>;
 
@@ -162,12 +199,12 @@ jQuery(document).ready(function(jQuery) {
       }
     };
     
-    map = new google.maps.Map(document.getElementById("map_canvas"),
+    wl_map_main = new google.maps.Map(document.getElementById("map_canvas"),
         mapOptions);
         
     //Associate the styled map with the MapTypeId and set it to display.
-  	map.mapTypes.set('welocally_style', styledMapType);
-  	map.setMapTypeId('welocally_style');  
+  	wl_map_main.mapTypes.set('welocally_style', styledMapType);
+  	wl_map_main.setMapTypeId('welocally_style');  
 
 <?php else:?>  	
   	
@@ -175,31 +212,44 @@ jQuery(document).ready(function(jQuery) {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     
-    map = new google.maps.Map(document.getElementById("map_canvas"),
+    wl_map_main = new google.maps.Map(document.getElementById("map_canvas"),
         mapOptions);
 
 
 <?php  endif; ?>
-        
-    var places = new Array();
-    
+	//the loop
+   	var places = new Array();
+	var showLink = true;    
+	
 <?php 
 $index = 0;
 $cat_ID = get_query_var( 'cat' );			
 $places_in_category_posts = get_places_posts_for_category($cat_ID);
-			
-foreach( $places_in_category_posts as $post ) { ?>  
- 	
+foreach( $places_in_category_posts as $post ) { 
+?>  
 <?php $index=$index+1; ?>	
+	
+	var showThumb<?php echo $index; ?>= false;
+	var thumbImage<?php echo $index; ?> = '';
+
+<?php if (has_post_thumbnail( $post->ID )) : ?>
+	showThumb<?php echo $index; ?> = true;
+<?php $image = 
+           wp_get_attachment_image_src( 
+           		get_post_thumbnail_id( $post->ID ), 
+             	'thumbnail' ); ?>
+    thumbImage<?php echo $index; ?> = '<?php echo $image[0]; ?>';
+<?php endif; ?>	
+	
 
 	places[<?php echo $index; ?>] = jQuery.parseJSON( '<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>' );	
-	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].latitude, places[<?php echo $index; ?>].longitude);
+	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].geometry.coordinates[1], places[<?php echo $index; ?>].geometry.coordinates[0]);
 	bounds.extend(latlng);
 	
 	/*
 	index, 
 	place, 
-	map,  
+	wl_map_main,  
 	image, 
 	title, 
 	link, 
@@ -207,65 +257,77 @@ foreach( $places_in_category_posts as $post ) { ?>
 	webicon,
 	directionsicon
 	*/
-	var item =  addItemForPlace(
+	var item =  addItemForCategoryPlace(
 		<?php echo $index; ?>, 
 		places[<?php echo $index; ?>], 
-		map,
+		wl_map_main,
 		'<?php echo wl_get_option("map_default_marker") ?>',
 		'<?php echo str_replace("'", "\'",$post->post_name); ?>',
 		'<?php the_permalink(); ?>',
 		'<?php echo str_replace("'", "\'",wl_get_post_excerpt( $post->ID )); ?>',	
 		'<?php echo wl_get_option("map_icon_web"); ?>',
-		'<?php echo wl_get_option("map_icon_directions"); ?>'
+		'<?php echo wl_get_option("map_icon_directions"); ?>',
+		showLink,
+		showThumb<?php echo $index; ?>,
+		thumbImage<?php echo $index; ?>
 		);
 		
+	<?php if(wl_get_option("cat_map_select_show") == 'on'  ) { 	?>
 	jQuery("#selectable").append(item.content);
+	<?php } ?>
+	
 	items[<?php echo $index; ?>] = item;
 	
 	
-	jQuery("#item<?php echo $index; ?>").mouseover(function() {
+	jQuery("#item<?php echo $index; ?>")
+	.mouseover(function() {
 		jQuery(this).attr('class', 'ui-widget-content ui-selected select-box');
-	  }).mouseout(function(){
+	})
+	.mouseout(function(){
 	  	var index = this.id.replace("item","");
 	  	if(lastindex == null || index != lastindex){
 			jQuery(this).attr('class', 'ui-widget-content un-select-box');
 		}
-	  });
+	});
 
-	
-	
-	
-	
 	
 <?php
 }
 ?>		
-    
-
-
 
 	//init map with bounds   
     if(<?php echo $index; ?>==1){
-    	map.setCenter(latlng);
-    	map.setZoom(14);
+    	wl_map_main.setCenter(latlng);
+    	wl_map_main.setZoom(14);
     } else {
-    	map.fitBounds(bounds);
+    	wl_map_main.fitBounds(bounds);
     }
-
-
+    
+<?php if(wl_get_option('cat_map_select_show') == 'on') : ?>
 	jQuery( "#selectable" ).selectable({
 		   selected: function(event, ui) { 
+		   		console.log("selected");
 		   		var index = ui.selected.id.replace("item","");
 		   		var selectedItem = items[index];
-		   		var placeLatLng = new google.maps.LatLng(selectedItem.place.latitude, selectedItem.place.longitude);
-		   		map.panTo(placeLatLng);
-				boxText.innerHTML = buildContentForInfoWindow(selectedItem.place, ",", selectedItem.marker.webicon, selectedItem.marker.directionsicon);
-				ib.open(map, selectedItem.marker);
+		   		var placeLatLng = new google.maps.LatLng(selectedItem.place.geometry.coordinates[1], selectedItem.place.geometry.coordinates[0]);
+		   		wl_map_main.panTo(placeLatLng);
+		   		
+				boxText.innerHTML = 
+					buildContentForInfoWindow(
+					selectedItem.place, ",", 
+					selectedItem.marker.webicon, 
+					selectedItem.marker.directionsicon,
+					selectedItem.marker.linkedTitle,
+					selectedItem.marker.linkUrl,
+					selectedItem.marker.showThumb,
+					selectedItem.marker.thumbUrl);
+				ib.open(wl_map_main, selectedItem.marker);
 				lastindex= index;
 		   },
 		   cancel: ":input,option,a"
 	});
-	
+<?php endif; ?>	
+
 	jQuery('.wl-item-article' ).mouseover(function() {
 			jQuery(this).css('cursor', 'pointer');
 	  	});
@@ -281,31 +343,7 @@ foreach( $places_in_category_posts as $post ) { ?>
 		{'font-family' : '<?php echo wl_get_option("font_place_name", "Sorts Mill Goudy"); ?>', 
 		'color': '#<?php echo wl_get_option("color_place_name", "000000"); ?>'});
 	
+	
 });
 
-
-var boxText = document.createElement("div");
-boxText.className = "wl-map-infobox";
-boxText.innerHTML = "none selected"; 
-
-var infoboxOptions = {
-			content: boxText
-			,disableAutoPan: false
-			,maxWidth: 0
-			,pixelOffset: new google.maps.Size(-90, 0)
-			,zIndex: null
-			,boxStyle: { 
-			  background: "url('<?php echo wl_get_option('map_infobox_marker') ?>') no-repeat"
-			  ,opacity: 0.85
-			  ,width: "180px"
-			 }
-			,closeBoxMargin: "10px 2px 2px 2px"
-			,closeBoxURL: "<?php echo wl_get_option('map_infobox_closebox') ?>"
-			,infoBoxClearance: new google.maps.Size(1, 1)
-			,isHidden: false
-			,pane: "floatPane"
-			,enableEventPropagation: false
-		};
-		
-var ib = new InfoBox(infoboxOptions);
 </script>

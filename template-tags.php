@@ -3,7 +3,7 @@
 	template tags for places
 
 **/
-if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
+if( class_exists( 'WelocallyPlaces' ) ) {
 
 	function get_theme_view_dir(){
 	
@@ -54,13 +54,14 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		$default_cat_map_select_height = '160'; 
 		$default_api_endpoint = 'https://api.welocally.com'; 
 		$default_slider_amount = '100' ; 
+		$default_update_places = 'off';
 		
 		$default_infobox_title_link = 'off';
 		$default_infobox_thumbnail = 'on';
 		$default_infobox_thumb_width = '64';
 		$default_infobox_thumb_height = '64';
 		
-		$default_cat_map_select_show = 'on';
+		$default_cat_map_select_show = 'off';
 		$default_cat_map_select_title= 'on';
 		$default_cat_map_select_excerpt= 'on';
 		
@@ -100,16 +101,18 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		
 
 		if ( !array_key_exists( 'cat_map_select_show', $options ) ) { $options[ 'cat_map_select_show' ] = $default_cat_map_select_show; $changed = true; }
-		if ( !array_key_exists( 'cat_map_select_title', $options ) ) { $options[ 'cat_map_select_title' ] = $default_cat_map_select_title; $changed = true; }
 		if ( !array_key_exists( 'cat_map_select_excerpt', $options ) ) { $options[ 'cat_map_select_excerpt' ] = $default_cat_map_select_excerpt; $changed = true; }
 		
 		
 		if ( !array_key_exists( 'cat_map_layout', $options ) ) { $options[ 'cat_map_layout' ] = $default_cat_map_layout; $changed = true; }
 		if ( !array_key_exists( 'cat_map_select_width', $options ) ) { $options[ 'cat_map_select_width' ] = $default_cat_map_select_width; $changed = true; }
 		if ( !array_key_exists( 'cat_map_select_height', $options ) ) { $options[ 'cat_map_select_height' ] = $default_cat_map_select_height; $changed = true; }
-		if ( !array_key_exists( 'api_endpoint', $options ) ) { $options[ 'api_endpoint' ] = $default_api_endpoint; $changed = true; }
 		//welocally_cat_map_infobox_text_scale
 		if ( !array_key_exists( 'cat_map_infobox_text_scale', $options ) ) { $options[ 'cat_map_infobox_text_scale' ] = $default_slider_amount; $changed = true; }
+		
+		//about options
+		if ( !array_key_exists( 'api_endpoint', $options ) ) { $options[ 'api_endpoint' ] = $default_api_endpoint; $changed = true; }
+		if ( !array_key_exists( 'update_places', $options ) ) { $options[ 'update_places' ] = $default_update_places; $changed = true; }
 		
 	
 		// Update the options, if changed, and return the result
@@ -123,8 +126,18 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 	}
 	
 	function wl_save_options($options) {
+		//error_log("A", 0);
+		
+		
+		$options_r = print_r($options, true);
+		//error_log("saving options:".$options_r, 0);
 		global $wlPlaces;
 		$wlPlaces->saveOptions($options);
+		
+		//update places
+		if ( array_key_exists( 'update_places', $options )) {
+			update_places();
+		}
 	}
 	
 	
@@ -161,6 +174,154 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		}
 		return false;
 	}
+	
+	
+	function update_places(){
+		global $wlPlaces;
+		$cat_ID = $wlPlaces->placeCategory();		
+		$places_in_category_posts = get_places_posts_for_category($cat_ID);	
+		
+		$index = 0;
+		foreach( $places_in_category_posts as $post ) {	
+			
+			
+			$placeJsonRaw = str_replace(
+						"\'", "", 
+						get_post_meta( $post->ID, '_PlaceSelected', true ));		
+											
+			$placeJson = 
+				json_decode($placeJsonRaw, true); 
+			
+			$pname = str_replace("\\'", "'", $placeJson{'name'});
+			
+			if($pname != null){
+				$newPlaceJson = convert_legacy_place($placeJsonRaw);
+				update_post_meta( $post->ID, '_PlaceSelected',  $newPlaceJson);
+			}
+					
+		}		
+		
+	}
+	
+	/**
+	 * 	{
+		    "externalId": "SG_4v40yDHN9oDVgf2bjFMtIa_37.779701_-122.218002@1303263339",
+		    "type": "SG",
+		    "name": "Joe's Meat",
+		    "latitude": 37.779701,
+		    "longitude": -122.218002,
+		    "address": "1600 12th",
+		    "city": "Oakland",
+		    "state": "CA",
+		    "postalCode": "94601",
+		    "phone": "+1 510 763 3154",
+		    "website": "",
+		    "categories": [
+		        "Food & Beverages"
+		    ]
+		}
+		
+		{
+		    "_id": "%1$s",
+		    "properties": {
+		        "name": "%2$s",    
+		        "address": "%3$s",
+		        "city": "%4$s",
+		        "province": "%5$s",
+		        "postcode": "%6$s",
+		        "country": "US",
+		        "phone": "%7$s",
+		        "website": "%8$s",
+		        "owner": "welocally",
+		        "classifiers": [
+		            {
+		                "category": "%9$s",
+		                "subcategory": "%10$s",
+		                "type": "%11$s"
+		            }
+		        ]        
+		    },
+		    "type": "Place",
+		    "geometry": {
+		        "type": "Point",
+		        "coordinates": [
+		            %13$s,
+		            %12$s
+		        ]
+		    }
+		}
+		
+		
+		
+	 * takes a legacy json string in and returns a json string out
+	 */
+	function convert_legacy_place($legacyPlaceJsonRaw){
+		$legacyPlaceJson = 
+				json_decode($legacyPlaceJsonRaw, true);
+		
+		$legacyCategories = $legacyPlaceJson{'categories'};
+		//error_log("category:".$legacyCategories[1], 0);
+		
+		$template = file_get_contents(dirname( __FILE__ ) . '/templates/newplace-template.json');
+		
+		$resultJson = sprintf ( 
+				$template, 
+				str_replace("SG_", "WL_",$legacyPlaceJson{'externalId'}), //1
+				$legacyPlaceJson{'name'}, //2
+				$legacyPlaceJson{'address'}, //3 
+				$legacyPlaceJson{'city'}, //4
+				$legacyPlaceJson{'state'}, //5
+				$legacyPlaceJson{'postalCode'},//6
+				$legacyPlaceJson{'phone'},//7
+				$legacyPlaceJson{'website'}, //8 
+				$legacyCategories[0], //9
+				"", //10
+				"",//11
+				$legacyPlaceJson{'latitude'}, //12
+				$legacyPlaceJson{'longitude'} //13		
+				);				
+				
+		return trim($resultJson );
+	}
+	
+	/**
+	 * this fuction is used to determine the number of legacy places that will need to be
+	 * converted.
+	 * 
+	 */
+	function get_places_legacy_count() {
+		global $wlPlaces;
+		$cat_ID = $wlPlaces->placeCategory();
+		
+		$places_in_category_posts = get_places_posts_for_category($cat_ID);			
+			
+		//error_log("got place count:".count($places_in_category_posts), 0);
+	
+		
+		$index = 0;
+		foreach( $places_in_category_posts as $post ) {	
+			
+			$placeJsonRaw = str_replace(
+						"\'", "", 
+						get_post_meta( $post->ID, '_PlaceSelected', true ));		
+						
+			//error_log("place json:".$placeJsonRaw, 0);
+					
+			$placeJson = 
+				json_decode($placeJsonRaw, true); 
+			
+			$pname = str_replace("\\'", "'", $placeJson{'name'});
+			
+			//error_log("place json name:".$pname, 0);
+			if($pname != null)
+				$index = $index+1; 
+			
+		}
+		return $index;
+		
+	}
+	
+	
 	
 	/**
 	 * Call this function in a template to query the places and start the loop. Do not
@@ -285,6 +446,14 @@ if( class_exists( 'WelocallyPlaces' ) && !function_exists( 'is_place' ) ) {
 		$return = $wpdb->get_results($query, OBJECT);
 		return $return;
 	}
+	
+	function delete_place_by_post_id( $postId = null) {
+		
+		delete_post_meta($postId, '_PlaceSelected');
+		delete_post_meta($postId, '_PlaceSelected');
+		
+	}
+	
 	
 	function wl_get_post_excerpt( $postId = null) {
 		global $wpdb;

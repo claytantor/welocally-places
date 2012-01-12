@@ -12,46 +12,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+function replaceAll(txt, replace, with_this) {
+  return txt.replace(new RegExp(replace, 'g'),with_this);
+}
 
 function buildContentForInfoForList(place, index, permalink, webicon, directionsicon) {
 		var content= '<div class="wl-place-name wl-place-widget-name" id="plugin-place-name'+index+'"><a href="'+
-				permalink+'" >'+place.name+'</a></div>'+
-				'<div class="wl-place-address wl-place-widget-address">'+place.address+", "+
-				place.city+" "+
-				place.state+" "+
-				place.postalCode+'</div>';
+				permalink+'" >'+place.properties.name+'</a></div>'+
+				'<div class="wl-place-address wl-place-widget-address">'+place.properties.address+", "+
+				place.properties.city+" "+
+				place.properties.province+" "+
+				place.properties.postalcode+'</div>';
 		
 		//only add phone if exists
-		if(place.phone != null) {	
-				content = content+'<div class="wl-place-widget-phone">'+place.phone+'</div>';
+		if(place.properties.phone != null) {	
+				content = content+'<div class="wl-place-widget-phone">'+place.properties.phone+'</div>';
 		}
 		
 		//only add website if it exists
 		content = content+'<div class="wl-place-widget-links" id="plugin-place-links'+index+'">';
-		if(place.website != null && place.website != '') {
-				var website = place.website;
-				if(place.website.indexOf('http://') == -1) {
-					website = 'http://'+place.website;
+		if(place.properties.website != null && place.properties.website != '') {
+				var website = place.properties.website;
+				if(place.properties.website.indexOf('http://') == -1) {
+					website = 'http://'+place.properties.website;
 				}					
 				content = content+'<a href="'+
 					website+'" target="_new"><img src="'+webicon+'" border="0" class="wl-link-image"/></a>';
 					
-		} else if(place.url != null && place.url != '') {
-			var website = place.url;
-			if(place.url.indexOf('http://') == -1) {
-				website = 'http://'+place.url;
-			}					
-			content = content+'<a href="'+
-				website+'" target="_new"><img src="'+webicon+'" border="0" class="wl-link-image"/></a>';
-		}
+		} 
 		
 		
-		if(place.city != null && place.state != null){
-			var qS = place.city+" "+place.state;
-			if(place.address != null)
-				qs=place.address+" "+qS;
-			if(place.postalCode != null)
-				qs=qs+" "+place.postalCode;
+		if(place.properties.city != null && place.properties.province != null){
+			var qS = place.properties.city+" "+place.properties.province;
+			if(place.properties.address != null)
+				qs=place.properties.address+" "+qS;
+			if(place.properties.postalcode != null)
+				qs=qs+" "+place.properties.postalcode;
 			var qVal = qs.replace(" ","+");
 			content = content+'<a href="http://maps.google.com/maps?f=d&source=s_q&hl=en&geocode=&q='+qVal+
 			'" target="_new"><img src="'+directionsicon+'" class="wl-link-image"/></a>';
@@ -60,50 +56,10 @@ function buildContentForInfoForList(place, index, permalink, webicon, directions
 
 		return content;
 }
-
-/*function addItemForPlace(index, place, markerImage, map, excerpt, link) {
-	var marker = addItemMarker( 
-		index, place, map, markerImage, 
-		place.latitude, place.longitude, 
-		place.name);  	 		
-	return buildListItemForPlace(index, place, marker,excerpt, link);	
-}*/
-
-
-/*index, 
-	place, 
-	map,  
-	image, 
-	title, 
-	link, 
-	excerpt,
-	webicon,
-	directionsicon*/
-function addItemForPlace(index, 
-	place, 
-	map,  
-	image, 
-	title, 
-	link, 
-	excerpt,
-	webicon,
-	directionsicon) {
-	
-	var marker = addItemMarker(index, 
-		place, 
-		map,  
-		image, 
-		title, 
-		link, 
-		excerpt,
-		webicon,
-		directionsicon);  	
-		
-	return buildListItemForPlace(index, place, marker, excerpt, link);	
-}	
 	
 
 function addItemMarker(
+	container,
 	index, 
 	place, 
 	map,  
@@ -112,10 +68,15 @@ function addItemMarker(
 	link, 
 	excerpt,
 	webicon,
-	directionsicon) {
+	directionsicon,
+	linkedTitle,
+	linkUrl,
+	showThumb,
+	thumbUrl) {
 	
-	var myLatLng = new google.maps.LatLng(place.latitude, place.longitude);
+	var myLatLng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
 	var mMarker = new google.maps.Marker({
+		container: container,
 		position: myLatLng,
 		icon: image,
 		map: map,
@@ -127,28 +88,41 @@ function addItemMarker(
 		excerpt: excerpt,
 		webicon: webicon,
 		directionsicon: directionsicon,
+		linkedTitle: linkedTitle,
+		linkUrl: linkUrl,
+		showThumb: showThumb,
+		thumbUrl: thumbUrl
 	});
 	
 	google.maps.event.addListener(mMarker, 'click', function(event) {
 		
 			var placeSelected = mMarker.place;
+			var container = mMarker.container;
 			
 			var newLocation = 
 				new google.maps.LatLng(
-				placeSelected.latitude, placeSelected.longitude);
+				placeSelected.geometry.coordinates[1], placeSelected.geometry.coordinates[0]);
 			
 			map.panTo(mMarker.position);
 						
 			boxText.innerHTML = buildContentForInfoWindow(
-				mMarker.place, ', ', mMarker.webicon, mMarker.directionsicon);
-				
-			ib.open(mMarker.map, this);		
+				mMarker.place, ', ', mMarker.webicon, mMarker.directionsicon, 
+				mMarker.linkedTitle, mMarker.linkUrl, 
+				mMarker.showThumb, mMarker.thumbUrl);
+					
+			//if this is the widget show the excerpt
+			if(container == 'places-map'){
+				ib_widget.open(mMarker.map, this);
+				jQuery('#details-place-name').html('<a href="'+
+						mMarker.link+'" >'+placeSelected.name+'</a>');
+				jQuery('#details-place-excerpt').html(mMarker.excerpt);
+				jQuery('#place-details').show();
+				jQuery('#sp-click-action-call').hide();
+			} else {
+				ib.open(mMarker.map, this);
+			}
 			
-			jQuery('#details-place-name').html('<a href="'+
-				mMarker.link+'" >'+placeSelected.name+'</a>');
-			jQuery('#details-place-excerpt').html(mMarker.excerpt);
-			jQuery('#place-details').show();
-			jQuery('#sp-click-action-call').hide();
+			
 			
 		
 	});
@@ -157,11 +131,11 @@ function addItemMarker(
 	
 }
 
-function buildListItemForPlace(position, place, marker, excerpt, link) {
+function buildListItemForPlace(position, place, marker, excerpt, link, showExcerpt) {
 	if (place != null) {
 		var content = 
 		'<li id=\"item'+position+'\" class=\"ui-widget-content morePosts\">'+	
-			buildContentForSelector(place,excerpt,position, marker.link)+
+			buildContentForSelector(place,excerpt,position, marker.link, showExcerpt)+
 		'</li>';
 				
 		var item = new Item(
@@ -176,49 +150,134 @@ function buildListItemForPlace(position, place, marker, excerpt, link) {
 	}
 }
 
-function buildContentForSelector(place,excerpt,position,link) {
+function buildContentForSelector(place,excerpt,position,link, showExcerpt) {
+	
 		var content= '<div class="wl-infobox-text_scale wl-place-name title-selectable-place wl-infobox-text_scale">'+'<a href="'+
-				link+'" >'+place.name+'</a>'+'</div>'+
-			'<div class="wl-infobox-text_scale wl-place-excerpt">'+excerpt+'</div>';	
+				link+'" >'+place.properties.name+'</a>'+'</div>';
+		
+		if(showExcerpt){ 
+			content=  content+
+				'<div class="wl-infobox-text_scale wl-place-excerpt">'+excerpt+'</div>';
+		}
 		return content;
 }
 
-function buildContentForInfoWindow(place, catsDiv, wicon, dicon) {
-		var content= '<div class="wl-place-name wl-place-widget-name">'+place.name+'</div>'+
-			'<div class="wl-place-address wl-place-widget-address">'+place.address+", "+
-				place.city+" "+
-				place.state+" "+
-				place.postalCode+'</div>';
-		
-		//only add phone if exists
-		if(place.phone != null) {	
-				content = content+'<div class="wl-place-widget-phone">'+place.phone+'</div>';
-		}	
-					
-		//only add website if it exists
-		content = content+'<div class="wl-place-widget-links">';
-		if(place.website != null) {
-				var website = place.website;
-				if(place.website.indexOf('http://') == -1) {
-					website = 'http://'+place.website;
-				}					
-				content = content+'<a href="'+
-					website+'"><img src="'+wicon+'" border="0" class="wl-link-image"/></a>';
-					
-		}	
-		
-		if(place.city != null && place.state != null){
-			var qS = place.city+" "+place.state;
-			if(place.address != null)
-				qs=place.address+" "+qS;
-			if(place.postalCode != null)
-				qs=qs+" "+place.postalCode;
-			var qVal = qs.replace(" ","+");
-			content = content+'<a href="http://maps.google.com/maps?f=d&source=s_q&hl=en&geocode=&q='+qVal+
-				'" target="_new"><img src="'+dicon+'" class="wl-link-image"/></a>';
-		}
-		content = content+'</div">';
+function buildContentForInfoWindow(place, catsDiv, wicon, dicon,
+		linkedTitle, linkUrl, 
+		showThumb, thumbUrl) {
+						
+	var placeNameTemplate1= '<div class="wl-place-name wl-place-widget-name"><a href="{PLACE_POST_LINK}">{PLACE_NAME}</a></div>';
+	
+	var placeNameTemplate2= '<div class="wl-place-name wl-place-widget-name">{PLACE_NAME}</div>';
+	
+	var webTemplate='<li style="display:inline-block; margin-right:0px"><a href="{WEB_LINK}" target="_blank"><img src="{WEB_ICON}" border="0" class="wl-link-image" border="0"></a><div style="position:relative; display: inline-block; font-size:85%; top: -10px"><a href="{WEB_LINK}" target="_blank">web</a></div></li> ';
 
+	var directionsTemplate='<li style="display:inline-block; margin-right:0px"><a href="{DRIVE_LINK}" target="_blank"><img src="{DRIVE_ICON}" class="wl-link-image"></a><div style="position:relative; display: inline-block; font-size:85%; top: -10px"><a href="{DRIVE_LINK}" target="_blank">directions</a></div></li>';
+	
+	var thumbTemplate1='<a href="{PLACE_POST_LINK}"><img src="{THUMB_IMAGE_URL}" border="0" style="float:left; margin-right:5px; max-width:150px; max-height:150px"></a>';
+
+	var thumbTemplate2='<img src="{THUMB_IMAGE_URL}" border="0" style="float:left; margin-right:5px; max-width:150px; max-height:150px">';
+	
+	var content='<div id="infobox_content">{THUMB_CONTENT}<div style="margin-left:5px">{PLACE_NAME_CONTENT}<div class="wl-place-address wl-place-widget-address">{PLACE_ADDRESS}</div><div class="wl-place-widget-phone">{PLACE_PHONE}</div><div class="wl-place-widget-links"> <ul style="text-align:left; list-style-type: none; padding: 0px; margin: 0px;">{WEB_CONTENT}{DIRECTIONS_CONTENT}</ul></div></div></div><div style="clear:left; height:1px">&nbsp;</div>';
+			
+		//thumb
+		if(showThumb){
+			
+			if(linkedTitle){
+				var thumbContent = thumbTemplate1
+					.replace('{PLACE_POST_LINK}', linkUrl)
+					.replace('{THUMB_IMAGE_URL}',thumbUrl)
+					.replace('{THUMB_IMAGE_URL}',thumbUrl);
+				content = content.replace('{THUMB_CONTENT}',thumbContent);
+				
+			} else {
+				var thumbContent = thumbTemplate2
+				.replace('{THUMB_IMAGE_URL}',thumbUrl)
+				.replace('{THUMB_IMAGE_URL}',thumbUrl);
+				content = content.replace('{THUMB_CONTENT}',thumbContent);
+			}
+			
+			
+			
+		} else {
+			content = content.replace('{THUMB_CONTENT}','');
+		}
+		
+		content = content.replace('{THUMB_CONTENT}','');
+		
+		//placename
+		if(linkedTitle){
+			var placeNameContent = placeNameTemplate1
+				.replace('{PLACE_POST_LINK}', linkUrl)
+				.replace('{PLACE_NAME}', place.properties.name);
+			
+			content = content.replace('{PLACE_NAME_CONTENT}',placeNameContent);
+			
+		} else {
+			var placeNameContent = placeNameTemplate2
+			.replace('{PLACE_NAME}', place.properties.name);
+		
+			content = content.replace('{PLACE_NAME_CONTENT}',placeNameContent);
+		}
+		
+		
+				
+		//address
+		if(place.properties.city != null && place.properties.province != null){
+			var fullAddress = place.properties.city+" "+place.properties.province;
+			if(place.properties.address != null)
+				fullAddress=place.properties.address+", "+fullAddress;
+			if(place.properties.postalcode != null)
+				fullAddress=fullAddress+" "+place.properties.postalcode;			
+			var content= content		
+			.replace('{PLACE_ADDRESS}', fullAddress);
+			
+			var searchQuery = replaceAll(fullAddress, ',', '');
+			searchQuery = replaceAll(searchQuery, ' ', '+');
+			
+			var drivingUrl = 'http://maps.google.com/maps?f=d&source=s_q&hl=en&geocode=&q='+searchQuery;
+					
+			var directionsContent = 
+				replaceAll(directionsTemplate, '{DRIVE_LINK}', drivingUrl); 		
+	
+			directionsContent = directionsContent		
+				.replace('{DRIVE_ICON}', dicon);	
+			content= content		
+				.replace('{DIRECTIONS_CONTENT}', directionsContent);		
+			
+			
+		} else {
+			content= content		
+				.replace('{PLACE_ADDRESS}', '');
+			content= content		
+				.replace('{DIRECTIONS_CONTENT}', '');
+		}
+		
+		//phone
+		if(place.phone != null) {	
+			content= content		
+			.replace('{PLACE_PHONE}', place.phone);
+		} else {
+			content= content		
+			.replace('{PLACE_PHONE}', '');
+		}
+		
+		//website
+		if(place.website != null && place.website != '') {
+			
+			var webContent = 
+				replaceAll(webTemplate, '{WEB_LINK}', place.website ); 
+			webContent = 
+				replaceAll(webContent, '{WEB_ICON}', wicon ); 
+			content= content		
+				.replace('{WEB_CONTENT}', webContent);
+			
+			
+		} else {
+			content= content		
+			.replace('{WEB_CONTENT}', '');
+		}
+	
 		return content;
 }
 
@@ -566,6 +625,7 @@ InfoBox.prototype.setBoxStyle_ = function () {
 
     // Clear existing inline style values:
     this.div_.style.cssText = "";
+    //jQuery(this.div_).find('table').border='1';
 
     // Apply style values defined in the boxStyle parameter:
     boxStyle = this.boxStyle_;

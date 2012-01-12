@@ -7,8 +7,12 @@
  */
 global $wlPlaces; 
 $MapPlaceSelected	= get_post_meta( $post->ID, '_PlaceSelected', true );
+
 $places_map_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/places-map-include.php';
 include($places_map_include);
+
+$infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
+include($infobox_include);
 ?>
 
 <aside class="widget sidebar-item">

@@ -20,7 +20,7 @@ Welocally Places For WordPress makes it simple to attach real places to your con
 * Tested with most of the common themes
 * Rich place information such as phone number, and website
 * Integrated driving directions
-* Category based map
+* Category based map, automatically integrates "featured image" in pop-up;
 
 We have moved to a new "theme support" model. If your theme is not listed here that does not mean that the plug- in will not work please give it a try, it works with most themes. Please contact us if you would like us to support your theme.
 
@@ -60,10 +60,15 @@ A:Some plugins charge a single fee to download, others are free. Our plugin is f
 Q:Is your plugin supported internationally?
 A:We have not tested our internationally, but there are POIs in countries outside of the USA. We are in the process of creating a table of international coverage and multilingual support.
 
+
+
 == Changelog ==
 
-1.0.15
-361 Options settings to suppress the display of the the select boxes
+1.0.13
+361	Options settings to suppress the display of the the "sele...	
+360	Infobox close deselects peer infoboxes.	
+363	Support Thumbnails in Map Infobox
+364	Sight Theme Support	
 
 1.0.12
 354	critical	P1	Archive summaries are showing javascript for theme.

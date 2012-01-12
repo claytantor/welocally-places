@@ -1,6 +1,5 @@
 (function() {
 	
-	console.log('register button');
 	
     tinymce.create('tinymce.plugins.welocally', {
         init : function(ed, url) {

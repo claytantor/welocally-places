@@ -51,40 +51,12 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 
 
 <script type="text/javascript" charset="utf-8">
-var map_widget;
-
-
-var boxText = document.createElement("div");
-boxText.className = "wl-map-infobox"; 
-boxText.innerHTML = "none selected";
-
-var infoboxOptions = {
-			content: boxText
-			,disableAutoPan: false
-			,maxWidth: 0
-			,pixelOffset: new google.maps.Size(-90, 0)
-			,zIndex: null
-			,boxStyle: { 
-			  background: "url('<?php echo wl_get_option('map_infobox_marker') ?>') no-repeat"
-			  ,opacity: 0.85
-			  ,width: "180px"
-			 }
-			,closeBoxMargin: "10px 2px 2px 2px"
-			,closeBoxURL: "<?php echo wl_get_option('map_infobox_close') ?>"
-			,infoBoxClearance: new google.maps.Size(1, 1)
-			,isHidden: false
-			,pane: "floatPane"
-			,enableEventPropagation: false
-		};
-		
-var ib = new InfoBox(infoboxOptions);
-
+var wl_map_widget;
 
 jQuery(document).ready(function(jQuery) {
 	
-	
-	
-	 if (typeof(jQuery.fn.parseJSON) == "undefined" || typeof(jQuery.parseJSON) != "function") { 
+	 if (typeof(jQuery.fn.parseJSON) == "undefined" 
+	 	|| typeof(jQuery.parseJSON) != "function") { 
 
 	    //extensions, this is because prior to 1.4 there was no parse json function
 		jQuery.extend({
@@ -130,12 +102,12 @@ jQuery(document).ready(function(jQuery) {
       }
     };
     
-    map_widget = new google.maps.Map(document.getElementById("map_canvas_widget"),
+    wl_map_widget = new google.maps.Map(document.getElementById("map_canvas_widget"),
         mapOptions);
         
     //Associate the styled map with the MapTypeId and set it to display.
-  	map_widget.mapTypes.set('welocally_style', styledMapType);
-  	map_widget.setMapTypeId('welocally_style');  
+  	wl_map_widget.mapTypes.set('welocally_style', styledMapType);
+  	wl_map_widget.setMapTypeId('welocally_style');  
 
 <?php else:?>  	
   	
@@ -143,7 +115,7 @@ jQuery(document).ready(function(jQuery) {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     
-    map_widget = new google.maps.Map(document.getElementById("map_canvas_widget"),
+    wl_map_widget = new google.maps.Map(document.getElementById("map_canvas_widget"),
         mapOptions);
         
 
@@ -161,13 +133,13 @@ foreach( $posts as $post ) { ?>
 		jQuery.parseJSON( 
 			'<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>' );		
 	
-	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].latitude, places[<?php echo $index; ?>].longitude);
+	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].geometry.coordinates[1], places[<?php echo $index; ?>].geometry.coordinates[0]);
 	bounds.extend(latlng);
 	
 	/*
 	index, 
 	place, 
-	map_widget,  
+	wl_map_widget,  
 	image, 
 	title, 
 	link, 
@@ -176,15 +148,20 @@ foreach( $posts as $post ) { ?>
 	directionsicon
 	*/
 	var item<?php echo $index; ?> =  addItemMarker(
+		'places-map',
 		<?php echo $index; ?>, 
 		places[<?php echo $index; ?>], 
-		map_widget,
+		wl_map_widget,
 		'<?php echo wl_get_option("map_default_marker") ?>',
 		'<?php echo str_replace("'", "\'",$post->post_name); ?>',
 		'<?php echo get_post_permalink( $post->ID ); ?>',
 		'<?php echo str_replace("'", "\'",wl_get_post_excerpt( $post->ID )); ?>',	
 		'<?php echo wl_get_option("map_icon_web"); ?>',
-		'<?php echo wl_get_option("map_icon_directions"); ?>'
+		'<?php echo wl_get_option("map_icon_directions"); ?>',
+		false,
+		'',
+		false,
+		''		
 		);
 		
 <?php
@@ -194,10 +171,10 @@ foreach( $posts as $post ) { ?>
 
 	//init map with bounds   
     if(<?php echo $index; ?>==1){
-    	map_widget.setCenter(latlng);
-    	map_widget.setZoom(14);
+    	wl_map_widget.setCenter(latlng);
+    	wl_map_widget.setZoom(14);
     } else {
-    	map_widget.fitBounds(bounds);
+    	wl_map_widget.fitBounds(bounds);
     }
 	
 });

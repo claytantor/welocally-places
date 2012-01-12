@@ -61,7 +61,7 @@ var $sections = array(
               'description' => "The icon url for the map marker",
               'length' => "256",
               'suffix' => "",
-              'default_value' => "http://www.google.com/mapfiles/marker.png"
+              'default_value' => "https://www.google.com/mapfiles/marker.png"
               ),
          'css' => array (
               'label' => "Custom CSS",
@@ -115,36 +115,6 @@ function plugin_admin_add_page() {
   	array( &$this,'plugin_options_page'));
   }
  
-function plugin_options_page() {
-  global $welocally_settings;
-  
-	$siteName = placesGetOptionValue('siteName',get_bloginfo('name'));
-	$siteHome = placesGetOptionValue('siteHome',get_bloginfo('home'));
-	$siteDescription = placesGetOptionValue('siteDescription',get_bloginfo('description'));
-	$siteEmail = placesGetOptionValue('siteEmail',get_bloginfo('admin_email'));
-  
-  
-	include( dirname( __FILE__ ) . '/views/places-options.php' );
-  
-//hate this  
-	printf('
-	<div id="plugin-options" class="snp_settings wrap">
-	<legend class="options-title2">%s</legend>
-	<div class="line-spacer-10">&nbsp;</div>
-	<div>%s</div>
-	<form action="options.php" method="post">',
-	$welocally_settings['title'],
-	$welocally_settings['intro_text']);
-	
-	settings_fields($welocally_settings['group']);
-	do_settings_sections($welocally_settings['page_name']); 
- 
- 
-	//hate this
-	printf('<input type="submit" name="Submit" class="button-primary" value="%s" /></form></div><pre>',__('Save Options'));
-
-
-  }
  
 function plugin_admin_init(){
   global $welocally_settings;

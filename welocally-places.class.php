@@ -5,7 +5,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	 */
 	class WelocallyPlaces {
 		
-		const VERSION 				= '1.0.12';
+		const VERSION 				= '1.0.16';
 		const WLERROROPT			= '_welocally_errors';
 		const CATEGORYNAME	 		= 'Place';
 		const OPTIONNAME 			= 'wl_place_options';
@@ -60,7 +60,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			register_activation_hook(__FILE__, 'add_defaults_fn');
 			add_action( 'init',				array( $this, 'loadDomainStylesScripts' ) );
 			add_action( 'pre_get_posts',	array( $this, 'setOptions' ) );
-			
+			add_action( 'admin_enqueue_scripts', 		array( $this, 'loadAdminDomainStylesScripts' ) );
 			add_action( 'admin_menu', 		array( $this, 'addPlaceBox' ) );
 			add_action( 'save_post',		array( $this, 'addPlaceMetaSave' ), 15 );
 			add_action( 'publish_post',		array( $this, 'addPlaceMetaPublish' ), 15 );
@@ -153,14 +153,14 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		}
 
 		
-		//----------		
+
 		public function loadDomainStylesScripts() {
 		
 			
 			$placesURL = trailingslashit( WP_PLUGIN_URL ) . trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
 			
-			//app stuff
-			wp_enqueue_script('google-maps' , 'http://maps.google.com/maps/api/js?sensor=true' , false , '3');
+			//app stuff, for right now we will embed this key but this should be coming from a web service
+			wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true' , false , '3');
 			wp_enqueue_script('sp-places-script', $placesURL.'places.js', array('jquery') );
 			if( locate_template( array('places/places.css') ) ) {
 				$templateArray = explode( '/', TEMPLATEPATH );
@@ -176,7 +176,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 			$fontList = $this->makeUniqueGoogleFontList($fonts);
 						 
-			wp_enqueue_style( 'wl_font_list', 'http://fonts.googleapis.com/css?family='.$fontList );
+			wp_enqueue_style( 'wl_font_list', 'https://fonts.googleapis.com/css?family='.$fontList );
 						
 			//admin stuff
 			wp_enqueue_style( 'welocally_places', WP_PLUGIN_URL . '/welocally-places/resources/places.css' );
@@ -190,6 +190,23 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			//color picker
 			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));
 			
+		}
+		
+
+		public function loadAdminDomainStylesScripts() {
+					
+			$placesURL = trailingslashit( WP_PLUGIN_URL ) 
+				. trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
+			
+			//app stuff
+			wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
+			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));									
+			wp_enqueue_script('media-upload');
+				 	
+			wp_enqueue_style('thickbox');
+			
+			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/south-street/jquery-ui.css' );
+			wp_enqueue_style( 'jquery-ui-style' );		
 		}
 		
 		public function makeUniqueGoogleFontList($fontList){
@@ -402,11 +419,17 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		}	
 			
 		public function addPlaceMeta( $postId, $action ) {
+			error_log("addPlaceMeta: [".$_POST['PlaceSelected']."]", 0);
+			//check to delete existing place info
+			
+			
+			if(!empty( $_POST['deletePlaceInfo'] )){
+				delete_post_meta($postId, '_PlaceSelected');
+				delete_post_meta($postId, '_isWLPlace');
+				update_post_meta( $postId, '_isWLPlace', 'false' );
+			} else if( !empty( $_POST['PlaceSelected']) ) {
 
-			if( !empty( $_POST['PlaceSelected'] ) && isset( $_POST['isWLPlace'] )
-				&& $_POST['isWLPlace'] == 'true' ) {
-
-				error_log("save case 1: [".$_POST['PlaceSelected']."]", 0);
+				//error_log("save case 1: [".$_POST['PlaceSelected']."]", 0);
 
 				$category_id = $this->create_category_if_not_exists();				
 							
@@ -464,34 +487,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			return $data;
 		}	
 		
-		/*
-			should be parameterized	
-		*/
-		public function post_place_welocally($selectedPostJson, $action) {
-
-			
-			//set POST variables
-			$url =  wl_server_base().'/rcadmin/wpp/publish';
-			
-			
-			//open connection
-			$ch = curl_init();
-
-			
-			//set the url, number of POST vars, POST data
-			curl_setopt($ch,CURLOPT_URL,$url);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch,CURLOPT_POSTFIELDS,$selectedPostJson);
-			curl_setopt($ch,CURLOPT_HTTPHEADER,array('Content-Type: application/json; charset=utf-8', 'publisher-key: c1da06473823.oaklandly','welocally-baseurl: http://www.oaklandly.com','wp-action: '.$action));
-			
-			//execute post
-			$result = curl_exec($ch);
-			
-			//close connection
-			curl_close($ch);
-		}
-		
-			
 
 		/// OPTIONS DATA
 		//--------------------------------------------
@@ -501,13 +496,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
         }
 
 		public function getSingleOption( $key ) {
-			/*if($optionName) {			
-				$options = $this->getOptions();
-				return ( $options[$optionName] ) ? $options[$optionName] : $default;
-			}*/
-		
-		
-			//if( $this->latestOptions ) return $this->latestOptions[$key];
 			$options = $this->getOptions();
 			return $options[$key];
 		}

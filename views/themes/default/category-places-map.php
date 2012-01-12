@@ -25,6 +25,11 @@ $wlecCatObject = get_category( $wp_query->query_vars['cat']);
 <?php 
 $places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
 include($places_list_include);
+
+$infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
+include($infobox_include);
+
+
 ?>
 
 		<div id="container">
