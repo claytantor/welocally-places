@@ -22,5 +22,14 @@
     {
         "themeName": "Sight",
         "themeDirectory": "sight"
-    }  
+    },  
+    {
+        "themeName": "Delicate",
+        "themeDirectory": "delicate"
+    },
+    {
+        "themeName": "ColorWay",
+        "themeDirectory": "colorway"
+    }
+    
 ]
