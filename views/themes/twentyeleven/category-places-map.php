@@ -18,7 +18,7 @@ global $wp_query;
 $wlecCatObject = get_category( $wp_query->query_vars['cat'])
 ?>
 <?php get_header(); ?>
-<!-- include -->
+<!-- include for me -->
 <?php 
 
 $places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
