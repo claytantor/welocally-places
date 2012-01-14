@@ -30,6 +30,14 @@
     {
         "themeName": "ColorWay",
         "themeDirectory": "colorway"
+    },
+	{
+        "themeName": "zBench",
+        "themeDirectory": "zbench"
+    },
+	{
+        "themeName": "iFeature",
+        "themeDirectory": "ifeature"
     }
     
 ]
