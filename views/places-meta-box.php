@@ -19,6 +19,8 @@ var selectedPlace = {
 	}
 };
 
+var jqxhr;
+
 
 function addMarker(location) {
   marker = new google.maps.Marker({
@@ -110,8 +112,7 @@ function searchLocations(location, queryString, radiusKm) {
 			}
 	  }
 	});
-    
-    
+   
 }
 
 function buildListItemForPlace(place,i) {
@@ -186,8 +187,6 @@ function validGeocodeForSearch(geocode) {
 	return hasAll;
 }
 	
-
-
 function findCategory(categoryName){
 	var cat;
 	jQuery.each(currentCategories, function(key, val) {
@@ -197,7 +196,6 @@ function findCategory(categoryName){
 	});
 	return cat;
 }
-
 
 function getCategories(type, category) {
 
@@ -221,7 +219,7 @@ function getCategories(type, category) {
 		urlValue = urlValue+"?"+jQuery.param(params);
 	}
 	
-	jQuery.ajax({
+	jqxhr = jQuery.ajax({
 		  type: 'GET',
 		  url : urlValue,
           contentType: 'application/json', // don't do this or request params won't get through
@@ -253,7 +251,6 @@ function getCategories(type, category) {
 		  }
 		});
 }
-
 
 function getShortNameForType(type_name, address_components){
 	for (componentIndex in address_components) {
@@ -318,7 +315,6 @@ function setSelectedPlaceInfoForEditForm(place) {
 	}
 
 	jQuery("#edit-place-cats").val(categories);
-	
 	
 }
 
@@ -434,7 +430,7 @@ jQuery(document).ready(function(jQuery) {
 			selectedPlace.properties.website=jQuery('#edit-place-web').val();
 		}
         
-		jQuery.ajax({
+		jqxhr = jQuery.ajax({
 		  type: 'PUT',
 		  url : '/geodb/place/1_0/',
           contentType: 'application/json', // don't do this or request params won't get through
@@ -658,8 +654,16 @@ jQuery(document).ready(function(jQuery) {
 			jQuery('#search-place-name-section').append(jQuery('#back-action'));
 			jQuery('#search-place-name-section').append(jQuery('#next-action'));
 			jQuery('#search-place-name-section').show();
-			jQuery('#search-place-name-section').show();
-		} 
+			
+		} else if(mode=='search-geocoded-section') {     
+			jqxhr.abort();
+			jQuery('#search-geocoded-section').hide(); 
+    		jQuery('#search-place-address-section').show(); 
+    		
+    		 
+    		
+    		
+        }
 		jQuery('#'+phase).hide();	
 		return false;
 	});
@@ -670,7 +674,7 @@ jQuery(document).ready(function(jQuery) {
 		var mode = this.parentElement.parentElement.id;
 		console.log("save-place-name-action mode:"+mode);	
 
-		//finde mode		
+		//find mode		
 		if (!jQuery("#edit-place-name").val().match(/\S/)) {
             jQuery("#edit-place-name-title").removeClass(); 
             jQuery("#edit-place-name-title").addClass('error-txt')
@@ -685,7 +689,6 @@ jQuery(document).ready(function(jQuery) {
         	jQuery('#place-name-saved').show();
         	
         	jQuery('#edit-place-name-title').hide(); 
-
 
         	if(mode=='search-place-name-section'){
             	//put the address search in the top
@@ -710,7 +713,8 @@ jQuery(document).ready(function(jQuery) {
     			jQuery('#map_canvas').hide();
 
     			
-        	}      	        	
+        	} 
+        	     	        	
 
         }
 		
@@ -1021,8 +1025,7 @@ jQuery(document).ready(function(jQuery) {
 								<div id="search-geocoded-address-selected" class="selected-field">&nbsp;</div>
 							</div>
 							
-							
-							
+														
 							<div id="place-find-range-section" style="display:none">
 								<select id="welocally_default_search_radius" name="welocally_default_search_radius" >
 									<option value="2">2 km</option>
@@ -1034,23 +1037,16 @@ jQuery(document).ready(function(jQuery) {
 									<option value="50">50 km</option>
 								</select>&nbsp;<em>Distance in Km</em> 										
 							</div>	
-							
-							
+														
 							<div id="place-find-query-section" style="display:none">						
 								<div>*<em>What is the name of the place you are writing about or a simillar keyword...</em> REQUIRED</div> 
 								<div><input type="text" id="place-search" class="search-field" value="foo"></div>
 							</div>
-							
-							
+														
 							<div id="place-find-actions" class="action" style="display:none">
 								<button id="search-places-action">Find Places</button>			    					      
-							</div>
-							
-							
-							
-							
+							</div>												
 						</div>
-
 							
 					</div> 
 					<!-- end place selector -->

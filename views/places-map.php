@@ -300,8 +300,6 @@ var infoboxOptions = {
 		
 var ib = new InfoBox(infoboxOptions);
 
-
-
 </script>
 <div id="main">
 <?php if(wl_get_option('cat_map_layout', 'right') == 'right' ) : ?>
