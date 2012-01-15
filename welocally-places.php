@@ -8,7 +8,7 @@ Version: 1.0.16
 Author: Welocally Inc. 
 Author URI: http://welocally.com
 License: GPL2 
-Notes: test hook 4
+Notes: test hook 5
 */
 
 register_activation_hook(__FILE__, 'welocally_activate');
