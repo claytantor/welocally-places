@@ -660,9 +660,7 @@ jQuery(document).ready(function(jQuery) {
 			jQuery('#search-geocoded-section').hide(); 
     		jQuery('#search-place-address-section').show(); 
     		
-    		 
-    		
-    		
+    	
         }
 		jQuery('#'+phase).hide();	
 		return false;
