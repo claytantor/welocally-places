@@ -79,12 +79,19 @@ function searchLocations(location, queryString, radiusKm) {
 	  url: ajaxurl,
 	  data: options,
 	  dataType : 'json',
+	  beforeSend: function(jqXHR){
+        jqxhr = jqXHR;
+      },
 	  error : function(jqXHR, textStatus, errorThrown) {
-			console.error(textStatus);
-
-			jQuery('#welocally-post-error').html('ERROR : '+textStatus);
-			jQuery('#welocally-post-error').addClass('welocally-error error fade');
-			jQuery('#welocally-post-error').show();
+	  		
+	  		if(textStatus != 'abort'){
+	  			console.error(textStatus);
+	  			jQuery('#welocally-post-error').html('ERROR : '+textStatus);
+				jQuery('#welocally-post-error').addClass('welocally-error error fade');
+				jQuery('#welocally-post-error').show();
+	  		}	else {
+	  			console.log(textStatus);
+	  		}		
 	  },
 	  success : function(data, textStatus, jqXHR) {
 		    jQuery('#welocally-post-error').removeClass('welocally-error');
@@ -653,10 +660,10 @@ jQuery(document).ready(function(jQuery) {
 		} else if(phase=='search-place-address-section') {			
 			jQuery('#search-place-name-section').append(jQuery('#back-action'));
 			jQuery('#search-place-name-section').append(jQuery('#next-action'));
-			jQuery('#search-place-name-section').show();
-			
-		} else if(mode=='search-geocoded-section') {     
+			jQuery('#search-place-name-section').show();			
+		} else if(phase=='search-geocoded-section') {     
 			jqxhr.abort();
+			jQuery('#welocally-post-error').html('');
 			jQuery('#search-geocoded-section').hide(); 
     		jQuery('#search-place-address-section').show(); 
     		

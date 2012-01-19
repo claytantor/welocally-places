@@ -16,7 +16,7 @@ Welocally Places For WordPress makes it simple to attach real places to your con
 * No coding required. Plug and play
 * 2 sidebar widgets, Map Widget and Place List Widget
 * Fully customizable maps
-* Google fonts integration, no CSS required
+* Google fonts integration, no CSS required for custom fonts
 * Tested with most of the common themes
 * Rich place information such as phone number, and website
 * Integrated driving directions
