@@ -22,6 +22,9 @@ add_action('wp_ajax_remove_token', 'welocally_remove_token');
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
 add_filter('the_excerpt', 'wl_get_excerpt_basic'); 
 
+//ajax calls
+add_action('wp_ajax_customize_save', 'welocally_theme_options_customize_save');
+
 function wl_get_excerpt_basic() {
 	global $post;
 	return wl_get_post_excerpt($post->ID);
@@ -280,5 +283,21 @@ if (version_compare(phpversion(), "5.1", ">=") && welocally_is_curl_installed())
 			echo "<div class='updated fade'>The theme ".get_current_theme()." is not tested with Welocally Places. Goto the ".
 				"<a href='admin.php?page=welocally-places-about'>" . __( 'About Settings' ) . "</a> for more information.</div>";
 	}*/
+}
+
+function welocally_theme_options_customize_save() {
+	 global $wlPlaces;
+	 $options = $wlPlaces->getOptions();
+	 if ($_POST['customize'] == 'on'){
+	 	 if (!wl_create_custom_files()){echo json_encode(array('success' =>'false' ,'error' =>  'error, files can\'t created'));exit();}
+	 	$customize = 'off';
+	 }
+	 else {
+	 	$customize = 'on';
+	 }
+	 $options['theme_customize'] = $_POST['customize'];
+	 wl_save_options($options);
+	 echo json_encode(array('success' =>'true' ,'customize' =>  $customize));
+	 exit();
 }
 ?>

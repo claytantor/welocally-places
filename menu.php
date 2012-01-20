@@ -6,6 +6,7 @@ function wl_menu_initialise() {
 	add_contextual_help( $main_slug, __( $main_content ) );
 	
 	wl_add_submenu( 'Welocally Places Subscribe', 'Subscribe', 'welocally-places-subscribe', 'wl_places_subscribe' );
+	wl_add_submenu( 'Welocally Places Options', 'Theme Options', 'welocally-places-theme-options', 'wl_support_theme_options' );
 	wl_add_submenu( 'Welocally Places About', 'About', 'welocally-places-about', 'wl_support_about' );
 
 	add_filter( 'plugin_action_links', 'wl_add_settings_link', 10, 2 );
@@ -28,7 +29,10 @@ function wl_general_options() {
 function wl_support_about() {
 	include_once( WP_PLUGIN_DIR . "/welocally-places/options/about.php" );
 }
-   
+
+function wl_support_theme_options(){
+	include_once( WP_PLUGIN_DIR . "/welocally-places/options/theme_options.php" );
+}
 
 function wl_add_settings_link( $links, $file ) {
 
