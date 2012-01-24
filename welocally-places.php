@@ -71,7 +71,70 @@ function welocally_save_place() {
 
 	die(); // this is required to return a proper result
 }
+function welocally_getplaces() {
 
+	
+	$url = wl_server_base() .'/geodb/place/1_0/search.json?'.http_build_query($_GET);
+	
+	error_log("url:".$url, 0);
+
+	$result_json = wl_do_curl_get($url, array (
+		'Content-Type: application/json; charset=utf-8',
+		'site-key:' . wl_get_option('siteKey', null),
+		'site-token:' . wl_get_option('siteToken', null)
+	));
+
+	die(); // this is required to return a proper result
+}
+
+function welocally_get_classifiers_types() {
+
+	
+	$url = wl_server_base() .'/geodb/classifier/1_0/types.json';
+	
+	error_log("url:".$url, 0);
+
+	$result_json = wl_do_curl_get($url, array (
+		'Content-Type: application/json; charset=utf-8',
+		'site-key:' . wl_get_option('siteKey', null),
+		'site-token:' . wl_get_option('siteToken', null)
+	));
+
+	die(); // this is required to return a proper result
+}
+
+function welocally_get_classifiers_categories() {
+
+
+	$url = wl_server_base() .'/geodb/classifier/1_0/categories.json?'.http_build_query($_GET);
+	
+	error_log("url:".$url, 0);
+
+	$result_json = wl_do_curl_get($url, array (
+		'Content-Type: application/json; charset=utf-8',
+		'site-key:' . wl_get_option('siteKey', null),
+		'site-token:' . wl_get_option('siteToken', null)
+	));
+
+	die(); // this is required to return a proper result
+}
+
+function welocally_get_classifiers_subcategories() {
+
+	$url = wl_server_base() .'/geodb/classifier/1_0/subcategories.json?'.http_build_query($_GET);
+	
+	error_log("url:".$url, 0);
+
+	$result_json = wl_do_curl_get($url, array (
+		'Content-Type: application/json; charset=utf-8',
+		'site-key:' . wl_get_option('siteKey', null),
+		'site-token:' . wl_get_option('siteToken', null)
+	));
+
+	die(); // this is required to return a proper result
+}
+
+//-------- GET ------------
 
 function wl_do_curl_get($url, $headers){
 	error_log("wl_do_curl_get url:".$url, 0);
