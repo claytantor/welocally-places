@@ -25,7 +25,8 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 			}
 		
 			function widget( $args, $instance ) {
-				global $wp_query;
+				global $wp_query,$wlPlaces;
+				$options = $wlPlaces->getOptions();
 				extract( $args );
 
 				/* User-selected settings. */
@@ -46,8 +47,13 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 							
 							$theme_dir = get_theme_view_dir();	
 							
+							if ($options['theme_customize'] == 'on'){
+								$templateLoc = dirname( __FILE__ ) . 
+								'/views/custom/welocally-places-map-widget-display.php';
+							}else{
 							$templateLoc = $templateOverride ? $templateOverride : dirname( __FILE__ ) . 
 								'/views/themes/'.$theme_dir.'/welocally-places-map-widget-display.php';
+							}
 
 							//view
 							include( $templateLoc );

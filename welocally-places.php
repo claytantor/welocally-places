@@ -30,6 +30,8 @@ add_action('wp_ajax_get_classifiers_subcategories', 'welocally_get_classifiers_s
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
 add_filter('the_excerpt', 'wl_get_excerpt_basic'); 
 
+//ajax calls
+add_action('wp_ajax_customize_save', 'welocally_theme_options_customize_save');
 
 
 function wl_server_base() {
@@ -40,6 +42,7 @@ function wl_server_base() {
 function welocally_getkey() {
 
 	$selectedPostJson = json_encode($_POST);
+	//syslog(LOG_WARNING, "A" . var_export($selectedPostJson, true));
 
 	//set POST variables 
 	$url = wl_server_base() . '/admin/signup/plugin/key.json';
@@ -55,7 +58,7 @@ function welocally_getkey() {
 
 function welocally_save_place() {
 
-	$selectedPostJson = json_encode( $_POST['place'] );
+	$selectedPostJson = $_POST['place'];
 
 	//set POST variables 
 	$url = wl_server_base() . '/geodb/place/1_0/';
@@ -69,74 +72,6 @@ function welocally_save_place() {
 	die(); // this is required to return a proper result
 }
 
-function welocally_getplaces() {
-
-	
-	$url = wl_server_base() .'/geodb/place/1_0/search.json?'.http_build_query($_GET);
-	
-	error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_get($url, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-
-	die(); // this is required to return a proper result
-}
-
-function welocally_get_classifiers_types() {
-
-	
-	$url = wl_server_base() .'/geodb/classifier/1_0/types.json';
-	
-	error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_get($url, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-
-	die(); // this is required to return a proper result
-}
-
-function welocally_get_classifiers_categories() {
-
-
-	$url = wl_server_base() .'/geodb/classifier/1_0/categories.json?'.http_build_query($_GET);
-	
-	error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_get($url, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-
-	die(); // this is required to return a proper result
-}
-
-function welocally_get_classifiers_subcategories() {
-
-	$url = wl_server_base() .'/geodb/classifier/1_0/subcategories.json?'.http_build_query($_GET);
-	
-	error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_get($url, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-
-	die(); // this is required to return a proper result
-}
-
-
-
-
-
-//-------- GET ------------
 
 function wl_do_curl_get($url, $headers){
 	error_log("wl_do_curl_get url:".$url, 0);
@@ -433,5 +368,21 @@ if (version_compare(phpversion(), "5.1", ">=") && welocally_is_curl_installed())
 			echo "<div class='updated fade'>The theme ".get_current_theme()." is not tested with Welocally Places. Goto the ".
 				"<a href='admin.php?page=welocally-places-about'>" . __( 'About Settings' ) . "</a> for more information.</div>";
 	}*/
+}
+
+function welocally_theme_options_customize_save() {
+	 global $wlPlaces;
+	 $options = $wlPlaces->getOptions();
+	 if ($_POST['customize'] == 'on'){
+	 	 if (!wl_create_custom_files()){echo json_encode(array('success' =>'false' ,'error' =>  'error, files can\'t created'));exit();}
+	 	$customize = 'off';
+	 }
+	 else {
+	 	$customize = 'on';
+	 }
+	 $options['theme_customize'] = $_POST['customize'];
+	 wl_save_options($options);
+	 echo json_encode(array('success' =>'true' ,'customize' =>  $customize));
+	 exit();
 }
 ?>
