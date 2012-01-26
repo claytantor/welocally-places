@@ -505,50 +505,19 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		return $link;
 		
 	}
-	
-	function wl_create_custom_files_error(){
-		echo json_encode(array('success' =>'false' ,'error' =>  'error, files can\'t created'));
-		exit();
+// functions for get tamlate
+	function wl_places_get_template_map_widget(){
+		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
+		$theme_dir = get_theme_view_dir();	
+		return $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-map-widget-display.php';
 	}
-	function wl_create_custom_files(){
-		$target_path = dirname(__FILE__).'/views/custom';
-		if (!file_exists($target_path)){
-			mkdir($target_path,1) or wl_create_custom_files_error();
-			chmod($target_path, 0755);
-		}
-		if (!file_exists($target_path.'/category-places-map.php')){
-			$FileHandle = fopen($target_path.'/category-places-map.php', 'w') or wl_create_custom_files_error();
-			fclose($FileHandle);
-			chmod($target_path.'/category-places-map.php', 0755);
-		}
-		if (!file_exists($target_path.'/welocally-places-list-widget-display.php')){
-			$FileHandle = fopen($target_path.'/welocally-places-list-widget-display.php', 'w') or wl_create_custom_files_error();
-			fclose($FileHandle);
-			chmod($target_path.'/welocally-places-list-widget-display.php', 0755);
-		}
-	   if (!file_exists($target_path.'/welocally-places-map-widget-display.php')){
-			$FileHandle = fopen($target_path.'/welocally-places-map-widget-display.php', 'w') or wl_create_custom_files_error();
-			fclose($FileHandle);
-			chmod($target_path.'/welocally-places-map-widget-display.php', 0755);
-		}
-		return true;
-		 
+	function wl_places_get_template_list_widget(){
+		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
+		$theme_dir = get_theme_view_dir();	
+		return  $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-list-widget-display.php';
 	}
-	
-	function wl_read_custom_file($filename){
-		$target_path = dirname(__FILE__).'/views/custom/';
-		$fh = fopen($target_path.$filename, 'r');
-		$theData = fread($fh,5000);
-		fclose($fh);
-		print $theData;
+	function wl_places_get_template_category(){
+		$theme_dir = get_theme_view_dir();	
+		return dirname( __FILE__ ) . '/views/themes/'.$theme_dir.'/category-places-map.php';
 	}
-	
-	function wl_save_custom_file($filename,$stringData){
-		$target_path = dirname(__FILE__).'/views/custom/';
-		$fh = fopen($target_path.$filename.'.php', 'w');
-		fwrite($fh, stripslashes($stringData));
-		fclose($fh);
-		print $theData;
-	}
-	
 }

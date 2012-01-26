@@ -106,13 +106,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			if ( $this->in_category()) {
 				
 			    if( '' == locate_template( array( 'places/category-places-map.php' ), true ) ) {
-					if ($options['theme_customize'] == 'on'){
-						load_template( dirname( __FILE__ ) . '/views/custom/category-places-map.php' );
-					}else {	
-						$theme_dir = get_theme_view_dir();	
-						load_template( dirname( __FILE__ ) . '/views/themes/'.$theme_dir.'/category-places-map.php' );
-					}
-					
+					$templateLoc = apply_filters('category_template','');
+						//view
+					load_template( $templateLoc );					
 				}
 				exit;	
 			} else {

@@ -30,8 +30,10 @@ add_action('wp_ajax_get_classifiers_subcategories', 'welocally_get_classifiers_s
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
 add_filter('the_excerpt', 'wl_get_excerpt_basic'); 
 
-//ajax calls
-add_action('wp_ajax_customize_save', 'welocally_theme_options_customize_save');
+// add filter's for plugin templates
+add_filter('map_widget_template', 'wl_places_get_template_map_widget',10);
+add_filter('list_widget_template', 'wl_places_get_template_list_widget',10);
+add_filter('category_template', 'wl_places_get_template_category',10);
 
 
 function wl_server_base() {
@@ -433,19 +435,4 @@ if (version_compare(phpversion(), "5.1", ">=") && welocally_is_curl_installed())
 	}*/
 }
 
-function welocally_theme_options_customize_save() {
-	 global $wlPlaces;
-	 $options = $wlPlaces->getOptions();
-	 if ($_POST['customize'] == 'on'){
-	 	 if (!wl_create_custom_files()){echo json_encode(array('success' =>'false' ,'error' =>  'error, files can\'t created'));exit();}
-	 	$customize = 'off';
-	 }
-	 else {
-	 	$customize = 'on';
-	 }
-	 $options['theme_customize'] = $_POST['customize'];
-	 wl_save_options($options);
-	 echo json_encode(array('success' =>'true' ,'customize' =>  $customize));
-	 exit();
-}
 ?>
