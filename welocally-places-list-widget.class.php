@@ -25,7 +25,6 @@ if( !class_exists( 'WelocallyPlaces_Widget' ) ) {
 				global $wp_query,$wlPlaces;
 				$options = $wlPlaces->getOptions();
 				extract( $args );
-
 				/* User-selected settings. */
 				$style = $instance['style'];
 				$title = apply_filters('widget_title', $instance['title'] );
