@@ -22,7 +22,8 @@ if( !class_exists( 'WelocallyPlaces_Widget' ) ) {
 			}
 		
 			function widget( $args, $instance ) {
-				global $wp_query;
+				global $wp_query,$wlPlaces;
+				$options = $wlPlaces->getOptions();
 				extract( $args );
 
 				/* User-selected settings. */
@@ -42,13 +43,7 @@ if( !class_exists( 'WelocallyPlaces_Widget' ) ) {
 				if( $posts ) {
 					/* Display list of places. */
 						if( function_exists( 'get_places' ) ) {
-							$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
-							
-							$theme_dir = get_theme_view_dir();	
-							
-							$templateLoc = $templateOverride ? $templateOverride : dirname( __FILE__ ) . 
-								'/views/themes/'.$theme_dir.'/welocally-places-list-widget-display.php';
-
+							$templateLoc = apply_filters('list_widget_template','');
 							//view
 							include( $templateLoc );
 							

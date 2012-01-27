@@ -22,7 +22,7 @@ function buildContentForInfoForList(place, index, permalink, webicon, directions
 				'<div class="wl-place-address wl-place-widget-address">'+place.properties.address+", "+
 				place.properties.city+" "+
 				place.properties.province+" "+
-				place.properties.postalcode+'</div>';
+				place.properties.postcode+'</div>';
 		
 		//only add phone if exists
 		if(place.properties.phone != null) {	

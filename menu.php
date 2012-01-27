@@ -28,7 +28,6 @@ function wl_general_options() {
 function wl_support_about() {
 	include_once( WP_PLUGIN_DIR . "/welocally-places/options/about.php" );
 }
-   
 
 function wl_add_settings_link( $links, $file ) {
 
