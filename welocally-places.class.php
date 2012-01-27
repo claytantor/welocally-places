@@ -1,4 +1,7 @@
 <?php
+require_once('welocally-places-tag.class.php');
+require_once('welocally-places-tag-processor.class.php');
+
 if ( !class_exists( 'WelocallyPlaces' ) ) {
 	/**
 	 * Main plugin
@@ -63,24 +66,20 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			add_action( 'admin_enqueue_scripts', 		array( $this, 'loadAdminDomainStylesScripts' ) );
 			add_action( 'admin_menu', 		array( $this, 'addPlaceBox' ) );
 			add_action( 'save_post',		array( $this, 'addPlaceMetaSave' ), 15 );
+			add_action( 'save_post',        array( $this, 'tagHandling'));
 			add_action( 'publish_post',		array( $this, 'addPlaceMetaPublish' ), 15 );
 			add_action( 'template_redirect',array($this, 'templateChooser' ), 1 );
 			
 			add_action( 'sp_places_post_errors', array( 'WLPLACES_Post_Exception', 'displayMessage' ) );
 			add_action( 'sp_places_options_top', array( 'WLPLACES_Options_Exception', 'displayMessage') );
-			
-			add_filter( 'the_content', array($this, 'wl_content_search' ));
-			
-		}
-		
-		
-		function wl_content_search( $content ) {
-			$content = str_replace( '[welocally/]', $this->addPostPlaceInfoMarkup( $GLOBALS['post']->ID ), $content );
-			return $content;
-		}
-		
-		
 
+            add_filter( 'the_content', array( $this, 'wl_content_tag_search') );
+		}
+
+		public function wl_content_tag_search($content) {
+            return WelocallyPlaces_Tag::searchAndReplace($content, array($this, 'addPostPlaceTagMarkup'));
+		}
+		
 		public function templateChooser() {
 
 			$cat_map_layout_type = $this->getSingleOption('cat_map_layout');
@@ -190,6 +189,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			//color picker
 			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));
 			
+			wp_enqueue_script('wlplaces', WP_PLUGIN_URL . '/welocally-places/resources/wlplaces.js', array('jquery'));
 		}
 		
 
@@ -295,11 +295,78 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 						
 			include( dirname( __FILE__ ) . '/views/places-meta-box.php' );
 		}
-		
-		
 
+		public function addPostPlaceTagMarkup($tag, $str) {
+		    global $post;
+		    static $placecount = 0;
+		    
+            if (!$tag->postId)
+                return $str;
 
-	
+            if ($places = get_post_meta($tag->postId, '_WLPlaces', true)) {
+                if (isset($places[$tag->id])) {
+                    $place_json = $places[$tag->id];
+                    
+                    $resultContent = '';
+                    
+                    $showmap=true;
+                    $cat_ID = get_query_var( 'cat' );
+                    
+                    // if(is_single()){
+                    if(is_singular()){
+                     $showmap=true;
+                    } else if(is_home() || isset($cat_ID)){
+                     $showmap=false;
+                    }
+                    
+                    $isCustom = false;
+                    $customMapJson = '[  ]';
+                    if(wl_get_option('map_custom_style') != ''){
+                     $isCustom = true;
+                     $customMapJson = base64_decode(wl_get_option("map_custom_style"));
+                    }
+                    
+                    $whereImage=$this->pluginUrl.'/resources/images/here.png';
+                    
+
+                    // use place template
+                    $t = new StdClass();
+                    $t->uid = ++$placecount;
+                    $t->WPPost = $post->ID;
+                    $t->postId = $tag->postId;
+                    $t->placeJSON = $place_json;
+                    $t->options = array(
+                      'showmap' => $showmap,
+                      'isCustom' => $isCustom,
+                      
+                      'map_custom_style' => $customMapJson,
+                      'map_icon_web' => wl_get_option("map_icon_web"),
+                      'map_icon_directions' => wl_get_option("map_icon_directions"),
+                      'font_place_name' => wl_get_option("font_place_name"),
+                      'color_place_name' => wl_get_option("color_place_name"),
+                      'size_place_name' => wl_get_option("size_place_name"),
+                      'font_place_address' => wl_get_option("font_place_address"),
+                      'color_place_address' => wl_get_option("color_place_address"),
+                      'size_place_address' => wl_get_option("size_place_address"),
+                      'where_image' => $whereImage
+                    );
+                    
+                    ob_start();
+                    include(dirname(__FILE__) . '/views/place-content-template.php');
+                    $resultContent = ob_get_contents();
+                    ob_end_clean();
+                    
+                    $t = null;
+                    
+                    return $resultContent;
+
+                }
+            }
+            
+            return $str;
+            // $ShowPlaceAddress = get_post_meta( $postId, '_ShowPlaceAddress', true );
+
+		}	
 		
 		/* Callback for adding to the post itself
 		 * @return void
@@ -408,8 +475,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 		}
 		
-		
-		
 		public function addPlaceMetaSave( $postId ) {
 			$this->addPlaceMeta( $postId, 'save_post' );	
 		}	
@@ -471,6 +536,23 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 			
 	
+		}
+		
+        public function tagHandling($post_id) {
+		    if (!wp_is_post_revision($post_id)) {
+		        $post = get_post($post_id);
+		        
+		        // XXX not really needed but limit ourselves to pages for now
+		        if (get_post_type($post) == 'page') {
+		            delete_post_meta($post_id, '_WLPlaces');
+		            delete_post_meta($post_id, '_isWLPlace');
+		            
+		            $tags = WelocallyPlaces_Tag::parseText($post->post_content);
+
+                    $proc = new WelocallyPlaces_TagProcessor();
+                    $result = $proc->processTags($tags);
+		        }
+		    }
 		}
 		
 		
