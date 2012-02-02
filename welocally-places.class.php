@@ -241,16 +241,43 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 		}
 		
-				/**
+        /**
 		 * Creates the category and sets up the theme resource folder with sample config files. Calls updateMapPostMeta().
 		 * 
 		 * @return void
 		 */
 		public function on_activate( ) {
+		    global $wpdb;
+		    
 			$now = time();
 			$firstTime = $now - ($now % 66400);
-			$this->create_category_if_not_exists( );	
+			$this->create_category_if_not_exists( );
+			
+			// create places table
+			$db_version = get_option('Welocally_DBVersion');
+			
+			if ($db_version != self::VERSION) {
+                require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+                
+                $sql = "CREATE TABLE {$wpdb->prefix}wl_places (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    wl_id VARCHAR(255) NOT NULL,
+                    place TEXT NULL,
+                    created DATETIME NOT NULL
+                );";
+                dbDelta($sql);
+
+                $sql = "CREATE TABLE {$wpdb->prefix}wl_places_posts (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    post_id MEDIUMINT(9) NOT NULL,
+                    created DATETIME NOT NULL
+                );";
+                dbDelta($sql);
+			}
+			
+			update_option('Welocally_DBVersion', self::VERSION);
 		}
+
 
 		/**
 		 * Adds the place specific query vars to Wordpress
