@@ -50,17 +50,21 @@ jQuery(document).ready(function(jQuery) {
 		});
 	}	
 	var placeSelected = jQuery.parseJSON( '<?php echo $bodytag = str_replace("'", "\'", $PlaceSelected); ?>' );	
-	var catsDiv = jQuery('#plugin-place-category<?php echo $post->ID; ?>');
+
+	var catsDiv = jQuery("*[id\^='plugin-place-category<?php echo $post->ID;?>']");
+	var placeDiv = jQuery("*[id\^='plugin-place<?php echo $post->ID;?>']");	
 	
-	jQuery('#plugin-place<?php echo $post->ID; ?>').html(
+	jQuery(placeDiv).html(
 		buildContentForInfoForList(
 			placeSelected,
 			<?php echo $post->ID; ?>,
 			'<?php echo get_permalink( $post->ID ); ?>',
 			'<?php echo wl_get_option("map_icon_web"); ?>',
 			'<?php echo wl_get_option("map_icon_directions"); ?>'));
-			
-	jQuery('#plugin-place-links<?php echo $post->ID; ?>').before(catsDiv);
+				
+	for (var i=0; i<placeDiv.length; i++) {
+		jQuery(placeDiv[i]).find('#plugin-place-links<?php echo $post->ID; ?>').before(catsDiv[i]);
+	}
 	catsDiv.show();
 	
 });

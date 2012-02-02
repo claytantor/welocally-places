@@ -4,7 +4,7 @@
 Plugin Name: Welocally Places
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
 Description: The Welocally Places plugin lets easily associate places from our 21M POI database without manual geocoding. The map widget makes it easy for your users to find the places your are writing about on a map.
-Version: 1.0.16
+Version: 1.1.16
 Author: Welocally Inc. 
 Author URI: http://welocally.com
 License: GPL2 

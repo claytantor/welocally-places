@@ -8,7 +8,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	 */
 	class WelocallyPlaces {
 		
-		const VERSION 				= '1.0.16';
+		const VERSION 				= '1.1.16';
 		const WLERROROPT			= '_welocally_errors';
 		const CATEGORYNAME	 		= 'Place';
 		const OPTIONNAME 			= 'wl_place_options';
