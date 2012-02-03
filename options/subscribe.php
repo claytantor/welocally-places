@@ -1,5 +1,12 @@
 <?php
 global $wlPlaces;
+if ( ( !empty( $_POST ) ) && 
+	( check_admin_referer( 'welocally-places-subscribe', 'welocally_places_subscribe_nonce' ) ) ) { 
+	if($_POST[ 'siteName' ]=='delete'){
+		error_log('delete tokens:'.$_POST[ 'siteName' ]);
+		delete_subscription_options();
+	}	
+}
 ?>
 <script type="text/javascript">
 
@@ -10,14 +17,53 @@ var subscribed_saved = false;
 <?php endif; ?>
 
 jQuery(document).ready(function() {
-
-	wl_get_subscriber_info();
 	
-	jQuery("#offerCode").change( function () {	
-		jQuery("#hosted_button_id").val(jQuery("#offerCode").val());
+	if(jQuery("#registration_result").html() != null){
+		console.log(jQuery("#registration_result").html());
+		var keydata = JSON.parse(jQuery("#registration_result").html());
+		
+		set_form_fields( 
+			keydata.siteKey, 
+			null, 
+			keydata.subscriptionStatus);
+		
+	} else {
+		wl_get_subscriber_info();
+	}
+
+		
+	jQuery("#edit-form-action").click( function () {
+		jQuery("#siteName").toggle();
+		jQuery("#name-assigned").toggle();
+		
+		jQuery("#siteHome").toggle();
+		jQuery("#home-assigned").toggle();
+		
+		jQuery("#siteEmail").toggle();
+		jQuery("#email-assigned").toggle();
+		
+		jQuery("#siteKey").toggle();
+		jQuery("#key-assigned").toggle();
+			
+		return false;
 	});
 	
+	jQuery("#siteName").change( function () {	
+		jQuery("#name-assigned").html(jQuery("#siteName").val());
+	});
 	
+	jQuery("#siteHome").change( function () {	
+		jQuery("#home-assigned").html(jQuery("#siteName").val());
+	});
+	
+	jQuery("#siteEmail").change( function () {	
+		jQuery("#email-assigned").html(jQuery("#siteEmail").val());
+	});
+	
+	jQuery("#siteKey").change( function () {	
+		jQuery("#key-assigned").html(jQuery("#siteKey").val());
+	});
+		
 });
 
 
@@ -39,6 +85,7 @@ function wl_get_subscriber_info(){
 		action: 'getkey'
 	};
 	
+	data.siteKey = '<?php echo wl_get_option('siteKey',null) ?>' ;
 	data.siteHome = jQuery("#siteHome").val();
 	data.siteName = jQuery("#siteName").val();
 	data.siteDescription = '<?php echo get_bloginfo('description')?>';
@@ -58,7 +105,7 @@ function wl_get_subscriber_info(){
 	  success: function(keydata) {
 		
 		if(keydata.key != null){
-			set_form_fields( keydata.key, keydata.token, null, keydata.subscriptionStatus, keydata.buttonToken, keydata.paypalFormEndpoint);
+			set_form_fields( keydata.key, keydata.token, keydata.subscriptionStatus);
 		} else {
 			jQuery('#wl-options-error').append('<div class="error">ERROR 105: Key could not be created for publisher : '+data.siteName+'</div>');
 			jQuery("#publisher-status").html(' ERROR 105: Errors prevent us from sending your key...<br/><ul>');
@@ -73,47 +120,26 @@ function wl_get_subscriber_info(){
 }
 
 
-function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken, paypalEndpoint) {
-
-	jQuery('#paypal-form').attr( 'action', paypalEndpoint);
-	if(paypalEndpoint == 'https://www.paypal.com/cgi-bin/webscr'){
-		jQuery('#paypal-subscribe-img').attr( 'src', 'https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif');
-		jQuery('#paypal-pixel-img').attr( 'src', 'https://www.paypalobjects.com/en_US/i/scr/pixel.gif');
-		
-	}
+function set_form_fields( key, token, status) {
 	
 	if(key != null) {
 		jQuery("#paypal-custom").val(key);	
 		jQuery("#key-assigned").html(key);	
-		//set the form vals
-		jQuery("#siteKey").val(key);
-		
+		jQuery("#siteKey").val(key);	
 	}
 	
 	if(token != null){
 		jQuery("#token-assigned").html(token);
-		//welocally-places-display_token
 		jQuery("#welocally-places-display_token").val(token);
 		jQuery("#siteToken").val(token);
-		//jQuery("#token-section").show();
-		//jQuery("#save_options_button").show();
 	}
-	
-	var subscribe_process1 = '<div><img src="<?php echo WP_PLUGIN_URL; ?>'+
-		'/welocally-places/resources/images/subscribe_02.png" alt="" title=""/></div>';
-
+		
 	if(status != null) {
 		jQuery("#publisher-status").html(status);
 		if(status == 'KEY_ASSIGNED') {
 			jQuery("#key-section").show();
 			
-			//the button token
-			if(buttonToken != null) {
-				jQuery("#hosted_button_id").val(buttonToken);
-			} else { 
-				jQuery("#hosted_button_id").val('WKLRWF9WC9UZY');
-			}
-			
+						
 			jQuery("#token-section").hide();
 		    jQuery("#save_options_button").hide();
 			
@@ -125,19 +151,32 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 			jQuery("#subscribed-action").hide();
 			jQuery("#key-assigned-action").show();
 			
+			var statusimg = '<img width="75" hieght="75" style="float: left;" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/free1.png" alt="" title=""/>'+
+			'<span class="options-text">We have assigned a key to you, but to use or basic service you must register. Go ahead, its easy. Just press the <em>Save Settings</em> button and we will send you your secret token.</span>'; 
+			jQuery("#action-area").html(statusimg);
+			
+						
+		}  else if(status == 'REGISTERED') {
+			jQuery("#key-section").show();
+			jQuery("#token-section").show();
+			
+			jQuery("#finished-action").hide();
+			jQuery("#subscribed-action").hide();
+			jQuery("#key-assigned-action").show();	
 			
 			
+			var statusimg = '<img width="75" hieght="75" style="float: left;" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/token1.png" alt="" title=""/>'+
+				'<span class="options-text">Great you are almost there! Now look the your inbox for the email address you gave us, and there should be an email with your free token. Enter it in into the Publisher Token field and press the <em>Save Settings</em> button.</span>'; 
+			jQuery("#action-area").html(statusimg);
 			
-		} else if(status == 'SUBSCRIBER') {
+					
+		} else if(status == 'SUBSCRIBED') {
 			jQuery("#key-section").show();
 			jQuery("#paypal-subscribe").hide();		
 			jQuery("#action-getkey").show();
 			
 			jQuery("#token-section").show();
 		    jQuery("#save_options_button").show();
-			
-			
-			
 			
 			if(!subscribed_saved) {
 				jQuery("#finished-action").hide();
@@ -149,6 +188,9 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 			    jQuery("#finished-action").show();						
 			}
 			
+			var statusimg = '<img width="75" hieght="75" style="float: left;" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribed1.png" alt="" title=""/>'+
+				'<span class="options-text">You did it! You signed up for our product and now you can use it. You have been given access to our user portal with help, support and a whole bunch of other free welocally resouces. Be sure to <a href="<?php echo wl_server_base().'/admin/home'?>" target="_blank">log into your portal</a> as soon as possible.</span>'; 
+			jQuery("#action-area").html(statusimg);
 			
 			
 		} else if(status == 'CANCELLED') {
@@ -212,9 +254,30 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 	color: #6b6b6b;
 	font-weight: bold;
 	text-transform: uppercase;
-	width: 380px;
+	width: 95%;
 	
 }
+
+.basic-frame {
+	display: inline-block;
+    background:#ffffff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border: 2px solid #bbb;
+	-moz-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	-khtml-box-sizing: content-box;
+	color: #6b6b6b;
+	width: 95%;
+	padding: 5px;
+	
+}
+
+
 
 .option-form-label { width: 100px; display: inline-block;}
 .options-title2 {
@@ -271,7 +334,7 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 
 #wl_api_endpoint {
 	display: none;
-	width: 400px;
+	width: 95%;
 }
 
 #api-endpoint-assigned {
@@ -279,7 +342,11 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 }
 
 #siteToken {
-	width: 400px;
+	width: 95%;
+}
+
+#form-signup {
+	width: 95%;
 }
 	
 .assigned-field {
@@ -288,11 +355,13 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 	font-weight:bold; 
 	color: #595959;
 	font-family: monospace;
-	width: 400px;
+	width: 95%;
 	margin-bottom: 10px;
 }
+
+label { font-size:1.2em; color: #595959; font-weight:bold; width:400px; margin-top:10px;  }
 	
-.option-form-field { width: 300px; }
+.option-form-field { width: 100%; }
 
 #plugin-options th { width: 80px; }
 
@@ -306,34 +375,38 @@ function set_form_fields( key, token, serviceEndDateMillis, status, buttonToken,
 <?php 
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
 include($menubar_include);
-?>
 
-<?php
 // If options have been updated on screen, update the database
 
 if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-subscribe', 'welocally_places_subscribe_nonce' ) ) ) { 
 
 	$options = wl_get_options();
 	
+	$options[ 'siteName' ] = $_POST[ 'siteName' ];
+	$options[ 'siteHome' ] = $_POST[ 'siteHome' ];
+	$options[ 'siteEmail' ] = $_POST[ 'siteEmail' ];
 	$options[ 'siteToken' ] = $_POST[ 'siteToken' ];
 	$options[ 'siteKey' ] = $_POST[ 'siteKey' ];
 	
 	wl_save_options($options);
 
 	echo '<div class="updated fade"><p><strong>' . __( 'Settings Saved.' ) . "</strong></p></div>\n";
+	
+	$json_register_request = json_encode($_POST);
+	if($_POST[ 'siteName' ]!='delete'){
+		error_log('register:'.$_POST[ 'siteName' ]);
+		$result = welocally_register($json_register_request);
+		echo '<div style="display:none" id="registration_result">'.$result.'</div>';			
+		$resultJson = json_encode($result);	
+	}
+	
+
+	
 }
 
 // Get options
 $options = wl_set_general_defaults();
-
-//display error if not subscribed
-if(!is_subscribed()) {
-	echo '<div class="error fade"><p><strong>' . __( 'Please Subscribe To Activate Welocally Places' ) . "</strong></p></div>\n";
-} 
-
-
 ?>
-
 <div class="snp_settings wrap">
 
 	<div id="wl-options-error" class="wl-places-error error"></div>
@@ -345,12 +418,8 @@ if(!is_subscribed()) {
 					<td>
 						<div id="content_col_1">						
 								<!-- call to action -->							    
-							    <div class="options-signup-text" id="signup-text"></div>
-							    <div id="action-container">
-							    		<div id="key-assigned-action" style="display:none;"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribe_action_1.png" alt="" title=""/></div>
-										<div id="subscribed-action" style="display:none;"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribe_action_2.png" alt="" title=""/></div>
-										<div id="finished-action" style="display:none;"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribe_action_3.png" alt="" title=""/></div>							    
-							    </div>	
+							    <div class="basic-frame" id="action-area" >&nbsp;</div>
+
 							    <!-- status -->
 								<div class="publisher-status">
 									Publisher Status:<span id="publisher-status">LOADING...</span> 
@@ -358,54 +427,46 @@ if(!is_subscribed()) {
 							    
 							    <!-- the form -->
 								<div id="form-signup">
+								 <div class="action" style="width:100%; text-align:right;"><a id="edit-form-action" href="#">Edit</a></div>
 								 <form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">
 								 <fieldset>									
 									<div>
-										<label for="siteName" class="option-form-label">Site Name:</label>
-										<div id="home-assigned" class="assigned-field"><?php echo wl_get_option('siteName',get_bloginfo('name')); ?></div>
-										<input type="hidden" name="siteName" id="siteName" value="<?php echo wl_get_option('siteName',get_bloginfo('name')); ?>" />
+										<label for="siteName">Site Name: </label>										
+										<div><em>You can name your site anything you want but it has to be unique to our system.</em></div>
+										<div id="name-assigned" class="assigned-field"><?php echo wl_get_option('siteName',get_bloginfo('name')); ?></div>
+										<input class="option-form-field" type="field"  style="display:none" name="siteName" id="siteName" value="<?php echo wl_get_option('siteName',get_bloginfo('name')); ?>" />
 									</div>
 									<div>
-										<label for="siteHome" class="option-form-label">Site Home:</label>
+										<label for="siteHome" >Site Home:</label>
+										<div><em>This has to be the real base URL for your site, we check this when you make a request. If this site is not on the internet we can't give you a token.</em></div>
 										<div id="home-assigned" class="assigned-field"><?php echo wl_get_option('siteHome', get_bloginfo('home')); ?></div>
-										<input type="hidden" name="siteHome" id="siteHome" value="<?php echo wl_get_option('siteHome',get_bloginfo('home')); ?>" />
+										<input class="option-form-field" type="field"  style="display:none" name="siteHome" id="siteHome" value="<?php echo wl_get_option('siteHome',get_bloginfo('home')); ?>" />
 									</div>						
 									<div>
-										<label for="siteEmail" class="option-form-label" >E-mail:</label>
+										<label for="siteEmail" >E-mail:</label>
+										<div><em>This needs to be real, we send your token by email.</em></div>
 										<div id="email-assigned" class="assigned-field"><?php echo wl_get_option('siteEmail',get_bloginfo('admin_email')); ?></div>
-										<input type="hidden" name="siteEmail" id="siteEmail"  value="<?php echo wl_get_option('siteEmail',get_bloginfo('admin_email')); ?>" />
+										<input class="option-form-field" type="field"  style="display:none" name="siteEmail" id="siteEmail"  value="<?php echo wl_get_option('siteEmail',get_bloginfo('admin_email')); ?>" />
 									</div>	
 									<div id="key-section">
-										<label for="siteKey" class="option-form-label" >Publisher Key:</label>
+										<label for="siteKey" >Publisher Key:</label>
+										<div><em>We assign this to you, so if you change this you should probably have a good reason like we told you to. Better to leave it alone.</em></div>
 										<div id="key-assigned" class="assigned-field"></div>
-										<input type="hidden" name="siteKey" id="siteKey"  value="<?php echo wl_get_option('publisherKey',null) ?>" /> 
+										<input class="option-form-field" type="field"  style="display:none" name="siteKey" id="siteKey"  value="<?php echo wl_get_option('siteKey',null) ?>" /> 
 									</div>
-								
-									<div id="offer-section">
-										<label for="siteToken" class="option-form-label" >Offer Code:</label>
-										<input type="text" name="offerCode" id="offerCode" />
-									</div>				
 									<div id="token-section">
-										<label for="siteToken" class="option-form-label" >Publisher Token:</label>
-										<div><input type="text" name="siteToken" id="siteToken" value="<?php echo wl_get_option('publisherToken',null) ?>" /></div>
+										<label for="siteToken" >Publisher Token:</label>
+										<div><em>Please place the token you recieved by email here.</em></div>
+										<div><input type="text" name="siteToken" id="siteToken" value="<?php echo wl_get_option('siteToken',null) ?>" /></div>
 									</div>
 								</fieldset>
 								<?php wp_nonce_field( 'welocally-places-subscribe','welocally_places_subscribe_nonce', true, true ); ?>
-								<div id="save_options_button">				
-								<p class="submit"><input type="submit" name="Submit" class="button-primary" value="<?php _e( 'Save Settings' ); ?>"/></p>
-								</div>
+								
+								<p class="submit"><input type="submit" class="button-primary" value="<?php _e( 'Save Settings' ); ?>"/></p>
+																
 								</form>
 							</div>
-							<!-- PAYPAL subscribe form WKLRWF9WC9UZY -->
-							<div id="paypal-subscribe" style="display:none;">	
-								<form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="paypal-form">
-									<input type="hidden" name="cmd" value="_s-xclick">
-									<input type="hidden" name="hosted_button_id" id="hosted_button_id" value="WKLRWF9WC9UZY">
-									<input type="hidden" name="custom" id="paypal-custom">
-									<input id="paypal-subscribe-img" type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-									<img id="paypal-pixel-img" alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-								</form>
-							</div>				
+	
 						</div>
 					</td>
 			

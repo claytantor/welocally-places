@@ -65,6 +65,10 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$default_cat_map_select_title= 'on';
 		$default_cat_map_select_excerpt= 'on';
 		
+		$default_site_name= get_bloginfo('name');
+		$default_site_home= get_bloginfo('home');
+		$default_email=  get_bloginfo('admin_email');
+		
 
 			
 		// Set current version level. Because this can be used to detect version changes (and to what extent), this
@@ -90,8 +94,15 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		if ( !array_key_exists( 'map_icon_directions', $options ) ) { $options[ 'map_icon_directions' ] = $default_icon_directions; $changed = true; }
 		if ( !array_key_exists( 'map_icon_web', $options ) ) { $options[ 'map_icon_web' ] = $default_icon_web; $changed = true; }
 		if ( !array_key_exists( 'map_custom_style', $options ) ) { $options[ 'map_custom_style' ] = $default_map_style; $changed = true; }
+	    
+	    //site
 	    if ( !array_key_exists( 'siteKey', $options ) ) { $options[ 'siteKey' ] = $default_map_style; $changed = true; }
 	    if ( !array_key_exists( 'siteToken', $options ) ) { $options[ 'siteToken' ] = $default_map_style; $changed = true; }
+		if ( !array_key_exists( 'siteName', $options ) ) { $options[ 'siteName' ] = $default_site_name; $changed = true; }
+	    if ( !array_key_exists( 'siteHome', $options ) ) { $options[ 'siteHome' ] = $default_site_home; $changed = true; }
+		if ( !array_key_exists( 'siteEmail', $options ) ) { $options[ 'siteEmail' ] = $default_email; $changed = true; }
+	    
+		
 		if ( !array_key_exists( 'font_place_name', $options ) ) { $options[ 'font_place_name' ] = $default_font; $changed = true; }
 		if ( !array_key_exists( 'color_place_name', $options ) ) { $options[ 'color_place_name' ] = $default_font_color; $changed = true; }
 		if ( !array_key_exists( 'size_place_name', $options ) ) { $options[ 'size_place_name' ] = $default_font_size; $changed = true; }
@@ -112,6 +123,10 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		//about options
 		if ( !array_key_exists( 'api_endpoint', $options ) ) { $options[ 'api_endpoint' ] = $default_api_endpoint; $changed = true; }
+		if ( !array_key_exists( 'update_places', $options ) ) { $options[ 'update_places' ] = $default_update_places; $changed = true; }
+		
+		if ( !array_key_exists( 'update_places', $options ) ) { $options[ 'update_places' ] = $default_update_places; $changed = true; }
+		if ( !array_key_exists( 'update_places', $options ) ) { $options[ 'update_places' ] = $default_update_places; $changed = true; }
 		if ( !array_key_exists( 'update_places', $options ) ) { $options[ 'update_places' ] = $default_update_places; $changed = true; }
 		
 	
@@ -154,6 +169,12 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 		
 	function is_subscribed(){
+		$is_token_valid = wl_get_option('siteToken', null);
+		return isset($is_token_valid);
+	}	
+	
+	
+	function is_registered(){
 		$is_token_valid = wl_get_option('siteToken', null);
 		return isset($is_token_valid);
 	}	
@@ -452,6 +473,17 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		delete_post_meta($postId, '_PlaceSelected');
 		delete_post_meta($postId, '_PlaceSelected');
 		
+	}
+
+	function delete_subscription_options() {
+	
+		$options = wl_get_options();
+		
+		$options['siteKey'] = null;
+		$options['siteToken'] = null;
+	
+		wl_save_options($options);
+
 	}
 	
 	
