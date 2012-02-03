@@ -45,8 +45,8 @@ jQuery(document).ready(function() {
 		<?php _e('Sort Direction:',$this->pluginDomain);?></label>
 	<select id="<?php echo $this->get_field_id( 'order_dir' ); ?>"  
 		name="<?php echo $this->get_field_name( 'order_dir' ); ?>">
-		<option value="asc" <?php if($instance['order_dir']=='asc') echo 'selected';?>>Acending</option>
 		<option value="desc" <?php if($instance['order_dir']=='desc') echo 'selected';?>>Decending</option>
+		<option value="asc" <?php if($instance['order_dir']=='asc') echo 'selected';?>>Acending</option>
 	</select>
 	</div>
 	<!-- exclude categories, this should be a multiselect -->	
