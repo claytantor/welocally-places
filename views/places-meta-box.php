@@ -161,11 +161,7 @@ function buildListItemForPlace(place,i) {
 		return '<li class=\"ui-widget-content\" id="f'+i+'" title="select place">'+itemLabel+'</li>';
 }
 
-function buildSelectedInfoForPlace(place) {
-	
-		jQuery
-	
-	
+function buildSelectedInfoForPlace(place) {	
         var itemLabel = '<b>'+place.properties.name+'</b>';
         if (place.properties.address) {
             itemLabel += "<br>" + place.properties.address;
@@ -189,11 +185,68 @@ function buildCategorySelectionsForPlace(place, container) {
 		
 }
 
-
+/*
+{
+    "_id": "WL_3iFmTTneoar4y1tWWS9U40_37.803223_-122.270383@1303263346",
+    "geo_distance": 0.025965430761798115,
+    "properties": {
+        "phone": "+1 510 893 2767",
+        "classifiers": [
+            {
+                "category": "Professional",
+                "subcategory": "",
+                "type": "Services"
+            }
+        ],
+        "website": "www.francosecurity.com",
+        "address": "1305 Franklin St Ste 403",
+        "name": "Franco Consulting Group",
+        "province": "CA",
+        "owner": "welocally",
+        "postcode": "94612",
+        "city": "Oakland",
+        "country": "US"
+    },
+    "type": "Place",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            -122.270383,
+            37.803223
+        ]
+    }
+}
+*/
 function setSelectedPlaceInfo(selectedItem) {
+	
+	console.log(JSON.stringify(selectedItem));
 	
 	//set form fields for save post
 	selectedPlace = selectedItem;
+	
+	jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
+	jQuery('#search-geocoded-address-selected').html(selectedPlace.properties.address+
+		" "+selectedPlace.properties.city+" "+selectedPlace.properties.province+" "+
+		selectedPlace.properties.postcode);
+	
+	jQuery('#places-tag-selected').html('[welocally id="'+selectedPlace._id+'" /]');	
+	jQuery('#places-tag-selected').show(); 
+	
+	var selectedLocation = new google.maps.LatLng(selectedPlace.geometry.coordinates[1], selectedPlace.geometry.coordinates[0]);		
+	var myOptions = {
+		center: selectedLocation,
+	  	zoom: 15,
+	  	mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	
+	if(map==null){
+		map = new google.maps.Map(document.getElementById("map_canvas"),
+			myOptions);
+	}
+			
+	deleteOverlays();							
+	addMarker(selectedLocation);	
+	
 	
 	//hide the selection area
 	jQuery("#place-selector").hide();	
@@ -207,12 +260,13 @@ function setSelectedPlaceInfo(selectedItem) {
 	jQuery('#edit-place-name-selected')
 	
 	
-	//show the *selected* area
-		
+	//show the *selected* area	
 	jQuery("#selected-place-info").html('');
+	jQuery("#selected-place-info").append(jQuery('#places-tag-selected'));
 	jQuery("#selected-place-info").append(jQuery('#edit-place-name-selected'));
 	jQuery("#selected-place-info").append(jQuery('#search-geocoded-address-selected'));	
 	jQuery("#selected-place-info").append(jQuery('#map_canvas'));
+	
 	
 	
 	jQuery("#results").hide();
@@ -979,6 +1033,11 @@ jQuery(document).ready(function(jQuery) {
 	.edit-field { width: 680px; margin-bottom: 10px; display:inline-block; font-size:1.2em; }
 	.selected-field { width: 680px; height: 15px; margin-bottom: 5px; display:inline-block; font-size:1.4em; }
 	
+	.tag-field { width: 680px; height: 15px; margin-bottom: 5px; 
+		display:inline-block; 
+		font-weight:bold;color:#696969;
+		text-align:left;font-family:courier new, courier, monospace;line-height:1;
+		font-size:1.0em; }
 	
 	#edit-place-categories-selection-list .ui-selecting { background: #AAAAAA; color: black; }
 	#edit-place-categories-selection-list .ui-selected { 
@@ -1089,6 +1148,7 @@ jQuery(document).ready(function(jQuery) {
 							<div id="search-geocoded-section">
 								<div id="search-geocoded-name-selected" class="selected-field">&nbsp;</div>
 								<div id="search-geocoded-address-selected" class="selected-field">&nbsp;</div>
+								<div id="places-tag-selected" class="tag-field" style="display:none">&nbsp;</div>
 							</div>
 							
 														
