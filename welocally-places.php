@@ -4,7 +4,7 @@
 Plugin Name: Welocally Places
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
 Description: The Welocally Places plugin lets easily associate places from our 21M POI database without manual geocoding. The map widget makes it easy for your users to find the places your are writing about on a map.
-Version: 1.0.16
+Version: 1.1.16
 Author: Welocally Inc. 
 Author URI: http://welocally.com
 License: GPL2 
@@ -30,6 +30,10 @@ add_action('wp_ajax_get_classifiers_subcategories', 'welocally_get_classifiers_s
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
 add_filter('the_excerpt', 'wl_get_excerpt_basic'); 
 
+// add filter's for plugin templates
+add_filter('map_widget_template', 'wl_places_get_template_map_widget',10);
+add_filter('list_widget_template', 'wl_places_get_template_list_widget',10);
+add_filter('category_template', 'wl_places_get_template_category',10);
 
 
 function wl_server_base() {
@@ -42,20 +46,37 @@ function welocally_getkey() {
 	$selectedPostJson = json_encode($_POST);
 
 	//set POST variables 
-	$url = wl_server_base() . '/admin/signup/plugin/key.json';
+	$url = wl_server_base() . '/admin/signup/2_0/plugin/key.json';
 	
 	error_log("url:".$url, 0);
 
 	$result_json = wl_do_curl_post($url, $selectedPostJson, array (
 		'Content-Type: application/json; charset=utf-8'
 	));
+	
+	$result_model = json_decode($result_json);
+	
 
 	die(); // this is required to return a proper result
 }
 
+function welocally_register($selectedPostJson) {
+
+	$url = wl_server_base() . '/admin/signup/2_0/plugin/register';
+	
+	error_log("url:".$url, 0);
+
+	$result_json = wl_do_curl_post($url, $selectedPostJson, array (
+		'Content-Type: application/json; charset=utf-8'
+	), true);
+
+	return $result_json;
+}
+
+
 function welocally_save_place() {
 
-	$selectedPostJson = json_encode( $_POST['place'] );
+	$selectedPostJson = $_POST['place'];
 
 	//set POST variables 
 	$url = wl_server_base() . '/geodb/place/1_0/';
@@ -131,10 +152,6 @@ function welocally_get_classifiers_subcategories() {
 
 	die(); // this is required to return a proper result
 }
-
-
-
-
 
 //-------- GET ------------
 
@@ -273,18 +290,18 @@ function wl_do_curl_put_https($https_url, $selectedPostJson, $headers) {
 
 
 //-------- POST ------------
-function wl_do_curl_post($url, $selectedPostJson, $headers) {
+function wl_do_curl_post($url, $selectedPostJson, $headers, $returnxfer = false) {
 	$result_json = '';
 	if (preg_match("/https/", $url)) {
-		$result_json = wl_do_curl_post_https($url, $selectedPostJson, $headers);
+		$result_json = wl_do_curl_post_https($url, $selectedPostJson, $headers,$returnxfer);
 	} else {
-		$result_json = wl_do_curl_post_http($url, $selectedPostJson, $headers);
+		$result_json = wl_do_curl_post_http($url, $selectedPostJson, $headers,$returnxfer);
 	}
 
 	return $result_json;
 }
 
-function wl_do_curl_post_http($url, $selectedPostJson, $headers) {
+function wl_do_curl_post_http($url, $selectedPostJson, $headers, $returnxfer = false) {
 	//open connection
 	$ch = curl_init();
 
@@ -293,6 +310,8 @@ function wl_do_curl_post_http($url, $selectedPostJson, $headers) {
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $selectedPostJson);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, $returnxfer);
+	
 
 	//execute post
 	$result_json = curl_exec($ch);
@@ -302,7 +321,7 @@ function wl_do_curl_post_http($url, $selectedPostJson, $headers) {
 	return $result_json;
 }
 
-function wl_do_curl_post_https($https_url, $selectedPostJson, $headers) {
+function wl_do_curl_post_https($https_url, $selectedPostJson, $headers, $returnxfer = false) {
 
 	//open connection
 	$ch = curl_init();
@@ -311,6 +330,7 @@ function wl_do_curl_post_https($https_url, $selectedPostJson, $headers) {
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 	curl_setopt($ch, CURLOPT_CAINFO, NULL);
 	curl_setopt($ch, CURLOPT_CAPATH, NULL);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, $returnxfer);
 
 	//set the url, number of POST vars, POST data
 	curl_setopt($ch, CURLOPT_URL, $https_url);
@@ -358,8 +378,7 @@ function wl_self_deprecating_sidebar_registration() {
 function welocally_remove_token() {
 
 	$selectedPostJson = json_encode($_POST);
-	syslog(LOG_WARNING, "A" . var_export($selectedPostJson, true));
-
+	
 	$options = wl_get_options();
 
 	$options['siteToken'] = null;
@@ -434,4 +453,5 @@ if (version_compare(phpversion(), "5.1", ">=") && welocally_is_curl_installed())
 				"<a href='admin.php?page=welocally-places-about'>" . __( 'About Settings' ) . "</a> for more information.</div>";
 	}*/
 }
+
 ?>

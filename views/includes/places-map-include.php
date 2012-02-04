@@ -82,7 +82,10 @@ jQuery(document).ready(function(jQuery) {
 	//setup the bounds
 	var bounds = new google.maps.LatLngBounds();
 
-	jQuery('#map_canvas_widget').height( 400 );
+	//find all  map widgets
+	var map_canvas_widgets = jQuery("*[id\^='map_canvas_widget']");
+	
+	jQuery(map_canvas_widgets).height( 400 );
 	jQuery('#map_canvas_widget img').css('max-width' ,'1030px');
 	jQuery('.gmnoprint img').css('max-width' ,'1030px');
 	
@@ -114,10 +117,13 @@ jQuery(document).ready(function(jQuery) {
 	var mapOptions = {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
-    
-    wl_map_widget = new google.maps.Map(document.getElementById("map_canvas_widget"),
-        mapOptions);
-        
+
+	var wl_map_widget = new Array();
+	
+	for (var i=0; i<map_canvas_widgets.length; i++) {
+		wl_map_widget[i] = new google.maps.Map(map_canvas_widgets[i],
+	        mapOptions);
+	}
 
 
 <?php  endif; ?>
@@ -147,35 +153,38 @@ foreach( $posts as $post ) { ?>
 	webicon,
 	directionsicon
 	*/
-	var item<?php echo $index; ?> =  addItemMarker(
-		'places-map',
-		<?php echo $index; ?>, 
-		places[<?php echo $index; ?>], 
-		wl_map_widget,
-		'<?php echo wl_get_option("map_default_marker") ?>',
-		'<?php echo str_replace("'", "\'",$post->post_name); ?>',
-		'<?php echo get_post_permalink( $post->ID ); ?>',
-		'<?php echo str_replace("'", "\'",wl_get_post_excerpt( $post->ID )); ?>',	
-		'<?php echo wl_get_option("map_icon_web"); ?>',
-		'<?php echo wl_get_option("map_icon_directions"); ?>',
-		false,
-		'',
-		false,
-		''		
-		);
-		
+	for (var i=0; i<wl_map_widget.length; i++) {
+		var item<?php echo $index; ?> =  addItemMarker(
+			'places-map',
+			<?php echo $index; ?>, 
+			places[<?php echo $index; ?>], 
+			wl_map_widget[i],
+			'<?php echo wl_get_option("map_default_marker") ?>',
+			'<?php echo str_replace("'", "\'",$post->post_name); ?>',
+			'<?php echo get_post_permalink( $post->ID ); ?>',
+			'<?php echo str_replace("'", "\'",wl_get_post_excerpt( $post->ID )); ?>',	
+			'<?php echo wl_get_option("map_icon_web"); ?>',
+			'<?php echo wl_get_option("map_icon_directions"); ?>',
+			false,
+			'',
+			false,
+			''		
+			);
+	}	
 <?php
 	$index=$index+1;
 }
 ?>	
 
+	for (var i=0; i<wl_map_widget.length; i++) {
 	//init map with bounds   
-    if(<?php echo $index; ?>==1){
-    	wl_map_widget.setCenter(latlng);
-    	wl_map_widget.setZoom(14);
-    } else {
-    	wl_map_widget.fitBounds(bounds);
-    }
+	    if(<?php echo $index; ?>==1){
+	    	wl_map_widget[i].setCenter(latlng);
+	    	wl_map_widget[i].setZoom(14);
+	    } else {
+	    	wl_map_widget[i].fitBounds(bounds);
+	    }
+	}
 	
 });
 </script>

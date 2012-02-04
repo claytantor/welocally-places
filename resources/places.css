@@ -5,6 +5,10 @@
 .text-align-right { text-align:right; }
 
 
+.align-right { float:right; margin: 0 0 10px 10px; }
+.align-left { float:left; margin: 0 0 10px 10px; }
+
+
 /*--- we locally specific --*/
 .place_item {
 	padding:10px;
@@ -322,11 +326,11 @@ h4.wl-place-day + .post .entry-title {margin-top:6px;}
 
 
 
-#map_canvas_post {display:none; height:250px}
+.map_canvas_post {display:none; height:250px}
 
-#wl-place-content { list-style-type: none; margin: 0; padding: 0; width: 100%; }
-#wl-place-content ul {margin: 0; padding: 0;}
-#wl-place-content li { 
+.wl-place-content { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+.wl-place-content ul {margin: 0; padding: 0;}
+.wl-place-content li { 
 			font-size: 1.0em;			
 			display:inline-block; 
 			vertical-align:top; 
@@ -338,13 +342,13 @@ h4.wl-place-day + .post .entry-title {margin-top:6px;}
 			display:inline-block; 
 }
 
-#wl-place-content table
+.wl-place-content table
 {
 	border-collapse: collapse;
 	padding: 0px;
 }
 
-#wl-place-content td.wl-place-link-item
+.wl-place-content td.wl-place-link-item
 {
 	vertical-align:middle;
 	padding: 0px;
@@ -463,7 +467,6 @@ max-width: 1030px;
 	font-style: italic;
 	font-size:1.4em;
 	font: Arial, Helvetica, sans-serif;
-	width: 400px; 
 }
 
 .button-bar {
