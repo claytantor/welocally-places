@@ -3,6 +3,9 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
     
     class WelocallyPlaces_TagProcessor {
         
+        public function __construct() {
+        }
+        
         private function queryPlace($tag) {
             if (!$tag->id)
                 return false;
@@ -15,64 +18,81 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
             wl_do_curl_get($url);
             $json_response = ob_get_contents();
             ob_end_clean();
-            
-            return $json_response;
+
+            $response = json_decode($json_response);
+            return $response[0];
         }
         
-        public function processTag($tag) {
-            if ($json = $this->queryPlace($tag)) {
-                $response = json_decode($json);
+        public function processTag($tag, $postId=0) {
+            global $wpdb;
+            global $wlPlaces;
+            
+            if (!$tag->id)
+                return false;
                 
-                if (!isset($response['errors']) && count($response) == 1) {
-                    $place_json = json_encode($response[0]);
-                    
-                    $post_places = get_post_meta($tag->postId, '_WLPlaces', true);
-                    $post_places = array_merge(is_array($post_places) ? $post_places : array(), array("{$tag->id}" => $place_json));
-                
-                    delete_post_meta($tag->postId, '_WLPlaces');
-                    update_post_meta($tag->postId, '_WLPlaces', $post_places);
-                    update_post_meta($tag->postId, '_isWLPlace', 'true');
-                    
-                    // just one instance of a place per post
-                    // delete_post_meta($tag->postId, '_WLPlaces', $place_json);
-                    // add_post_meta($tag->postId, '_WLPlaces', $place_json);
+            $postId = intval($postId);
+            
+            $place = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id));
+            
+            if ($place == null) {
+                $place_info = $this->queryPlace($tag);
 
-                    // handle categories
-/*                    print_r($tag->categories);
-                    die();*/
-                    
-                    return true;
-                } else {
-                    // an error occurred
+                if ($wpdb->insert("{$wpdb->prefix}wl_places", array('wl_id' => $tag->id,
+                                                                    'place' => json_encode($place_info))) ) {
+                                                                        
+                    $place = $wpdb->get_row( 
+                        $wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id) );
+
                 }
             }
             
-            return false;
-        }
-        
-        public function processTags($tags) {
-            if (!is_array($tags))
+            if (!$place)
                 return false;
+            
+            if ($postId) {
+                $wpdb->insert("{$wpdb->prefix}wl_places_posts", array('place_id' => $place->id,
+                                                                      'post_id' => $postId));
                 
-            foreach ($tags as $tag) {
-                $this->processTag($tag);
+                if ($tag->categories && get_post_type($postId) != 'page') {
+                    $customCategories = array();
+                    $customCategories[] = $wlPlaces->create_category_if_not_exists();
+                    
+                    foreach ($tag->categories as $customCategory) {
+                        $customCategories[] = get_cat_ID($customCategory) ? get_cat_ID($customCategory) : wp_create_category($customCategory);
+                    }
+                    
+                    $postCategories = wp_get_post_categories($postId);
+                    $newCategories = array_merge($postCategories, $customCategories);
+                    wp_set_post_categories($postId, $newCategories);
+                }
+                
+                update_post_meta($this->postId, '_isWLPlace', true);
+                
+                // delete post metadata from previous versions of the plugin
+                delete_post_meta($post_id, '_PlaceSelected');
+                delete_post_meta($post_id, '_WLPlaces');
             }
+            
+            return $place;
+
         }
         
-            //  if(isset( $_POST['PlaceCategoriesSelected'] )){
-            //      $cat_index = 0;
-            //      $custom_cat_ids = array();
-            //      foreach ( $custom_categories as $custom_cat ) {
-            //          $custom_cat_ids[$cat_index] = $this->create_custom_category_if_not_exists($custom_cat); 
-            //          $cat_index = $cat_index+1;                      
-            //      }
-            //      
-            //      // merge place category into this post
-            //      $cats = wp_get_object_terms($postId, 'category', array('fields' => 'ids'));
-            //      $new_cats1 = array_merge( array( $category_id ), $cats ); 
-            //      $new_cats2 = array_merge( $new_cats1, $custom_cat_ids );
-            //      wp_set_post_categories( $postId, $new_cats2 );                  
-            //  } 
+        public function processTags($tags, $postId=0) {
+            global $wpdb;
+            
+            if (!is_array($tags))
+                return true;
+                
+            if ($postId)
+                $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}wl_places_posts WHERE post_id = %d", $postId));
+            
+            foreach ($tags as $tag) {
+                $this->processTag($tag, $postId);
+            }
+            
+            return true;
+        }
+
 
     }
 

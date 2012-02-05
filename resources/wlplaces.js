@@ -6,6 +6,10 @@ jQuery(document).ready(function(){
 var WLPlaces = {
     
     init: function() {
+        // themes can screw up google maps
+        jQuery('.map_canvas_post img').css('max-width' ,'1030px');
+        jQuery('.gmnoprint img').css('max-width' ,'1030px');
+        
         return true;
     },
     
@@ -115,8 +119,6 @@ var WLPlaces = {
 		});
 		
 		jQuery('.map_canvas_post', $sel).show();
-		
-//		jQuery('.map_canvas_post', $sel).show();
 	 }
 
 
