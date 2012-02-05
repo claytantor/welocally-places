@@ -44,6 +44,13 @@ jQuery(document).ready(function() {
 		
 		jQuery("#siteKey").toggle();
 		jQuery("#key-assigned").toggle();
+		
+		jQuery("#siteToken").toggle();
+		jQuery("#token-assigned").toggle();
+		
+		if(jQuery("#siteKey").is(":visible")){
+			jQuery("#token-section").show();		   	
+		}
 			
 		return false;
 	});
@@ -62,6 +69,10 @@ jQuery(document).ready(function() {
 	
 	jQuery("#siteKey").change( function () {	
 		jQuery("#key-assigned").html(jQuery("#siteKey").val());
+	});
+	
+	jQuery("#siteToken").change( function () {	
+		jQuery("#token-assigned").html(jQuery("#siteToken").val());
 	});
 		
 });
@@ -137,6 +148,8 @@ function set_form_fields( key, token, status) {
 	if(status != null) {
 		jQuery("#publisher-status").html(status);
 		if(status == 'KEY_ASSIGNED') {
+			wl_set_cancelled_state_ajax();
+			jQuery("#siteToken").val('');
 			jQuery("#key-section").show();
 			
 						
@@ -280,6 +293,7 @@ function set_form_fields( key, token, status) {
 
 
 .option-form-label { width: 100px; display: inline-block;}
+
 .options-title2 {
     	border-bottom:1px solid #cccccc; padding-bottom:3px;
     	margin-bottom: 10px;
@@ -341,9 +355,6 @@ function set_form_fields( key, token, status) {
 	width: 400px;
 }
 
-#siteToken {
-	width: 95%;
-}
 
 #form-signup {
 	width: 95%;
@@ -356,12 +367,17 @@ function set_form_fields( key, token, status) {
 	color: #595959;
 	font-family: monospace;
 	width: 95%;
+	height:20px;
 	margin-bottom: 10px;
 }
 
 label { font-size:1.2em; color: #595959; font-weight:bold; width:400px; margin-top:10px;  }
 	
-.option-form-field { width: 100%; }
+.option-form-field { 
+	width: 95%; 
+	height:20px;
+	margin-bottom: 10px;
+}
 
 #plugin-options th { width: 80px; }
 
@@ -434,30 +450,31 @@ $options = wl_set_general_defaults();
 										<label for="siteName">Site Name: </label>										
 										<div><em>You can name your site anything you want but it has to be unique to our system.</em></div>
 										<div id="name-assigned" class="assigned-field"><?php echo wl_get_option('siteName',get_bloginfo('name')); ?></div>
-										<input class="option-form-field" type="field"  style="display:none" name="siteName" id="siteName" value="<?php echo wl_get_option('siteName',get_bloginfo('name')); ?>" />
+										<input class="option-form-field" type="text"  style="display:none" name="siteName" id="siteName" value="<?php echo wl_get_option('siteName',get_bloginfo('name')); ?>" />
 									</div>
 									<div>
 										<label for="siteHome" >Site Home:</label>
 										<div><em>This has to be the real base URL for your site, we check this when you make a request. If this site is not on the internet we can't give you a token.</em></div>
 										<div id="home-assigned" class="assigned-field"><?php echo wl_get_option('siteHome', get_bloginfo('home')); ?></div>
-										<input class="option-form-field" type="field"  style="display:none" name="siteHome" id="siteHome" value="<?php echo wl_get_option('siteHome',get_bloginfo('home')); ?>" />
+										<input  class="option-form-field"  type="text"  style="display:none" name="siteHome" id="siteHome" value="<?php echo wl_get_option('siteHome',get_bloginfo('home')); ?>" />
 									</div>						
 									<div>
 										<label for="siteEmail" >E-mail:</label>
 										<div><em>This needs to be real, we send your token by email.</em></div>
 										<div id="email-assigned" class="assigned-field"><?php echo wl_get_option('siteEmail',get_bloginfo('admin_email')); ?></div>
-										<input class="option-form-field" type="field"  style="display:none" name="siteEmail" id="siteEmail"  value="<?php echo wl_get_option('siteEmail',get_bloginfo('admin_email')); ?>" />
+										<input  class="option-form-field"  type="text"  style="display:none" name="siteEmail" id="siteEmail"  value="<?php echo wl_get_option('siteEmail',get_bloginfo('admin_email')); ?>" />
 									</div>	
 									<div id="key-section">
 										<label for="siteKey" >Publisher Key:</label>
 										<div><em>We assign this to you, so if you change this you should probably have a good reason like we told you to. Better to leave it alone.</em></div>
 										<div id="key-assigned" class="assigned-field"></div>
-										<input class="option-form-field" type="field"  style="display:none" name="siteKey" id="siteKey"  value="<?php echo wl_get_option('siteKey',null) ?>" /> 
+										<input  class="option-form-field"  type="text"  style="display:none" name="siteKey" id="siteKey"  value="<?php echo wl_get_option('siteKey',null) ?>" /> 
 									</div>
 									<div id="token-section">
 										<label for="siteToken" >Publisher Token:</label>
 										<div><em>Please place the token you recieved by email here.</em></div>
-										<div><input type="text" name="siteToken" id="siteToken" value="<?php echo wl_get_option('siteToken',null) ?>" /></div>
+										<div id="token-assigned" class="assigned-field"><?php echo wl_get_option('siteToken','') ?></div>
+										<div><input  class="option-form-field" type="text" style="display:none" name="siteToken" id="siteToken" value="<?php echo wl_get_option('siteToken','') ?>" /></div>
 									</div>
 								</fieldset>
 								<?php wp_nonce_field( 'welocally-places-subscribe','welocally_places_subscribe_nonce', true, true ); ?>

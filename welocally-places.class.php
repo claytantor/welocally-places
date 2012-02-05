@@ -16,7 +16,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		const DATEONLYFORMAT 		= 'F j, Y';
 		const TIMEFORMAT			= 'g:i A';
 		const DBDATEFORMAT	 		= 'Y-m-d';
-		const DBDATETIMEFORMAT 		= 'Y-m-d G:i:s';
+		const DBDATETIMEFORMAT 		= 'Y-m-d G:i:s'; 
 		
 		public $displaying;
 		public $latestOptions;
