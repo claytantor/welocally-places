@@ -9,6 +9,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	class WelocallyPlaces {
 		
 		const VERSION 				= '1.1.16';
+		const DB_VERSION			= '2.0';
 		const WLERROROPT			= '_welocally_errors';
 		const CATEGORYNAME	 		= 'Place';
 		const OPTIONNAME 			= 'wl_place_options';
@@ -256,7 +257,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			// create places table
 			$db_version = get_option('Welocally_DBVersion');
 			
-			if ($db_version != self::VERSION) {
+			if ($db_version != self::DB_VERSION) {
                 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
                 
                 $sql = "CREATE TABLE {$wpdb->prefix}wl_places (
@@ -269,13 +270,14 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 
                 $sql = "CREATE TABLE {$wpdb->prefix}wl_places_posts (
                     id INT PRIMARY KEY AUTO_INCREMENT,
+                    place_id INT NOT NULL,
                     post_id MEDIUMINT(9) NOT NULL,
                     created DATETIME NOT NULL
                 );";
                 dbDelta($sql);
 			}
 			
-			update_option('Welocally_DBVersion', self::VERSION);
+			update_option('Welocally_DBVersion', self::DB_VERSION);
 		}
 
 
@@ -325,69 +327,68 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 
 		public function addPostPlaceTagMarkup($tag, $str) {
 		    global $post;
+		    global $wpdb;
 		    static $placecount = 0;
 		    
-            if (!$tag->postId)
+            if (!$tag->id)
                 return $str;
 
-            if ($places = get_post_meta($tag->postId, '_WLPlaces', true)) {
-                if (isset($places[$tag->id])) {
-                    $place_json = $places[$tag->id];
-                    
-                    $resultContent = '';
-                    
-                    $showmap=true;
-                    $cat_ID = get_query_var( 'cat' );
-                    
-                    // if(is_single()){
-                    if(is_singular()){
-                     $showmap=true;
-                    } else if(is_home() || isset($cat_ID)){
-                     $showmap=false;
-                    }
-                    
-                    $isCustom = false;
-                    $customMapJson = '[  ]';
-                    if(wl_get_option('map_custom_style') != ''){
-                     $isCustom = true;
-                     $customMapJson = base64_decode(wl_get_option("map_custom_style"));
-                    }
-                    
-                    $whereImage=$this->pluginUrl.'/resources/images/here.png';
-                    
-
-                    // use place template
-                    $t = new StdClass();
-                    $t->uid = ++$placecount;
-                    $t->WPPost = $post->ID;
-                    $t->postId = $tag->postId;
-                    $t->placeJSON = $place_json;
-                    $t->options = array(
-                      'showmap' => $showmap,
-                      'isCustom' => $isCustom,
-                      
-                      'map_custom_style' => $customMapJson,
-                      'map_icon_web' => wl_get_option("map_icon_web"),
-                      'map_icon_directions' => wl_get_option("map_icon_directions"),
-                      'font_place_name' => wl_get_option("font_place_name"),
-                      'color_place_name' => wl_get_option("color_place_name"),
-                      'size_place_name' => wl_get_option("size_place_name"),
-                      'font_place_address' => wl_get_option("font_place_address"),
-                      'color_place_address' => wl_get_option("color_place_address"),
-                      'size_place_address' => wl_get_option("size_place_address"),
-                      'where_image' => $whereImage
-                    );
-                    
-                    ob_start();
-                    include(dirname(__FILE__) . '/views/place-content-template.php');
-                    $resultContent = ob_get_contents();
-                    ob_end_clean();
-                    
-                    $t = null;
-                    
-                    return $resultContent;
-
+            if ($place = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id))) {
+                $place_json = $place->place;
+                
+                $resultContent = '';
+                
+                $showmap=true;
+                $cat_ID = get_query_var( 'cat' );
+                
+                // if(is_single()){
+                if(is_singular()){
+                 $showmap=true;
+                } else if(is_home() || isset($cat_ID)){
+                 $showmap=false;
                 }
+                
+                $isCustom = false;
+                $customMapJson = '[  ]';
+                if(wl_get_option('map_custom_style') != ''){
+                 $isCustom = true;
+                 $customMapJson = base64_decode(wl_get_option("map_custom_style"));
+                }
+                
+                $whereImage=$this->pluginUrl.'/resources/images/here.png';
+                
+
+                // use place template
+                $t = new StdClass();
+                $t->uid = ++$placecount;
+                $t->WPPost = $post->ID;
+                $t->postId = $tag->postId;
+                $t->placeJSON = $place_json;
+                $t->options = array(
+                  'showmap' => $showmap,
+                  'isCustom' => $isCustom,
+                  
+                  'map_custom_style' => $customMapJson,
+                  'map_icon_web' => wl_get_option("map_icon_web"),
+                  'map_icon_directions' => wl_get_option("map_icon_directions"),
+                  'font_place_name' => wl_get_option("font_place_name"),
+                  'color_place_name' => wl_get_option("color_place_name"),
+                  'size_place_name' => wl_get_option("size_place_name"),
+                  'font_place_address' => wl_get_option("font_place_address"),
+                  'color_place_address' => wl_get_option("color_place_address"),
+                  'size_place_address' => wl_get_option("size_place_address"),
+                  'where_image' => $whereImage
+                );
+                
+                ob_start();
+                include(dirname(__FILE__) . '/views/place-content-template.php');
+                $resultContent = ob_get_contents();
+                ob_end_clean();
+                
+                $t = null;
+                
+                return $resultContent;
+
             }
             
             return $str;
@@ -489,19 +490,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 		}
 		
-		/**
-		 * redundant
-		 */
-		public function create_custom_category_if_not_exists( $categoryName ) {
-			if ( !category_exists( $categoryName ) ) {
-				$category_id = wp_create_category( $categoryName );
-				return $category_id;
-			} else {
-				return get_cat_ID( $categoryName );
-			}
-			
-		}
-		
 		public function addPlaceMetaSave( $postId ) {
 			$this->addPlaceMeta( $postId, 'save_post' );	
 		}	
@@ -569,16 +557,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		    if (!wp_is_post_revision($post_id)) {
 		        $post = get_post($post_id);
 		        
-		        // XXX not really needed but limit ourselves to pages for now
-		        if (get_post_type($post) == 'page') {
-		            delete_post_meta($post_id, '_WLPlaces');
-		            delete_post_meta($post_id, '_isWLPlace');
-		            
-		            $tags = WelocallyPlaces_Tag::parseText($post->post_content);
+	            $tags = WelocallyPlaces_Tag::parseText($post->post_content);
 
-                    $proc = new WelocallyPlaces_TagProcessor();
-                    $result = $proc->processTags($tags);
-		        }
+                $proc = new WelocallyPlaces_TagProcessor();
+                $result = $proc->processTags($tags, $post_id);
 		    }
 		}
 		
