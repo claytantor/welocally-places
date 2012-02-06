@@ -223,9 +223,13 @@ jQuery(document).ready(function(jQuery) {
 	
 <?php 
 $index = 0;
-$cat_ID = get_query_var( 'cat' );			
+$cat_ID = get_query_var( 'cat' );
 $places_in_category_posts = get_places_posts_for_category($cat_ID);
-foreach( $places_in_category_posts as $post ) { 
+
+foreach( $places_in_category_posts as $post ):
+    $places = get_post_places($post->ID);
+    
+    foreach ($places as $place):
 ?>  
 <?php $index=$index+1; ?>	
 	
@@ -242,7 +246,7 @@ foreach( $places_in_category_posts as $post ) {
 <?php endif; ?>	
 	
 
-	places[<?php echo $index; ?>] = jQuery.parseJSON( '<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>' );	
+	places[<?php echo $index; ?>] = <?php echo json_encode($place); ?>;	
 	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].geometry.coordinates[1], places[<?php echo $index; ?>].geometry.coordinates[0]);
 	bounds.extend(latlng);
 	
@@ -292,7 +296,8 @@ foreach( $places_in_category_posts as $post ) {
 
 	
 <?php
-}
+    endforeach;
+endforeach;
 ?>		
 
 	//init map with bounds   
