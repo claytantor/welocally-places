@@ -618,6 +618,17 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			return $text;
 		}
 		
+		public function getPostPlaces($postId) {
+		    global $wpdb;
+		    
+		    $places = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT place FROM {$wpdb->prefix}wl_places p INNER JOIN {$wpdb->prefix}wl_places_posts pp ON p.id = pp.place_id WHERE pp.post_id = %d", $postId));
+		    
+		    if ($places) 
+		        return array_map('json_decode', $places);
+		        
+		    return array();
+		}
+		
 		
 		
 	}
