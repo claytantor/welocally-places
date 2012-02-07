@@ -350,6 +350,21 @@ function wl_do_curl_post_https($https_url, $selectedPostJson, $headers, $returnx
 
 //----- end of neworking section ----------//
 
+function wl_debug() {
+    $args = func_get_args();
+    
+    echo '<pre>';
+    foreach ($args as $arg) {
+        print_r($arg);
+    }
+    echo '</pre>';
+}
+
+function wl_debug_e() {
+    call_user_func_array('wl_debug', func_get_args());
+    exit;
+}
+
 function wl_self_deprecating_sidebar_registration() {
 	$i = 1;
 	$args = array (
