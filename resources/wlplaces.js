@@ -60,66 +60,65 @@ var WLPlaces = {
     				qVal+'" target="_new">directions</a></td></tr></table>');
     	 }
 
-	 if(showMap && customStyle ){
-	 	
-	 	
-	 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
-	
-		var welocallyMapStyle = options.map_custom_style;
+		 if(showMap && customStyle ){		 	
+		 	
+		 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
 		
-		
-		// Create a new StyledMapType object, passing it the array of styles,
-		// as well as the name to be displayed on the map type control.
-		var styledMapType = new google.maps.StyledMapType(welocallyMapStyle,
-			{name: "Custom"});
-		
-		
-		var mapOptions = {
-		  zoom: 16,
-		  center: latlng,
-		  mapTypeControlOptions: {
-			mapTypeIds: ['welocally_style']
-		  }
-		};
-		
-		map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
-			mapOptions);
+			var welocallyMapStyle = options.map_custom_style;
 			
-		//Associate the styled map with the MapTypeId and set it to display.
-		map_post.mapTypes.set('welocally_style', styledMapType);
-		map_post.setMapTypeId('welocally_style');
+			
+			// Create a new StyledMapType object, passing it the array of styles,
+			// as well as the name to be displayed on the map type control.
+			var styledMapType = new google.maps.StyledMapType(welocallyMapStyle,
+				{name: "Custom"});
+			
+			
+			var mapOptions = {
+			  zoom: 16,
+			  center: latlng,
+			  mapTypeControlOptions: {
+				mapTypeIds: ['welocally_style']
+			  }
+			};
+			
+			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
+				mapOptions);
+				
+			//Associate the styled map with the MapTypeId and set it to display.
+			map_post.mapTypes.set('welocally_style', styledMapType);
+			map_post.setMapTypeId('welocally_style');
+			
+			
+			//home location
+			var mMarker = new google.maps.Marker({
+				position: latlng,
+				map: map_post,
+				icon: options.where_image
+			});
+			
+			jQuery('.map_canvas_post', $sel).show();
+		 
+		 } else if(showMap && !customStyle ){
+			 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
+			
+				var mapOptions = {
+				  zoom: 12,
+				  center: latlng,
+				  mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+			
+			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
+				mapOptions);
 		
-		
-		//home location
-		var mMarker = new google.maps.Marker({
-			position: latlng,
-			map: map_post,
-			icon: options.where_image
-		});
-		
-		jQuery('.map_canvas_post', $sel).show();
-	 
-	 } else if(showMap && !customStyle ){
-	 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
-	
-		var mapOptions = {
-		  zoom: 12,
-		  center: latlng,
-		  mapTypeId: google.maps.MapTypeId.ROADMAP
-		};
-		
-		map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
-			mapOptions);
-	
-		//home location
-		var mMarker = new google.maps.Marker({
-			position: latlng,
-			map: map_post,
-			icon: options.where_image
-		});
-		
-		jQuery('.map_canvas_post', $sel).show();
-	 }
+			//home location
+			var mMarker = new google.maps.Marker({
+				position: latlng,
+				map: map_post,
+				icon: options.where_image
+			});
+			
+			jQuery('.map_canvas_post', $sel).show();
+		 }
 
 
     }

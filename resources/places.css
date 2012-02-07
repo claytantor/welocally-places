@@ -473,3 +473,13 @@ max-width: 1030px;
 	font-size: 65%;
 }
 
+
+/* place tag*/
+
+  .share-place-tag { background:#def3ca; margin:3px; width:100%;
+  display:none; float:left; text-align:center; }
+  
+ .wl-place-links{ height: 30px; }
+  
+ 
+
