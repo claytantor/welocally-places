@@ -501,7 +501,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$queryResult = $wpdb->get_results($query, OBJECT);
 		
 		$excerpt = trim_excerpt($queryResult[0]->post_content, $queryResult[0]->post_excerpt);	
-		$excerpt = str_replace( '[welocally/]', '', $excerpt );
+		$excerpt = WelocallyPlaces_Tag::searchAndReplace($excerpt, create_function('$tag,$tag_str', 'return ""'));
 		$excerpt = str_replace( '\'', '', $excerpt );
 		$excerpt = trim( preg_replace( '/\s+/', ' ', $excerpt ) );
 		
