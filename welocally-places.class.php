@@ -160,7 +160,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$placesURL = trailingslashit( WP_PLUGIN_URL ) . trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
 			
 			//app stuff, for right now we will embed this key but this should be coming from a web service
-			wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true' , false , '3');
+			wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true&language=en' , false , '3');
 			wp_enqueue_script('sp-places-script', $placesURL.'places.js', array('jquery') );
 			if( locate_template( array('places/places.css') ) ) {
 				$templateArray = explode( '/', TEMPLATEPATH );
