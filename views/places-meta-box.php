@@ -118,12 +118,6 @@ function searchLocations(location, queryString, radiusKm) {
 	  		}		
 	  },
 	  success : function(data, textStatus, jqXHR) {
-
-		    
-		    setStatus('', false, false);
-		    
-		    //jQuery('#welocally-post-error').hide();
-	  		//jQuery('#welocally-post-error').html('');
 	  		
 	  		if(data != null && data.length == 0) {
 	  			jQuery('#welocally-post-error').append('<div class="welocally-context-help"></div>');
@@ -145,6 +139,8 @@ function searchLocations(location, queryString, radiusKm) {
 				buildErrorMessages(data.errors);	
 					
 			}
+			
+	  		setStatus('', false, false);
 	  }
 	});
    
@@ -481,9 +477,7 @@ function showSearchStep(step){
 		jQuery('.step').hide();
 		jQuery('#next-search-action').show();
 	}
-	jQuery('#welocally-post-error').html('');
 	jQuery('#welocally-post-error').removeClass('error');
-	jQuery('#welocally-post-error').hide('');
 	if (step != 0){
 		var next_step = step + 1;
 		var back_step = step -1;
@@ -493,16 +487,16 @@ function showSearchStep(step){
 	switch (step){
 	 case 0: 
 		 	jQuery('#placeForm').hide();
-		 	jQuery('.step-'+step).show('slow');
+		 	jQuery('.step-'+step).show('fast');
 	 break;
 	 case 1: 
 		 	jQuery('#placeForm').show();
-		 	jQuery('.step-'+step).show('slow');
+		 	jQuery('.step-'+step).show('fast');
 	 break;
 	 case 2:
 		 selectedPlace.properties.name = jQuery("#edit-place-name").val();
 		 jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
-		 jQuery('.step-'+step).show('slow');
+		 jQuery('.step-'+step).show('fast');
 	 break;
 	 case 3:
 		 var address = jQuery('#edit-place-street').val();
@@ -567,14 +561,14 @@ function showSearchStep(step){
 					jQuery('#next-search-action').hide();	
 				}
 		 });
-		 jQuery('.step-'+step).show('slow');
+		 jQuery('.step-'+step).show('fast');
 	 break;
 	 case 4:
 		 jQuery('#next-search-action').hide();
 		 jQuery('#back-search-action').attr('OnClick','showSearchStep(2)');
 		 //ajax call
 		searchLocations(selectedGeocode.geometry.location, selectedPlace.properties.name, 30);
-		jQuery('.step-'+step).show('slow');
+		jQuery('.step-'+step).show('fast');
 	 break;
 	}
 }
@@ -688,7 +682,7 @@ function showAddPlaceStep(step){
 	 
 	}
 	 
-	jQuery('.addstep-'+step).show('slow');
+	jQuery('.addstep-'+step).show('fast');
 }
 
 function cancelAddPlace(){
@@ -952,7 +946,6 @@ function savePlaceAction(){
 					<div id="search-geocoded-name-selected" class="selected-field">&nbsp;</div>
 					<div id="search-geocoded-address-selected" class="selected-field">&nbsp;</div>
 					<div id="map_canvas" style="width:100%; height:300px;"></div>
-					<div id="map_canvas_add" style="width:100%; height:300px;"></div>
 				</div>
 			</div>
 			<input type="hidden" id="place-selected" name="PlaceSelected">
