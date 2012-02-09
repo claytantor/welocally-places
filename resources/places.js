@@ -95,7 +95,6 @@ function addItemMarker(
 	});
 	
 	google.maps.event.addListener(mMarker, 'click', function(event) {
-		
 			var placeSelected = mMarker.place;
 			var container = mMarker.container;
 			
@@ -114,7 +113,7 @@ function addItemMarker(
 			if(container == 'places-map'){
 				ib_widget.open(mMarker.map, this);
 				jQuery('#details-place-name').html('<a href="'+
-						mMarker.link+'" >'+placeSelected.name+'</a>');
+						mMarker.link+'" >'+placeSelected.properties.name+'</a>');
 				jQuery('#details-place-excerpt').html(mMarker.excerpt);
 				jQuery('#place-details').show();
 				jQuery('#sp-click-action-call').hide();

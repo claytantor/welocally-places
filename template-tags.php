@@ -401,7 +401,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$wlPlaces->setOptions();
 		
 		$categoryPlacesId = $wlPlaces->placeCategory();
-		
+
 		$categories_query = "select 
                         $wpdb->posts.*
                         from $wpdb->term_taxonomy, $wpdb->term_relationships, $wpdb->posts, $wpdb->terms 
@@ -420,8 +420,9 @@ if( class_exists( 'WelocallyPlaces' ) ) {
                                 AND $wpdb->term_taxonomy.taxonomy = 'category' 
                                 AND $wpdb->posts.post_status = 'publish' 
                                 GROUP BY $wpdb->posts.ID)";
-									
+                                
 		$return = $wpdb->get_results($categories_query, OBJECT);
+		
 		return $return;
 	}
 	
@@ -500,7 +501,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$queryResult = $wpdb->get_results($query, OBJECT);
 		
 		$excerpt = trim_excerpt($queryResult[0]->post_content, $queryResult[0]->post_excerpt);	
-		$excerpt = str_replace( '[welocally/]', '', $excerpt );
+		$excerpt = WelocallyPlaces_Tag::searchAndReplace($excerpt, create_function('$tag,$tag_str', 'return ""'));
 		$excerpt = str_replace( '\'', '', $excerpt );
 		$excerpt = trim( preg_replace( '/\s+/', ' ', $excerpt ) );
 		
@@ -537,6 +538,15 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		return $link;
 		
 	}
+	
+	function get_post_places($post_id=0) {
+	    global $wlPlaces;
+	    
+	    if (!$post_id) $post_id = get_the_ID();
+	    
+	    return $wlPlaces->getPostPlaces($post_id);
+	}
+	
 // functions for get tamlate
 	function wl_places_get_template_map_widget(){
 		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );

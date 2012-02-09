@@ -554,15 +554,15 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		}
 		
         public function tagHandling($post_id) {
-		    if (!wp_is_post_revision($post_id)) {
-		        $post = get_post($post_id);
-		        
-	            $tags = WelocallyPlaces_Tag::parseText($post->post_content);
+            if (!wp_is_post_revision($post_id)) {
+                $post = get_post($post_id);
+                
+                $tags = WelocallyPlaces_Tag::parseText($post->post_content);
 
                 $proc = new WelocallyPlaces_TagProcessor();
                 $result = $proc->processTags($tags, $post_id);
-		    }
-		}
+            }
+        }
 		
 		
 		/* gets the data from a URL */
@@ -617,6 +617,35 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 			return $text;
 		}
+		
+		public function getPostPlaces($postId) {
+		    global $wpdb;
+		    
+		    if (is_array($postId)) {
+                $places = array();
+		        
+		        foreach ($postId as $p) {
+		            if (is_object($p) || is_array($p)) {
+		                $p_ = (array) $p;
+		                $places = $places + $this->getPostPlaces($p_['ID']);
+		            } else if (is_int($p)) {
+		                $places = $places + $this->getPostPlaces($p);
+		            }
+		        }
+		        
+                return $places;
+		    }
+		    
+		    $postId = is_array($postId) ? $postId['ID'] : (is_object($postId) ? $postId->ID : intval($postId));
+		    
+		    $places = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT place FROM {$wpdb->prefix}wl_places p INNER JOIN {$wpdb->prefix}wl_places_posts pp ON p.id = pp.place_id WHERE pp.post_id = %d", $postId));
+		    
+		    if ($places) 
+		        return array_map('json_decode', $places);
+		        
+		    return array();
+		}
+		
 		
 		
 		

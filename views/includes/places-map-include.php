@@ -134,10 +134,12 @@ jQuery(document).ready(function(jQuery) {
 
 <?php
 $index = 0;
-foreach( $posts as $post ) { ?>
-	places[<?php echo $index; ?>] = 
-		jQuery.parseJSON( 
-			'<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>' );		
+foreach( $posts as $post ) {
+    $places = get_post_places($post->ID);
+    
+    foreach ($places as $place):
+?>
+	places[<?php echo $index; ?>] = <?php echo json_encode($place) ; ?>;
 	
 	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].geometry.coordinates[1], places[<?php echo $index; ?>].geometry.coordinates[0]);
 	bounds.extend(latlng);
@@ -173,6 +175,7 @@ foreach( $posts as $post ) { ?>
 	}	
 <?php
 	$index=$index+1;
+	endforeach;
 }
 ?>	
 
