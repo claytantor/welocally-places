@@ -477,11 +477,9 @@ max-width: 1030px;
 /* place tag*/
 
 .share-place-tag { 
-	background:#f2f2f2; 
 	margin:0px; 
 	width:100%;
   	display:none; 
-  	height: 50px 
 }
 
 .share-place-tag-tagtext { 
@@ -497,9 +495,7 @@ max-width: 1030px;
 	color: #888888;
 	font-style: italic;
 	font: Arial, Helvetica, sans-serif; 
-	position: relative; 
 	width:72%;
-	top:-15px;
 	margin-left: 3px;
 }
 
@@ -507,8 +503,6 @@ max-width: 1030px;
 	display:inline-block; 
 	text-align:right;
 	font-size:0.7em;  
-	position: relative; 
-	top:-10px;
 	width:26%;
 }
 

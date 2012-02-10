@@ -5,7 +5,6 @@
  * @return string
  */
 $MapPlaceSelected	= get_post_meta( $post->ID, '_PlaceSelected', true );
-
 ?>
 <style>
 	#place-details { width: 100%; display: none; background-color: #eeeeee; }
@@ -205,10 +204,6 @@ foreach( $posts as $post ) { ?>
     }
 	
 });
-
-
-
-
 
 </script>
 <li class="sidebar-item">
