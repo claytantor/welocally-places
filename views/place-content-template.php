@@ -1,9 +1,9 @@
 <div id="wl-place-content-<?php echo $t->uid; ?>" class="wl-place-content">
-	<div class="map_canvas_post"></div>
-	
+	<div class="map_canvas_post"></div>	
 	<div class="wl-place-name" id="place-name-<?php echo $t->uid; ?>"></div>
 	<div class="wl-place-address" id="place-address-<?php echo $t->uid; ?>"></div>
 	<div class="wl-place-phone" id="place-phone-<?php echo $t->uid; ?>"></div>	
+	<div>
 	<ul class="wl-place-links">
 		<li class="wl-place-links-lines" >
 			<span class="wl-place-website" id="place-website-<?php echo $t->uid; ?>"></span>
@@ -11,30 +11,38 @@
 		<li class="wl-place-links-lines" >
 			<span class="wl-place-driving" id="place-driving-<?php echo $t->uid; ?>"></span>
 		</li>
-		<li class="wl-place-links-lines" >
-			<img width="16" height="16" 
+		<li class="wl-place-links-lines">
+			<table>
+				<tbody>
+				<tr>
+					<td class="wl-place-link-item"><img width="16" height="16" 
 			src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/we_16.png" 
-			alt="" title=""/>&nbsp;<a id="share-link-<?php echo $t->uid; ?>" href="#">share</a>
+			alt="" title=""/></td>
+					<td class="wl-place-link-item"><a id="share-link-<?php echo $t->uid; ?>" href="#">embed</a></td>
+				</tr>
+				</tbody>
+			</table>
 		    <script>
 			jQuery("#share-link-<?php echo $t->uid; ?>").click(function () {	
-			  if(jQuery("#share-tag-<?php echo $t->uid; ?>").is(":visible")){
-			  	jQuery("#share-tag-<?php echo $t->uid; ?>").hide(1000);
-			  }	else {
-			  	jQuery("#share-tag-<?php echo $t->uid; ?>").first().show("fast", function showNext() {
-				    jQuery(this).next("#share-tag-<?php echo $t->uid; ?>").show("fast", showNext);
-				  });			  	
-			  }	
+			  jQuery("#place-tag-field-<?php echo $t->uid; ?>").val(WLPlaces.makePlaceTag(<?php echo $t->placeJSON; ?>));  
+			  jQuery("#share-tag-<?php echo $t->uid; ?>").toggle();	
 			  return false;
 			});			
 			</script>
 		</li>
 	</ul>
-	<div>
-		<div style="display:none" class="share-tag" id="share-tag-<?php echo $t->uid; ?>">
-		<input type="text" name="place-tag-<?php echo $t->uid; ?>" id="place-tag-<?php echo $t->uid; ?>" value="[welocally/]" />
-		</div>
 	</div>
-	
+	<div class="share-place-tag" id="share-tag-<?php echo $t->uid; ?>">
+		<div class="tag-line">
+			<input class="share-place-tag-tagtext" type="text" id="place-tag-field-<?php echo $t->uid; ?>"></input>
+		</div>
+		<div style="display:inline-block; width:100%; height:10px">
+			<div class="share-place-tag-info">Place this tag in your own <a href="http://welocally.com/?page_id=2">Welocally Places</a> powered <a href="http://wordpress.org/extend/plugins/welocally-places/">wordpress</a> site.</div>
+			<div class="tag-powered-by"><img width="95" height="20" 
+			src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/places_powered.png" 
+			alt="" title=""/></div>
+		</div>
+	</div>	
 </div>
 <script type="text/javascript" charset="utf-8">
     WLPlaces.insertPlace('wl-place-content-<?php echo $t->uid; ?>',

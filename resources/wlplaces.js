@@ -121,6 +121,10 @@ var WLPlaces = {
 		 }
 
 
+    },
+    
+    makePlaceTag: function(place) {
+    	return '[welocally id="'+place._id+'"/]';
     }
     
       
