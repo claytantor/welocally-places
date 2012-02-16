@@ -366,8 +366,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
                 $t->placeJSON = $place_json;
                 $t->options = array(
                   'showmap' => $showmap,
-                  'isCustom' => $isCustom,
-                  
+                  'isCustom' => $isCustom,                
                   'map_custom_style' => $customMapJson,
                   'map_icon_web' => wl_get_option("map_icon_web"),
                   'map_icon_directions' => wl_get_option("map_icon_directions"),

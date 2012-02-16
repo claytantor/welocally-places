@@ -76,7 +76,7 @@ function welocally_register($selectedPostJson) {
 
 function welocally_save_place() {
 
-	$selectedPostJson = $_POST['place'];
+	$selectedPostJson = json_encode($_POST['place']);
 
 	//set POST variables 
 	$url = wl_server_base() . '/geodb/place/1_0/';
@@ -84,8 +84,12 @@ function welocally_save_place() {
 	error_log("url:".$url, 0);
 
 	$result_json = wl_do_curl_put($url, $selectedPostJson, array (
-		'Content-Type: application/json; charset=utf-8'
+		'Content-Type: application/json; charset=utf-8',
+		'site-key:' . wl_get_option('siteKey', null),
+		'site-token:' . wl_get_option('siteToken', null)
 	));
+	
+	$result_model = json_decode($result_json);
 
 	die(); // this is required to return a proper result
 }

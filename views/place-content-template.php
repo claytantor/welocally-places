@@ -15,16 +15,16 @@
 			<table>
 				<tbody>
 				<tr>
-					<td class="wl-place-link-item"><img width="16" height="16" 
-			src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/we_16.png" 
-			alt="" title=""/></td>
+					<td class="wl-place-link-item">
+					<img width="16" height="16" 
+						src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/we_16.png" alt="" title=""/></td>
 					<td class="wl-place-link-item"><a id="share-link-<?php echo $t->uid; ?>" href="#">embed</a></td>
 				</tr>
 				</tbody>
 			</table>
 		    <script>
 			jQuery("#share-link-<?php echo $t->uid; ?>").click(function () {	
-			  jQuery("#place-tag-field-<?php echo $t->uid; ?>").val(WLPlaces.makePlaceTag(<?php echo $t->placeJSON; ?>));  
+			  jQuery("#place-tag-field-<?php echo $t->uid; ?>").val(WELOCALLY.places.tag.makePlaceTag(<?php echo $t->placeJSON; ?>));  
 			  jQuery("#share-tag-<?php echo $t->uid; ?>").toggle();	
 			  return false;
 			});			
@@ -45,7 +45,7 @@
 	</div>	
 </div>
 <script type="text/javascript" charset="utf-8">
-    WLPlaces.insertPlace('wl-place-content-<?php echo $t->uid; ?>',
+    WELOCALLY.places.tag.insertPlace('wl-place-content-<?php echo $t->uid; ?>',
                          <?php echo $t->placeJSON; ?>,
                          <?php echo json_encode($t->options); ?>);
 </script>
