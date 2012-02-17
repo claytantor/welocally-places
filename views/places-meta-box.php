@@ -1,6 +1,6 @@
 <script>
 
-//probably obsolete
+//probably obsolete would like to make non wp
 var isWLPlace = <?php echo $isWLPlace  ?>;
 var jsonObjFeatures = []; //declare features array
 var markersArray = [];
