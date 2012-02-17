@@ -1,5 +1,4 @@
 <script>
-
 var isWLPlace = <?php echo $isWLPlace  ?>;
 var jsonObjFeatures = []; //declare features array
 var markersArray = [];
@@ -961,10 +960,6 @@ jQuery(document).ready(function(jQuery) {
 
 
 });
-
-
-
-
 </script>
 <style type="text/css">
 	
@@ -1205,8 +1200,7 @@ jQuery(document).ready(function(jQuery) {
 								<div id="search-geocoded-address-selected" class="selected-field">&nbsp;</div>
 								<div id="places-tag-selected" class="tag-field" style="display:none">&nbsp;</div>
 							</div>
-							
-														
+																				
 							<div class="resetable" id="place-find-range-section" style="display:none">
 								<select id="welocally_default_search_radius" name="welocally_default_search_radius" >
 									<option value="2">2 km</option>
