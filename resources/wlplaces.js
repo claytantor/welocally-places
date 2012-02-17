@@ -197,7 +197,7 @@ if (!window.WELOCALLY) {
             			var styledMapType = new google.maps.StyledMapType(welocallyMapStyle,
             				{name: "Custom"});
             			
-            			
+            			//this should be an option
             			var mapOptions = {
             			  zoom: 16,
             			  center: latlng,
@@ -206,8 +206,16 @@ if (!window.WELOCALLY) {
             			  }
             			};
             			
+
+            			
             			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
             				mapOptions);
+            			
+            			//we need this to override what themes sometimes do to images
+            			google.maps.event.addListener(map_post, 'idle', function() {
+            				jQuery('.map_canvas_post img').css('max-width','none');
+            			});
+            			
             				
             			//Associate the styled map with the MapTypeId and set it to display.
             			map_post.mapTypes.set('welocally_style', styledMapType);
@@ -222,12 +230,14 @@ if (!window.WELOCALLY) {
             			});
             			
             			jQuery('.map_canvas_post', $sel).show();
+            			
+            			
             		 
             		 } else if(showMap && !customStyle ){
             			 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
             			
             				var mapOptions = {
-            				  zoom: 12,
+            				  zoom: 16,
             				  center: latlng,
             				  mapTypeId: google.maps.MapTypeId.ROADMAP
             				};
@@ -235,6 +245,12 @@ if (!window.WELOCALLY) {
             			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
             				mapOptions);
             		
+            			//we need this to override what themes sometimes do to images
+            			google.maps.event.addListener(map_post, 'idle', function() {
+            				jQuery('.map_canvas_post img').css('max-width','none');
+            			});
+            			
+            			
             			//home location
             			var mMarker = new google.maps.Marker({
             				position: latlng,
@@ -243,6 +259,8 @@ if (!window.WELOCALLY) {
             			});
             			
             			jQuery('.map_canvas_post', $sel).show();
+            			jQuery('.map_canvas_post img', $sel).css('max-width','none');
+            			
             		 }
                 },                 
                 makePlaceTag: function(place) {
@@ -274,4 +292,6 @@ if (!WELOCALLY.PlacesSearchComponent) {
     WELOCALLY.PlacesSearchComponent = function(cfg) {
     }
 }
+
+
 

@@ -28,15 +28,20 @@ var activityType;
 
 var jqxhr;
 
-function setStatus(message, iserror, showloading){
+function setStatus(message, type, showloading){
 	jQuery('#welocally-post-error').html('');
-	if(!iserror){
-		jQuery('#welocally-post-error').removeClass('welocally-error error');
+	jQuery("#welocally-post-error").removeClass();
+	
+	if(type=='update'){
+		jQuery('#welocally-post-error').addClass('welocally-update');
+	} else if(type=='error'){
+		jQuery('#welocally-post-error').addClass('welocally-error');
+	} else if(type=='message'){
+		jQuery('#welocally-post-error').addClass('welocally-message');
 	}
 	
 	if(showloading){
 		jQuery('#welocally-post-error').append('<img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/ajax-loading.gif" alt="" title=""/>');
-
 	}
 	
 	jQuery('#welocally-post-error').append('<em>'+message+'</em>');
@@ -87,7 +92,7 @@ function deleteOverlays() {
 
 
 function searchLocations(location, queryString, radiusKm) {	
-	setStatus('Loading Places...', false, true);
+	setStatus('Loading Places...', 'message', true);
 	
 	jQuery('#selectable').empty();
 	jsonObjFeatures = [];
@@ -108,13 +113,21 @@ function searchLocations(location, queryString, radiusKm) {
 	  beforeSend: function(jqXHR){
         jqxhr = jqXHR;
       },
-	  error : function(jqXHR, textStatus, errorThrown) {
-	  		
+      //dont know why success is not working on empty results
+      statusCode: { 
+    	200: function(data, textStatus, jqXHR) {
+			if(data != null && data.length == 0) {
+	  			setStatus('Sorry no places were found that match your query.', 'update', false);
+	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
+	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
+	  			jQuery('#add-place-section').show();
+	  			  			
+	  		}
+    	}
+      },
+	  error : function(jqXHR, textStatus, errorThrown) {	  		
 	  		if(textStatus != 'abort'){
-	  			console.error(textStatus);
-	  			jQuery('#welocally-post-error').html('ERROR : '+textStatus);
-				jQuery('#welocally-post-error').addClass('welocally-error error fade');
-				jQuery('#welocally-post-error').show();
+	  			setStatus('ERROR : '+textStatus, 'error', true);
 	  		}	else {
 	  			console.log(textStatus);
 	  		}		
@@ -122,15 +135,14 @@ function searchLocations(location, queryString, radiusKm) {
 	  success : function(data, textStatus, jqXHR) {
 
 		    
-		    setStatus('', false, false);
+		    setStatus('', 'message', false);
 		    
-		    //jQuery('#welocally-post-error').hide();
-	  		//jQuery('#welocally-post-error').html('');
 	  		
 	  		if(data != null && data.length == 0) {
-	  			jQuery('#welocally-post-error').append('<div class="welocally-context-help"></div>');
-	  			jQuery('#welocally-post-error').append('Sorry no places were found that match your query, try again or add this as a new place.');
-	  			jQuery('#welocally-post-error').addClass('welocally-update updated fade');
+	  			setStatus('Sorry no places were found that match your query.', 'update', false);
+	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
+	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
+	  			jQuery('#add-place-section').show();
 	  			
 	  		} else if(data != null && data.length > 0) {
 				jQuery.each(data, function(i,item){
@@ -140,7 +152,10 @@ function searchLocations(location, queryString, radiusKm) {
 					
 				});
 				jQuery('#search-geocoded-section').append(jQuery('#results'));
+				jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));		
+				jQuery('#results').append(jQuery('#add-place-section'));											
 				jQuery("#results").show();	
+				jQuery('#add-place-section').show();
 				
 			} else if(data == null && data.errors != null) {
 			
@@ -185,9 +200,7 @@ function buildCategorySelectionsForPlace(place, container) {
 }
 
 function setSelectedPlaceInfo(selectedItem) {
-	
-	console.log(JSON.stringify(selectedItem));
-	
+		
 	//set form fields for save post
 	selectedPlace = selectedItem;
 	
@@ -265,7 +278,7 @@ function getCategories(type, category) {
 	jQuery('#edit-place-categories-selection').hide();
 	
 	
-	setStatus('Loading Categories...',false, true);
+	setStatus('Loading Categories...','message', true);
 			    
 	
 	 var options = {
@@ -300,18 +313,18 @@ function getCategories(type, category) {
 	        jqxhr = jqXHR;
 	      },
 		  error : function(jqXHR, textStatus, errorThrown) {
-					console.error(textStatus);
-					jQuery('#welocally-post-error').html('ERROR : '+textStatus);
-					jQuery('#welocally-post-error').addClass('welocally-error error fade');
+			if(textStatus != 'abort'){
+	  			setStatus('ERROR : '+textStatus, 'error', true);
+	  		}	else {
+	  			console.log(textStatus);
+	  		}	
 		  },		  
 		  success : function(data, textStatus, jqXHR) {
 		  	
-		  	setStatus('', false, false);		  	
-		  	
-		  	
+		  	setStatus('', 'message', false);		  	
+		  			  	
 		  	jQuery('#edit-place-categories-selection-list').html('');
-		  	
-		  	
+		  			  	
 		  	if(base != null && data.length==1){
 		  		jQuery('#edit-place-categories-selection-list').append('<li style="display:inline-block;">'+base+'</li>');
 		  	}
@@ -326,9 +339,13 @@ function getCategories(type, category) {
 					}
 				});		
 				jQuery('#categories-section').show();
-				jQuery('#edit-place-categories-selection').append(jQuery('#back-action'));
+				jQuery('#edit-place-categories-selection').append(jQuery('#back-action'));		
+				jQuery('#edit-place-categories-selection').show();
 				
-				jQuery('#edit-place-categories-selection').show();		
+				jQuery('#add-place-actions-section').append(jQuery('#cancel-finder-workflow'));
+				jQuery('#cancel-finder-workflow').show();	
+				jQuery('#add-place-actions-section').show();	
+				
 			}
 		  }
 		});
@@ -355,15 +372,13 @@ function hasType(type_name, address_components){
 }
 
 function buildErrorMessages(errors) {
-	jQuery('#welocally-post-error').html('');
-	jQuery('#welocally-post-error').append('<ul>');
+	
+	var errorMessageOut = "ERROR: ";
 	jQuery.each(errors, function(i,error){
-		jQuery('#welocally-post-error').append('<li>error:'+error.errorMessage+'</li>');
-		
-	});
-	jQuery('#welocally-post-error').append('</ul>');
-	jQuery('#welocally-post-error').addClass('welocally-error error fade');	
-	jQuery('#welocally-post-error').show();
+		var number = i+1;
+		errorMessageOut = errorMessageOut+number+". "+error.errorMessage;
+	});	
+	setStatus(errorMessageOut,'error', false);
 }
 
 function buildMissingFieldsErrorMessages(fields) {
@@ -375,12 +390,49 @@ function buildMissingFieldsErrorMessages(fields) {
 	jQuery('#welocally-post-error').show();	
 }
 
+// intercepts a next event and resets everything, but is acting as the first phase
+function cancelHandler(event) {
+		setStatus('','message', false);
+		
+		//reset selected place
+    	selectedPlace = {
+			properties: {},
+			type: "Place",
+			classifiers: [
+				{
+					type: '',
+					category: '',
+					subcategory: ''
+				}
+			],
+			geometry: {
+					type: "Point",
+					coordinates: []
+			}
+		};
+		
+		//wipe clean any input fields
+		jQuery('#place-selector-form input').val('');
+		
+		//all sections hidden
+		jQuery('.resetable').hide();
+ 	
+        jQuery('#edit-place-form').hide();
+        jQuery('#place-selector').show();
+        
+        return nextHandler(event);
+        
+}
+
 function nextHandler(event) {
 	console.log('next phase:'+event.data.phase);
+	setStatus('','message', false);
 	var phase = event.data.phase;
 	if(phase=='associate-place-section'){
-		var section = jQuery('#search-place-name-section');
+		jQuery('.resetable', jQuery('#search-place-name-section')).show();
 		
+		var section = jQuery('#search-place-name-section');
+		jQuery('#back-action' ).hide();
 		section.append(jQuery('#edit-place-name-title'));
 		section.append(jQuery('#place-name-input'));
 		section.append(jQuery('#place-name-saved'));
@@ -388,13 +440,13 @@ function nextHandler(event) {
 		section.append(jQuery('#next-action'));
 		section.show();
 		
-		jQuery('#place-name-title').html('Search Term: Enter a search term such as the place name or the category ie. "pizza"');		
+		jQuery('#place-name-title').html('Search Term: Enter a search term such as the place name or the category ie. "Pizza"');		
 		
 		//manage event model
 		jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'search-place-name-section' }, nextHandler);		
 		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-name-section' }, backHandler);
 		
-		jQuery('#placeForm').show();
+		jQuery('#place-selector-form').show();
 		
 							
 	} else if(phase=='search-place-name-section'){
@@ -402,37 +454,44 @@ function nextHandler(event) {
     	selectedPlace.properties.name = jQuery("#edit-place-name").val();
     	
     	jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
-    	jQuery('#place-street-title').html('Location: Choose the location or full address you would like to search from. ie. Oakland, CA');
+    	jQuery('#place-street-title').html('Location: Choose the location or full address you would like to search from. ie. Oakland, CA 94612');
 							
 	    //put the address search in the top
-	    var section = jQuery('#search-place-address-section');		    
+	    jQuery('.resetable', jQuery('#search-place-address-section')).show();
+	    
+	    var section = jQuery('#search-place-address-section');	
+	    section.append(jQuery('#edit-place-name-selected'));	    
 		section.append(jQuery('#street-name-input'));
 		section.append(jQuery('#street-address-saved'));	
 		section.append(jQuery('#back-action'));
 		section.append(jQuery('#next-action'));	
 		
+		jQuery('#back-action').show();
+		
 		section.show();	
 		
 		jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, nextHandler);		
 		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
+		
+		
 			
 	} else if(phase=='search-place-address-section'){
 				
-		setStatus('Geocoding...',false, true);
+		setStatus('Geocoding...','message', true);
 		
 		var address = jQuery('#edit-place-street').val();
-	
-		//determine mode from parent context
-		var mode = this.parentElement.parentElement.id;
-				
+		
 		jQuery('#search-geocoded-section').append(jQuery('#back-action'));
+		
+		
 		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
 		
+			
 		geocoder.geocode( { 'address': address}, function(results, status) {
 			if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
 				jQuery('#search-geocoded-name-selected').html(selectedPlace.properties.name);
 				jQuery('#search-geocoded-address-selected').html(results[0].formatted_address);										
-				
+				jQuery('#search-geocoded-section').append(jQuery('#search-geocoded-address-selected'));
 				jQuery('#search-geocoded-section').append(jQuery('#map_canvas'));	
 										
 				//do the map stuff
@@ -473,13 +532,17 @@ function nextHandler(event) {
 				deleteOverlays();
 				map.setCenter(selectedGeocode.geometry.location);								
 				addMarker(selectedGeocode.geometry.location);					
-																
-				jQuery('#search-geocoded-section').show();	
 				
-				setStatus('',false, false);
+				jQuery('.resetable', jQuery('#search-geocoded-section')).show();	
+				jQuery('#back-action').hide();											
+				jQuery('#search-geocoded-section').show();	
+								
+				setStatus('','message', false);
 				
 				//ajax call
 				searchLocations(selectedGeocode.geometry.location, selectedPlace.properties.name, 30);
+				
+				
 						
 			} else {
 				console.log("Geocode was not successful for the following reason: " + status);
@@ -487,6 +550,7 @@ function nextHandler(event) {
 		});
     		
 	} else if(phase=='edit-place-name-section'){
+			
 			
 		selectedPlace.properties.name = jQuery("#edit-place-name").val();
 		jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
@@ -500,27 +564,28 @@ function nextHandler(event) {
 		section.append(jQuery('#street-address-saved'));			
 		section.append(jQuery('#back-action'));
 		section.append(jQuery('#next-action'));	
+		jQuery('#back-action').show();
 		section.show();	
-		
+				
 		jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, nextHandler);		
 		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, backHandler);
 		
 		
 	} else if(phase=='edit-place-address-section'){
 					
-		setStatus('Geocoding...',false, true);
+		setStatus('Geocoding...','message', true);
 		var address = jQuery('#edit-place-street').val();
 		
 		var section = jQuery('#edit-place-address-section');
 		section.append(jQuery('#back-action'));			
-		section.append(jQuery('#next-action'));			
+		section.append(jQuery('#next-action'));	
+		jQuery('#back-action').show();		
 		section.show();	
-	
+		
 		jQuery('#edit-geocoded-section').append(jQuery('#back-action'));
 		
 		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-geocoded-section' }, backHandler);
-		
-		
+				
 		geocoder.geocode( { 'address': address}, function(results, status) {
 			if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
 				jQuery('#edit-geocoded-name-selected').html(selectedPlace.properties.name);
@@ -566,7 +631,9 @@ function nextHandler(event) {
 				map.setCenter(selectedGeocode.geometry.location);								
 				addMarker(selectedGeocode.geometry.location);					
 															
-				setStatus('',false, false);												
+				setStatus('','message', false);		
+					
+				jQuery('.resetable', jQuery('#edit-geocoded-section')).show();					
 				jQuery('#edit-geocoded-section').show();	
 				
 				getCategories(null, null);
@@ -584,9 +651,10 @@ function nextHandler(event) {
 
 function backHandler(event) {
 	console.log('back phase:'+event.data.phase);
+	setStatus('','message', false);
 	var phase = event.data.phase;
 	if(phase=='search-place-name-section'){			
-		jQuery('#placeForm').hide();
+		jQuery('#place-selector-form').hide();
 		jQuery('#associate-place-section').append(jQuery('#next-action'));
 			
 		jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'associate-place-section' }, nextHandler);
@@ -661,6 +729,9 @@ function backHandler(event) {
 jQuery(document).ready(function(jQuery) {
 	
 	WELOCALLY.env.initJQuery();
+	
+	//all sections hidden
+    jQuery('.resetable').hide();
 
 	activityType = 'search';
 		
@@ -668,15 +739,15 @@ jQuery(document).ready(function(jQuery) {
 		 
 	var selectedPlaceObject = null;
 	
+	//init buttons
 	jQuery( 'a, input:submit, button','.action' ).button();
-	jQuery( '#next-action' ).button();
-	jQuery('#next-action' ).bind('click' , { phase: 'associate-place-section' }, nextHandler);
+	jQuery( '#next-action,#cancel-finder-workflow,#btn-new-select,#back-action,#save-place-action' ).button();
 	
-	jQuery('#back-action' ).button();
-		
-	if(isWLPlace){
-		jQuery( '#delete-place-section' ).show();
-	}	
+	//resets all and starts over
+    jQuery('#cancel-finder-workflow,#btn-new-select' ).bind('click' , { phase: 'associate-place-section' }, cancelHandler);
+	
+	
+	jQuery('#next-action' ).bind('click' , { phase: 'associate-place-section' }, nextHandler);
 		
 	jQuery('#welocally_default_search_radius').val('8');
 	
@@ -707,33 +778,16 @@ jQuery(document).ready(function(jQuery) {
         return false;
     });
     
-    jQuery( '#cancel-add-link' ).click(function() {
-        jQuery('#edit-place-form').hide();
-        if(selectedPlaceObject == null) {
-        	jQuery('#place-selector').show();
-        } else {
-        	jQuery('#place-selector').show();
-        }
-        return false;
-    });
-
-    
-    jQuery( '#btn-new-select' ).click(function() {  
-    	jQuery('#selected-place').hide();
-    	jQuery('#place-selector').show();    	     
-        return false;
-    });
-    
+            
     //saves a new place
     jQuery( '#save-place-action' ).click(function() {   
     	
-    	setStatus('Saving Place...', false, true);
+    	setStatus('Saving Place...', 'message', true);
     	
     	var options 
     	
     	var options = {
 			action: 'save_place',
-
 		};
     
     	var missingRequired = false;
@@ -759,9 +813,11 @@ jQuery(document).ready(function(jQuery) {
 	        jqxhr = jqXHR;
 	      },
 		  error : function(jqXHR, textStatus, errorThrown) {
-					console.error(textStatus);
-					jQuery('#welocally-post-error').html('ERROR : '+textStatus);
-					jQuery('#welocally-post-error').addClass('welocally-error error fade');
+			if(textStatus != 'abort'){
+	  			setStatus('ERROR : '+textStatus, 'error', true);
+	  		}	else {
+	  			console.log(textStatus);
+	  		}		
 		  },		  
 		  success : function(data, textStatus, jqXHR) {
 		  	jQuery('#welocally-post-error').html('');
@@ -769,6 +825,7 @@ jQuery(document).ready(function(jQuery) {
 				buildErrorMessages(data.errors);		
 			} else {
 				selectedPlace._id=data.id;
+				setStatus('Your new place has been added!', 'message', false);
 				setSelectedPlaceInfo(selectedPlace);
 			}
 		  }
@@ -780,7 +837,7 @@ jQuery(document).ready(function(jQuery) {
     
     jQuery("input[name='isWLPlace']" ).change(function(){
     	if (jQuery("input[name='isWLPlace']:checked").val() == 'true') { 
-        	jQuery("#placeForm").show();
+        	jQuery("#place-selector-form").show();
         	
         	//no place has been selected yet
         	if(selectedPlaceObject == null) {
@@ -788,7 +845,7 @@ jQuery(document).ready(function(jQuery) {
         	}
         		
     	} else if (jQuery("input[name='isWLPlace']:checked").val() == 'false') { 
-	        jQuery("#placeForm").hide();	
+	        jQuery("#place-selector-form").hide();	
     	} 
     });   
     
@@ -864,6 +921,8 @@ jQuery(document).ready(function(jQuery) {
 	
 	jQuery( '#add-new-place-action' ).click(function() {
 		
+		setStatus('', 'message', false);
+		
 		jQuery("#place-selector").hide();
 		
 		jQuery('#place-name-title').html('Place Name: Enter the common name of the place, ie. "Treehouse Coffee Shop"');		
@@ -911,7 +970,7 @@ jQuery(document).ready(function(jQuery) {
 	
 	#place-intro { margin-top: 5px; margin-bottom: 5px; }
 	
-	#placeForm { 
+	#place-selector-form { 
 		border-color:#dfdfdf;
 		background-color:#F9F9F9;
 		border-width:1px;
@@ -1095,24 +1154,23 @@ jQuery(document).ready(function(jQuery) {
 	
 		<div id="place-name-input" class="action" style="display:inline-block">
 			<div id="place-name-title"  class="field-title">*Place Name: <em>Required</em></div>
-			<input type="text" id="edit-place-name" name="edit-place-name" class="edit-field" value="FTW Group">
+			<input type="text" id="edit-place-name" name="edit-place-name" class="edit-field">
 			<button id="save-place-name-action" href="#" style="display:none">Save</button>
 		</div>							
 
 		<div id="street-name-input" class="action" style="display:inline-block">			
 			<div id="place-street-title"  class="field-title">*Full Address: <em>Required</em></div>
-			<input type="text" id="edit-place-street" name="edit-place-street" class="edit-field" value="1305 Franlkin Street, Oakland CA 94612">
-			<button class="action" id="geocode-action" href="#" style="display:none">Geocode</button>				        	
+			<input type="text" id="edit-place-street" name="edit-place-street" class="edit-field">
 		</div>
 		
 
-		<div id="map_canvas" style="width:100%; height:300px;"></div>
-		<div id="results">
+		<div class="resetable" id="map_canvas" style="width:100%; height:300px;"></div>
+		<div class="resetable" id="results">
 				<div id="scroller-places">
 					<ol id="selectable">
 					</ol>	
 				</div>
-				<div class="action" style="margin-top:10px;">
+				<div id="add-place-section" class="resetable action" style="margin-top:10px;" >
 					<div class="selected-field"><em>Can't find the place you are looking for?</em></div>
 					<button id="add-new-place-action" href="#">Add Place</button>
 				</div>
@@ -1124,41 +1182,32 @@ jQuery(document).ready(function(jQuery) {
 	<div class="container">
 		<div class="span-24">	
 			<div id="welocally-post-error" style="display:none">No Errors...</div>				
-				<div>
-					<div id="delete-place-section" style="display:none">
-						<?php _e('Delete place info for this post?',$this->pluginDomain); ?>&nbsp;
-						<label><input type='radio' name='deletePlaceInfo' value='true' />&nbsp;<b><?php _e('Yes', $this->pluginDomain); ?></b></label>
-					</div>
-					<div style="display:none">
-						<?php _e('Associate a place with this post?',$this->pluginDomain); ?>&nbsp;
-						<label><input type='radio' name='isWLPlace' value='true' <?php echo $isPlaceChecked; ?> />&nbsp;<b><?php _e('Yes', $this->pluginDomain); ?></b></label>
-						<label><input type='radio' name='isWLPlace' value='false' <?php echo $isNotPlaceChecked; ?> />&nbsp;<b><?php _e('No', $this->pluginDomain); ?></b></label>
-					</div>
+				<div>					
 					<div id="associate-place-section"></div>
 				</div>
 				<input type="hidden" id="place-selected" name="PlaceSelected">
 				<input type="hidden" id="place-categories-selected" name="PlaceCategoriesSelected">
 						
-				<div id="placeForm" style="display:none">
+				<div id="place-selector-form" style="display:none">
 				 <div id="all_place_info">
 					<!-- start place selector -->
 					<div id="place-selector">
 						<div class="meta-title2">Search Places</div>
 						
-							<div id="search-place-name-section"></div>
+							<div class="resetable" id="search-place-name-section"></div>
 							
-							<div id="search-place-address-section">
+							<div class="resetable" id="search-place-address-section">
 								<div id="edit-place-name-selected" class="selected-field">&nbsp;</div>
 							</div>
 							
-							<div id="search-geocoded-section">
+							<div class="resetable" id="search-geocoded-section">
 								<div id="search-geocoded-name-selected" class="selected-field">&nbsp;</div>
 								<div id="search-geocoded-address-selected" class="selected-field">&nbsp;</div>
 								<div id="places-tag-selected" class="tag-field" style="display:none">&nbsp;</div>
 							</div>
 							
 														
-							<div id="place-find-range-section" style="display:none">
+							<div class="resetable" id="place-find-range-section" style="display:none">
 								<select id="welocally_default_search_radius" name="welocally_default_search_radius" >
 									<option value="2">2 km</option>
 									<option value="4">4 km</option>
@@ -1170,12 +1219,12 @@ jQuery(document).ready(function(jQuery) {
 								</select>&nbsp;<em>Distance in Km</em> 										
 							</div>	
 														
-							<div id="place-find-query-section" style="display:none">						
+							<div class="resetable" id="place-find-query-section" style="display:none">						
 								<div>*<em>What is the name of the place you are writing about or a simillar keyword...</em> REQUIRED</div> 
 								<div><input type="text" id="place-search" class="search-field" value="foo"></div>
 							</div>
 														
-							<div id="place-find-actions" class="action" style="display:none">
+							<div class="resetable" id="place-find-actions" class="action" style="display:none">
 								<button id="search-places-action">Find Places</button>			    					      
 							</div>												
 						</div>
@@ -1183,7 +1232,7 @@ jQuery(document).ready(function(jQuery) {
 					</div> 
 					<!-- end place selector -->
 					<!-- start place selector -->
-					<div id="selected-place">
+					<div id="selected-place" class="resetable">
 						<div class="meta-title2">Selected Place</div>
 						<div id="selected-place-info"></div>
 						<div id="categories-choice">
@@ -1198,35 +1247,35 @@ jQuery(document).ready(function(jQuery) {
 				    <div id="edit-place-form">
 				    	<div id="place-form-title" class="meta-title2">Add New Place</div>
 				    					    		    				    	
-				    	<div id="edit-place-name-section"></div>
+				    	<div class="resetable" id="edit-place-name-section"></div>
 				        
-				        <div id="edit-place-address-section" style="display:none"></div>
+				        <div class="resetable" id="edit-place-address-section" style="display:none"></div>
 				        
-				        <div id="edit-geocoded-section">
+				        <div class="resetable" id="edit-geocoded-section">
 								<div id="edit-geocoded-name-selected" class="selected-field">&nbsp;</div>
 								<div id="edit-geocoded-address-selected" class="selected-field">&nbsp;</div>
 						</div>
 				        
-				        <div id="categories-section" style="display:none">
+				        <div class="resetable" id="categories-section" style="display:none">
 				        	<div style="margin-top:10px; height:20px;" class="field-title">*Category Info: <em>Required</em></div>
 				        	<div id="edit-place-categories-selected"><ul id="edit-place-categories-selected-list"></ul></div>
 				        	<div id="edit-place-categories-selection"><ul id="edit-place-categories-selection-list" style="display:inline-block; list-style:none;"></ul></div>
 				        </div>
 
-						<div id="edit-place-optional-section" style="display:none">
-							<div style="margin-top:10px;"><em>Although these fields are optional is is strongly reccomended that you include the phone number and website of the place if you can find it.</em></div>
+						<div class="resetable" id="edit-place-optional-section" style="display:none">
+							<div style="margin-top:10px; margin-bottom:5px;"><em>These fields are optional but it is strongly reccomended that you include the phone number and website.</em></div>
 							<div id="step-phone">
 								Phone Number: (optional):</br>
-								<input type="text" id="edit-place-phone" name="edit-place-phone" class="edit-field" value="(415) 484-3593">
+								<input type="text" id="edit-place-phone" name="edit-place-phone" class="edit-field">
 							</div>
 							<div id="step-web">
 								Website: (optional):</br>
-								<input type="text" id="edit-place-web" name="edit-place-web" class="edit-field" value="http://ftwgroup.com">
+								<input type="text" id="edit-place-web" name="edit-place-web" class="edit-field">
 							</div>
 				        </div>
 				        
-	        			<div id="add-place-actions-section" class="action" style="display:inline-block; margin-top:10px;">
-							<button id="cancel-add-link" href="#">Cancel</button>
+	        			<div class="resetable" id="add-place-actions-section" class="action" style="display:inline-block; margin-top:10px;">
+							<button id="cancel-finder-workflow" href="#">Cancel</button>
 							<button id="save-place-action" href="#" style="display:none">Save</button>
 				        </div> 	   
 				    </div> 

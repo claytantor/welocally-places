@@ -1019,6 +1019,6 @@ InfoBox.prototype.close = function () {
 
 //every document
 jQuery(document).ready(function(jQuery) {
-	
-	
+	jQuery('.map_canvas_post img').css('max-width','100%');
 });
+

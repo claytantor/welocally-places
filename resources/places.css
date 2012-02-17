@@ -385,16 +385,35 @@ h4.wl-place-day + .post .entry-title {margin-top:6px;}
 }
 
 .welocally-error {
-	font-size:1.2em; 
-	color: #A30F0F;
-	font-variant: small-caps; font:1.2em Verdana, Arial, Helvetica, sans-serif; 
+	border: #D12424 1px solid;
+	color: #D12424;
+	font: 1.2em Verdana, Arial, Helvetica, sans-serif; 
+	background-color: #EBC7C7;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	margin-bottom: 5px;
 }
 
 .welocally-update {
-	font-size:1.2em; 
-	color: #A38D0F;
-	font-variant: small-caps; font:1.2em Verdana, Arial, Helvetica, sans-serif; 
+	border: #96841A 1px solid;
+	color: #96841A;
+	font: 1.2em Verdana, Arial, Helvetica, sans-serif; 
+	background-color: #F5EAAB;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	margin-bottom: 5px;
 }
+
+.welocally-message {
+	border: #2484BF 1px solid;
+	color: #2484BF;
+	font: 1.2em Verdana, Arial, Helvetica, sans-serif; 
+	background-color: #D3E3ED;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	margin-bottom: 5px;
+}
+
 
 .welocally-context-help {
 	width: 100%;
