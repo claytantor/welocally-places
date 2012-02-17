@@ -1,4 +1,6 @@
 <script>
+
+//probably obsolete
 var isWLPlace = <?php echo $isWLPlace  ?>;
 var jsonObjFeatures = []; //declare features array
 var markersArray = [];
