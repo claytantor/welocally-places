@@ -386,7 +386,7 @@ label { font-size:1.2em; color: #595959; font-weight:bold; width:400px; margin-t
 <div class="wrap">
 
 <div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
-<h2>Welocally Places Subscribe</h2>
+<h2>Welocally Places Registration</h2>
 <?php 
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
 include($menubar_include);

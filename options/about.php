@@ -73,7 +73,7 @@ $options = wl_set_general_defaults();
 
 //display error if not subscribed
 if(!is_subscribed()) {
-	echo '<div class="error fade"><p><strong>' . __( 'Please Subscribe To Activate Welocally Places' ) . "</strong></p></div>\n";
+	echo '<div class="error fade"><p><strong>' . __( 'Please Register To Activate Welocally Places' ) . "</strong></p></div>\n";
 } 
 
 ?>
