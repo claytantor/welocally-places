@@ -31,8 +31,6 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 
 </style>
 <script type="text/javascript" charset="utf-8">
-
-
 jQuery(document).ready(function(jQuery) {
 	
 	 if (typeof(jQuery.fn.parseJSON) == "undefined" || typeof(jQuery.parseJSON) != "function") { 

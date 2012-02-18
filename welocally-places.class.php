@@ -297,9 +297,12 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * @return void
 		 */
 		public function addPlaceBox( ) {
-				add_meta_box( 'Place Details', __( 'Welocally Places', 'Place_textdomain' ), 
-		                array( $this, 'placeMetaBox' ), 'post', 'normal', 'high' );
-		}
+			foreach (array('post','page') as $type)
+		    {
+		        add_meta_box( 'wl-place-finder-meta-1', __( 'Welocally Places', 'Place_textdomain' ), 
+				                array( $this, 'placeMetaBox' ), $type, 'normal', 'high' );
+		    }
+ 		}
 		
 		public function placeMetaBox() {
 			global $post;

@@ -311,7 +311,7 @@ endforeach;
 <?php if(wl_get_option('cat_map_select_show') == 'on') : ?>
 	jQuery( "#selectable" ).selectable({
 		   selected: function(event, ui) { 
-		   		console.log("selected");
+		   		
 		   		var index = ui.selected.id.replace("item","");
 		   		var selectedItem = items[index];
 		   		var placeLatLng = new google.maps.LatLng(selectedItem.place.geometry.coordinates[1], selectedItem.place.geometry.coordinates[0]);

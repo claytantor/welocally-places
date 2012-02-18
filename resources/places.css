@@ -508,6 +508,11 @@ max-width: 1030px;
 	margin:2px; 
 }
 
+.post-place-tag-tagtext { 
+	font-family: monospace; 
+	margin:2px; 
+}
+
 .share-place-tag-info { 
 	display: inline-block;
 	font-size:0.7em; 

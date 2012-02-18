@@ -1,7 +1,19 @@
+<?php global $post; ?>
 <script>
+if (!window.WELOCALLY) {
+    window.WELOCALLY = {
+    	
+    }
+}
 
-//probably obsolete would like to make non wp
-var isWLPlace = <?php echo $isWLPlace  ?>;
+//this can go farther
+WELOCALLY.meta = {
+	post: {
+		type: '<?php echo $post->post_type; ?>',
+		id: '<?php echo $post->ID; ?>'
+	}
+}
+
 var jsonObjFeatures = []; //declare features array
 var markersArray = [];
 var selectedFeatureIndex = 0;
@@ -11,7 +23,7 @@ var map;
 var selectedGeocode;
 var selectedPlace = {
 	properties: {},
-	type: "Place",
+	type: 'Place',
 	classifiers: [
 		{
 			type: '',
@@ -147,7 +159,6 @@ function searchLocations(location, queryString, radiusKm) {
 	  			
 	  		} else if(data != null && data.length > 0) {
 				jQuery.each(data, function(i,item){
-					console.log(JSON.stringify(item));
 					jsonObjFeatures.push(item);	    		
 					jQuery('#selectable').append(buildListItemForPlace(item,i));
 					
@@ -200,7 +211,7 @@ function buildCategorySelectionsForPlace(place, container) {
 		
 }
 
-function setSelectedPlaceInfo(selectedItem) {
+function setSelectedPlaceInfo(selectedItem, post) {
 		
 	//set form fields for save post
 	selectedPlace = selectedItem;
@@ -210,7 +221,7 @@ function setSelectedPlaceInfo(selectedItem) {
 		" "+selectedPlace.properties.city+" "+selectedPlace.properties.province+" "+
 		selectedPlace.properties.postcode);
 	
-	jQuery('#places-tag-selected').html('[welocally id="'+selectedPlace._id+'" /]');	
+	jQuery('#share-meta-tagtext').val(WELOCALLY.places.tag.makePlaceTag(selectedPlace, post));	
 	jQuery('#places-tag-selected').show(); 
 	
 	var selectedLocation = new google.maps.LatLng(selectedPlace.geometry.coordinates[1], selectedPlace.geometry.coordinates[0]);		
@@ -827,7 +838,7 @@ jQuery(document).ready(function(jQuery) {
 			} else {
 				selectedPlace._id=data.id;
 				setStatus('Your new place has been added!', 'message', false);
-				setSelectedPlaceInfo(selectedPlace);
+				setSelectedPlaceInfo(selectedPlace, WELOCALLY.meta.post);
 			}
 		  }
 		});
@@ -835,25 +846,12 @@ jQuery(document).ready(function(jQuery) {
         
         return false;
     });
-    
-    jQuery("input[name='isWLPlace']" ).change(function(){
-    	if (jQuery("input[name='isWLPlace']:checked").val() == 'true') { 
-        	jQuery("#place-selector-form").show();
-        	
-        	//no place has been selected yet
-        	if(selectedPlaceObject == null) {
-        		jQuery("#place-selector").show();
-        	}
-        		
-    	} else if (jQuery("input[name='isWLPlace']:checked").val() == 'false') { 
-	        jQuery("#place-selector-form").hide();	
-    	} 
-    });   
+ 
     
     jQuery( "#selectable" ).selectable({
 		   selected: function(event, ui) {
-				selectedFeatureIndex = jQuery("#scroller-places li").index(ui.selected);
-				setSelectedPlaceInfo(jsonObjFeatures[selectedFeatureIndex]);				
+				selectedFeatureIndex = jQuery("#scroller-places li").index(ui.selected);	
+				setSelectedPlaceInfo(jsonObjFeatures[selectedFeatureIndex], WELOCALLY.meta.post);				
 		   }
 	});
 	
@@ -1200,7 +1198,12 @@ jQuery(document).ready(function(jQuery) {
 							<div class="resetable" id="search-geocoded-section">
 								<div id="search-geocoded-name-selected" class="selected-field">&nbsp;</div>
 								<div id="search-geocoded-address-selected" class="selected-field">&nbsp;</div>
-								<div id="places-tag-selected" class="tag-field" style="display:none">&nbsp;</div>
+								<div id="places-tag-selected" style="display:none; margin-bottom:10px;">
+									<div class="tag-line">
+										<div><em>Place this tag in your edit area to link to post. Or use the Welocally TinyMCE button to insert.</em></div>				
+										<div><input class="search-field post-place-tag-tagtext" type="text" id="share-meta-tagtext"></input></div>
+									</div>						
+								</div>
 							</div>
 																				
 							<div class="resetable" id="place-find-range-section" style="display:none">
@@ -1217,7 +1220,7 @@ jQuery(document).ready(function(jQuery) {
 														
 							<div class="resetable" id="place-find-query-section" style="display:none">						
 								<div>*<em>What is the name of the place you are writing about or a simillar keyword...</em> REQUIRED</div> 
-								<div><input type="text" id="place-search" class="search-field" value="foo"></div>
+								<div><input type="text" id="place-search" class="class="search-field"" value="foo"></div>
 							</div>
 														
 							<div class="resetable" id="place-find-actions" class="action" style="display:none">

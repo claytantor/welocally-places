@@ -190,7 +190,6 @@ jQuery(document).ready(function(jQuery) {
 <?php while ( have_posts() ) : the_post();?> 
 
 <?php $index=$index+1; ?>	
-	//console.log('<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>');
 	places[<?php echo $index; ?>] = jQuery.parseJSON( '<?php echo $bodytag = str_replace("'", "\'", get_post_meta( $post->ID, '_PlaceSelected', true )); ?>' );	
 	
 	var latlng = new google.maps.LatLng(places[<?php echo $index; ?>].geometry.coordinates[1], places[<?php echo $index; ?>]..geometry.coordinates[0]);

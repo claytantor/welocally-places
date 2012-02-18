@@ -19,7 +19,6 @@ var subscribed_saved = false;
 jQuery(document).ready(function() {
 	
 	if(jQuery("#registration_result").html() != null){
-		console.log(jQuery("#registration_result").html());
 		var keydata = JSON.parse(jQuery("#registration_result").html());
 		
 		set_form_fields( 

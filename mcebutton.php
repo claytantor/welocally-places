@@ -24,6 +24,4 @@ function add_welocally_places_mce_plugin( $plugin_array ) {
 }
 
 
-
-
 ?>

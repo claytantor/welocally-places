@@ -38,9 +38,9 @@
 		</div>
 		<div style="display:inline-block; width:100%; height:10px">
 			<div class="share-place-tag-info">Place this tag in your own <a href="http://welocally.com/?page_id=2">Welocally Places</a> powered <a href="http://wordpress.org/extend/plugins/welocally-places/">wordpress</a> site.</div>
-			<div class="tag-powered-by"><img width="95" height="20" 
+			<div class="tag-powered-by"><a href="http://welocally.com/?page_id=2"><img width="95" height="20" 
 			src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/places_powered.png" 
-			alt="" title=""/></div>
+			alt="" title="Powered by Welocally Places"/></a></div>
 		</div>
 	</div>	
 </div>

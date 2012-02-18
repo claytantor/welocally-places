@@ -77,8 +77,7 @@ if (!window.WELOCALLY) {
         },
         places: {
         	//PLACES SEARCH META
-        	search: {
-        		
+        	search: {       		
         	},
         	//MAP SECTION=========
         	map: {
@@ -212,7 +211,7 @@ if (!window.WELOCALLY) {
             				mapOptions);
             			
             			//we need this to override what themes sometimes do to images
-            			google.maps.event.addListener(map_post, 'idle', function() {
+            			google.maps.event.addListener(map_post, 'tilesloaded', function() {
             				jQuery('.map_canvas_post img').css('max-width','none');
             			});
             			
@@ -234,19 +233,19 @@ if (!window.WELOCALLY) {
             			
             		 
             		 } else if(showMap && !customStyle ){
-            			 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
-            			
-            				var mapOptions = {
-            				  zoom: 16,
-            				  center: latlng,
-            				  mapTypeId: google.maps.MapTypeId.ROADMAP
-            				};
+        			 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
+        			
+        				var mapOptions = {
+        				  zoom: 16,
+        				  center: latlng,
+        				  mapTypeId: google.maps.MapTypeId.ROADMAP
+        				};
             			
             			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
             				mapOptions);
             		
             			//we need this to override what themes sometimes do to images
-            			google.maps.event.addListener(map_post, 'idle', function() {
+            			google.maps.event.addListener(map_post, 'tilesloaded', function() {
             				jQuery('.map_canvas_post img').css('max-width','none');
             			});
             			
@@ -263,8 +262,14 @@ if (!window.WELOCALLY) {
             			
             		 }
                 },                 
-                makePlaceTag: function(place) {
-                	return '[welocally id="'+place._id+'"/]';
+                makePlaceTag: function(place, post) {
+                	var tag = '';
+        			if(post == null){
+        				tag = '[welocally id="'+place._id+'" /]';
+        			} else {
+        				tag = '[welocally id="'+place._id+'" postId="'+post.id+'" type="'+post.type+'" /]';
+        			}
+        			return tag;
                 }               			                	
             }
         }
