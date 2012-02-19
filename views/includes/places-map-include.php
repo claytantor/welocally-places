@@ -92,8 +92,8 @@ jQuery(document).ready(function(jQuery) {
 	
 
 <?php if(wl_get_option('map_custom_style') != '') : ?>	
-
-	var welocallyMapStyle = <?php printf(base64_decode(wl_get_option("map_custom_style")))  ?>;
+	//make the style map
+	var welocallyMapStyle = <?php printf(wl_get_option("map_custom_style"))  ?>;
 
 	// Create a new StyledMapType object, passing it the array of styles,
   	// as well as the name to be displayed on the map type control.
@@ -105,12 +105,15 @@ jQuery(document).ready(function(jQuery) {
       }
     };
     
-    wl_map_widget = new google.maps.Map(document.getElementById("map_canvas_widget"),
-        mapOptions);
-        
-    //Associate the styled map with the MapTypeId and set it to display.
-  	wl_map_widget.mapTypes.set('welocally_style', styledMapType);
-  	wl_map_widget.setMapTypeId('welocally_style');  
+    var wl_map_widget = new Array();
+	
+	for (var i=0; i<map_canvas_widgets.length; i++) {
+		wl_map_widget[i] = new google.maps.Map(map_canvas_widgets[i],
+	        mapOptions);
+	    wl_map_widget[i].mapTypes.set('welocally_style', styledMapType);
+  		wl_map_widget[i].setMapTypeId('welocally_style');  
+	}
+    
 
 <?php else:?>  	
   	

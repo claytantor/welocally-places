@@ -355,7 +355,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
                 $customMapJson = '[  ]';
                 if(wl_get_option('map_custom_style') != ''){
                  $isCustom = true;
-                 $customMapJson = base64_decode(wl_get_option("map_custom_style"));
+                 $customMapJson = wl_get_option("map_custom_style");
                 }
                 
                 $whereImage=$this->pluginUrl.'/resources/images/here.png';
@@ -418,7 +418,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$customMapJson = '[  ]';
 			if(wl_get_option('map_custom_style') != ''){
 				$isCustom = 'true';
-				$customMapJson = base64_decode(wl_get_option("map_custom_style"));
+				$customMapJson = wl_get_option("map_custom_style");
 			}
 			
 			$whereImage=$this->pluginUrl.'/resources/images/here.png';

@@ -154,7 +154,7 @@ jQuery(document).ready(function(jQuery) {
 	
 	<?php if(wl_get_option('map_custom_style') != '') : ?>	
 
-	var welocallyMapStyle = <?php printf(base64_decode(wl_get_option("map_custom_style")))  ?>;
+	var welocallyMapStyle = <?php printf(wl_get_option("map_custom_style"))  ?>;
 
 	// Create a new StyledMapType object, passing it the array of styles,
   	// as well as the name to be displayed on the map type control.

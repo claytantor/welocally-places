@@ -501,9 +501,10 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$queryResult = $wpdb->get_results($query, OBJECT);
 		
 		$excerpt = trim_excerpt($queryResult[0]->post_content, $queryResult[0]->post_excerpt);	
-		$excerpt = WelocallyPlaces_Tag::searchAndReplace($excerpt, create_function('$tag,$tag_str', 'return ""'));
+		//$excerpt = WelocallyPlaces_Tag::searchAndReplace($excerpt, create_function('$tag,$tag_str', 'return ""'));
 		$excerpt = str_replace( '\'', '', $excerpt );
 		$excerpt = trim( preg_replace( '/\s+/', ' ', $excerpt ) );
+		$excerpt = "";
 		
 		return $excerpt;
 	}
@@ -547,7 +548,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	    return $wlPlaces->getPostPlaces($post_id);
 	}
 	
-// functions for get tamlate
+// functions for get template
 	function wl_places_get_template_map_widget(){
 		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
 		$theme_dir = get_theme_view_dir();	
