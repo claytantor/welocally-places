@@ -141,8 +141,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	function wl_save_options($options) {
-		//error_log("A", 0);
-		
 		
 		$options_r = print_r($options, true);
 		//error_log("saving options:".$options_r, 0);
@@ -153,6 +151,18 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		if ( array_key_exists( 'update_places', $options )) {
 			update_places();
 		}
+	}
+	
+	function delete_post_places($post_id=0) {
+	    global $wlPlaces;	    
+	    if (!$post_id) $post_id = get_the_ID();	    
+	    $wlPlaces->deletePostPlaces($post_id);
+	}
+	
+	function delete_post_places_meta($post_id=0) {
+	    global $wlPlaces;	    
+	    if (!$post_id) $post_id = get_the_ID();	    
+	    $wlPlaces->deletePostPlacesMeta($post_id);
 	}
 	
 	
@@ -225,55 +235,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	/**
-	 * 	{
-		    "externalId": "SG_4v40yDHN9oDVgf2bjFMtIa_37.779701_-122.218002@1303263339",
-		    "type": "SG",
-		    "name": "Joe's Meat",
-		    "latitude": 37.779701,
-		    "longitude": -122.218002,
-		    "address": "1600 12th",
-		    "city": "Oakland",
-		    "state": "CA",
-		    "postalCode": "94601",
-		    "phone": "+1 510 763 3154",
-		    "website": "",
-		    "categories": [
-		        "Food & Beverages"
-		    ]
-		}
-		
-		{
-		    "_id": "%1$s",
-		    "properties": {
-		        "name": "%2$s",    
-		        "address": "%3$s",
-		        "city": "%4$s",
-		        "province": "%5$s",
-		        "postcode": "%6$s",
-		        "country": "US",
-		        "phone": "%7$s",
-		        "website": "%8$s",
-		        "owner": "welocally",
-		        "classifiers": [
-		            {
-		                "category": "%9$s",
-		                "subcategory": "%10$s",
-		                "type": "%11$s"
-		            }
-		        ]        
-		    },
-		    "type": "Place",
-		    "geometry": {
-		        "type": "Point",
-		        "coordinates": [
-		            %13$s,
-		            %12$s
-		        ]
-		    }
-		}
-		
-		
-		
+	 * 	
 	 * takes a legacy json string in and returns a json string out
 	 */
 	function convert_legacy_place($legacyPlaceJsonRaw){
@@ -281,7 +243,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 				json_decode($legacyPlaceJsonRaw, true);
 		
 		$legacyCategories = $legacyPlaceJson{'categories'};
-		//error_log("category:".$legacyCategories[1], 0);
 		
 		$template = file_get_contents(dirname( __FILE__ ) . '/templates/newplace-template.json');
 		
@@ -315,18 +276,13 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$cat_ID = $wlPlaces->placeCategory();
 		
 		$places_in_category_posts = get_places_posts_for_category($cat_ID);			
-			
-		//error_log("got place count:".count($places_in_category_posts), 0);
-	
-		
+					
 		$index = 0;
 		foreach( $places_in_category_posts as $post ) {	
 			
 			$placeJsonRaw = str_replace(
 						"\'", "", 
 						get_post_meta( $post->ID, '_PlaceSelected', true ));		
-						
-			//error_log("place json:".$placeJsonRaw, 0);
 					
 			$placeJson = 
 				json_decode($placeJsonRaw, true); 
@@ -426,6 +382,10 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		return $return;
 	}
 	
+	
+	/**
+	 * is this obsolete?
+	 */
 	function get_place_post_ids_by_category( $orderBy = null, $orderDir = null, $categoryId = null ) {
 
 		global $wpdb, $wlPlaces;
@@ -471,7 +431,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	
 	function delete_place_by_post_id( $postId = null) {
 		
-		delete_post_meta($postId, '_PlaceSelected');
 		delete_post_meta($postId, '_PlaceSelected');
 		
 	}
@@ -546,6 +505,14 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	    if (!$post_id) $post_id = get_the_ID();
 	    
 	    return $wlPlaces->getPostPlaces($post_id);
+	}
+	
+	function get_post_places_meta($post_id=0) {
+	    global $wlPlaces;
+	    
+	    if (!$post_id) $post_id = get_the_ID();
+	    
+	    return $wlPlaces->getPostPlacesMeta($post_id);
 	}
 	
 // functions for get template

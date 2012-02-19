@@ -215,6 +215,10 @@ if (!window.WELOCALLY) {
             				jQuery('.map_canvas_post img').css('max-width','none');
             			});
             			
+            			google.maps.event.addListener(map_post, 'mouseover', function() {
+            				jQuery(this).css('cursor','move');
+            			});
+            			
             				
             			//Associate the styled map with the MapTypeId and set it to display.
             			map_post.mapTypes.set('welocally_style', styledMapType);
@@ -247,6 +251,10 @@ if (!window.WELOCALLY) {
             			//we need this to override what themes sometimes do to images
             			google.maps.event.addListener(map_post, 'tilesloaded', function() {
             				jQuery('.map_canvas_post img').css('max-width','none');
+            			});
+            			
+            			google.maps.event.addListener(map_post, 'mouseover', function() {
+            				jQuery(this).css('cursor','move');
             			});
             			
             			

@@ -120,9 +120,7 @@ function addItemMarker(
 			} else {
 				ib.open(mMarker.map, this);
 			}
-			
-			
-			
+	
 		
 	});
 	

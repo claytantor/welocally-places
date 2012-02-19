@@ -9,6 +9,11 @@
 .align-left { float:left; margin: 0 0 10px 10px; }
 
 
+/*-- jquery --*/
+.ui-button-text {
+	color: #505050;
+}
+
 /*--- we locally specific --*/
 .place_item {
 	padding:10px;
@@ -367,7 +372,9 @@ h4.wl-place-day + .post .entry-title {margin-top:6px;}
 
 .wl_options_heading { margin-top:10px; color: #333333; font-variant: small-caps; font:1.2em Verdana, Arial, Helvetica, sans-serif; text-transform:uppercase}
 
-.form-table {  width:98%; margin-bottom:10px;  border: 1px solid #888888; background: #eeeeee; padding: 5px; }
+.form-table {  
+	border-collapse: separate;
+	width:98%; margin-bottom:10px;  border: 1px solid #888888; background: #f2f2f2; padding: 5px; } 
 
 #welocally_cat_map_none{ display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('images/layout_selector_none_up.png') no-repeat 0 bottom;}
 #welocally_cat_map_center{display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('images/layout_selector_center_up.png') no-repeat 0 bottom;}
