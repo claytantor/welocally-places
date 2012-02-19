@@ -492,17 +492,12 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		}	
 			
 		public function addPlaceMeta( $postId, $action ) {
-			error_log("addPlaceMeta: [".$_POST['PlaceSelected']."]", 0);
-			//check to delete existing place info
-			
 			
 			if(!empty( $_POST['deletePlaceInfo'] )){
 				delete_post_meta($postId, '_PlaceSelected');
 				delete_post_meta($postId, '_isWLPlace');
 				update_post_meta( $postId, '_isWLPlace', 'false' );
 			} else if( !empty( $_POST['PlaceSelected']) ) {
-
-				//error_log("save case 1: [".$_POST['PlaceSelected']."]", 0);
 
 				$category_id = $this->create_category_if_not_exists();				
 							
@@ -539,7 +534,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				update_post_meta( $postId, '_isWLPlace', 'false' );
 			} 
 			else if($_POST['isWLPlace'] == 'false' || !isset( $_POST['isWLPlace']) ) {
-				error_log("save case 3", 0);
 				update_post_meta( $postId, '_isWLPlace', 'false' );
 			}
 			
