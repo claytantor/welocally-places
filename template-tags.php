@@ -305,6 +305,8 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	 * subsequently call the_post() in your template, as this will start the loop twice and then
 	 * you're in trouble.
 	 * 
+	 * OBSOLETE
+	 * 
 	 * http://codex.wordpress.org/Displaying_Posts_Using_a_Custom_Select_Query#Query_based_on_Custom_Field_and_Category
 	 *
 	 * @param int number of results to display for upcoming or past modes (default 10)
@@ -409,10 +411,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		//iterate through those, we could probably come up with a query here 
 		//because we are effectively creating a join, but this is already a pretty
-		//complex query, this should probably be improved later
-			
-			
-			
+		//complex query, this should probably be improved later			
 		$return = $wpdb->get_results($placesQuery, OBJECT);
 		return $return;
 	}

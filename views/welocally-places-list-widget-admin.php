@@ -1,8 +1,3 @@
-<script type="text/javascript">
-jQuery(document).ready(function() {
-
-});
-</script>
 <style type="text/css">
 
 </style>
@@ -16,7 +11,7 @@ jQuery(document).ready(function() {
 	</div>
 	<div class="line-spacer-10">&nbsp;</div>	
 	<!-- limit -->	
-	<div>
+	<?php /*<div>
 	<label for="<?php echo $this->get_field_id( 'limit' ); ?>">
 		<?php _e('Max Items:',$this->pluginDomain);?></label>
 	<select id="<?php echo $this->get_field_id( 'limit' ); ?>"  
@@ -27,6 +22,8 @@ jQuery(document).ready(function() {
 	</select>
 	</div>
 	<div class="line-spacer-10">&nbsp;</div>
+	*/
+	?>
 	<!-- order field -->	
 	<div>
 	<label for="<?php echo $this->get_field_id( 'order_by' ); ?>">
