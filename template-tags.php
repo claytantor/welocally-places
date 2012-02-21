@@ -388,42 +388,13 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		return $return;
 	}
 	
-	/*
-	 * given a specific category, no matter what it is, return the
-	 * post ids within it that are also place posts. this essentially
-	 * acts as a place filter for posts in a category so that only 
-	 * those will be shown on the map
-	 * 
+	/**
+	 * @see WelocallyPlaces::getPlacePostsInCategory()
+	 * @deprecated deprecated since 1.1.17.
 	 */
 	function get_places_posts_for_category($categoryId){
-				
-		global $wpdb, $wlPlaces;
-		$wlPlaces->setOptions();
-		
-		$categoryPlacesId = $wlPlaces->placeCategory();
-
-		$categories_query = "select 
-                        $wpdb->posts.*
-                        from $wpdb->term_taxonomy, $wpdb->term_relationships, $wpdb->posts, $wpdb->terms 
-                        where $wpdb->term_taxonomy.term_taxonomy_id = $wpdb->term_relationships.term_taxonomy_id
-                        AND $wpdb->term_taxonomy.term_id = $wpdb->terms.term_id
-                        AND $wpdb->posts.id = $wpdb->term_relationships.object_id
-                        AND $wpdb->term_taxonomy.term_id = $categoryId
-                        AND $wpdb->term_taxonomy.taxonomy = 'category' 
-                        AND $wpdb->posts.post_status = 'publish'
-                        AND $wpdb->posts.id in (select $wpdb->posts.ID  
-                                FROM $wpdb->posts 
-                                LEFT JOIN $wpdb->postmeta as d1 ON($wpdb->posts.ID = d1.post_id) 
-                                LEFT JOIN $wpdb->term_relationships ON($wpdb->posts.ID = $wpdb->term_relationships.object_id) 
-                                LEFT JOIN $wpdb->term_taxonomy ON($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id) 
-                                WHERE $wpdb->term_taxonomy.term_id = $categoryPlacesId
-                                AND $wpdb->term_taxonomy.taxonomy = 'category' 
-                                AND $wpdb->posts.post_status = 'publish' 
-                                GROUP BY $wpdb->posts.ID)";
-                                
-		$return = $wpdb->get_results($categories_query, OBJECT);
-		
-		return $return;
+		global $wlPlaces;
+		return $wlPlaces->getPlacePostsInCategory($categoryId, 'post');
 	}
 	
 	function get_place_post_ids_by_category( $orderBy = null, $orderDir = null, $categoryId = null ) {

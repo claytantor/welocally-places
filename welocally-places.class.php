@@ -644,6 +644,41 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		        
 		    return array();
 		}
+
+		/**
+		 * Return the posts with places associated inside a category.
+		 * @param int the category ID
+		 * @param string|array post types to search for in the category (defaults to 'post'). use false/null if you want to retrieve all post types.
+		 * @return array 
+		 */
+		public function getPlacePostsInCategory($categoryId, $post_type='post') {
+			global $wpdb, $wlPlaces;
+			$wlPlaces->setOptions();
+
+			$post_type_and = '1=1';
+			if (is_array($post_type) && !empty($post_type)) {
+				$post_type_and = "{$wpdb->posts}.post_type IN ('" . implode('\',\'', $post_type) . "')";
+			} elseif (is_string($post_type)) {
+				$post_type_and = "{$wpdb->posts}.post_type = '" . $wpdb->escape($post_type) . "'";
+			}
+
+			$categories_query = "select 
+	                        $wpdb->posts.*
+	                        from $wpdb->term_taxonomy, $wpdb->term_relationships, $wpdb->posts, $wpdb->terms 
+	                        where $wpdb->term_taxonomy.term_taxonomy_id = $wpdb->term_relationships.term_taxonomy_id
+	                        AND $wpdb->term_taxonomy.term_id = $wpdb->terms.term_id
+	                        AND $wpdb->posts.id = $wpdb->term_relationships.object_id
+	                        AND $wpdb->term_taxonomy.term_id = $categoryId
+	                        AND $wpdb->term_taxonomy.taxonomy = 'category' 
+	                        AND $wpdb->posts.post_status = 'publish' AND " . $post_type_and . "
+	                        AND $wpdb->posts.id in (select $wpdb->posts.ID  
+	                                FROM $wpdb->posts INNER JOIN {$wpdb->prefix}wl_places_posts
+	                                ON $wpdb->posts.ID = {$wpdb->prefix}wl_places_posts.post_id
+	                                GROUP BY $wpdb->posts.ID)";
+
+			$return = $wpdb->get_results($categories_query, OBJECT);
+			return $return;
+		}
 		
 		
 		
