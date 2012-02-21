@@ -510,7 +510,6 @@ max-width: 1030px;
 
 .share-place-tag-tagtext { 
 	width: 98%; 
-	font-size:0.7em;
 	font-family: monospace; 
 	margin:2px; 
 }
@@ -537,7 +536,7 @@ max-width: 1030px;
 	width:26%;
 }
 
-.wl-place-links{ height: 30px; }
+.wl-place-links{  }
   
  
 

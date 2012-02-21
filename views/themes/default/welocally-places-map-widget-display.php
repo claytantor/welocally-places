@@ -17,7 +17,7 @@ include($infobox_include);
 ?>
 
 
-<li class="widget sidebar-item">
+<aside class="widget sidebar-item">
 <h3 class="widget-title"><?php echo $title; ?></h3>
 <div id="map_widget_container">
 	<div id="map_canvas_widget"></div>
@@ -34,5 +34,5 @@ include($infobox_include);
 			</a>
 			</div>
 </div>
-</li>
+</aside>
 

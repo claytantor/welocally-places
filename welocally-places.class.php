@@ -80,7 +80,11 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
             return WelocallyPlaces_Tag::searchAndReplace($content, array($this, 'addPostPlaceTagMarkup'));
 		}
 		
+		//this is a little strange is ths obsolete?
 		public function templateChooser() {
+			
+			//temporary disable
+			//return;
 
 			$cat_map_layout_type = $this->getSingleOption('cat_map_layout');
 					

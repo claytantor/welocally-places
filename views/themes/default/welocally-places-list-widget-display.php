@@ -1,7 +1,7 @@
 <?php
 global $wlPlaces;
 $index = 0;
-echo '<li class="widget sidebar-item"><h3 class="widget-title">'.$title.'</h3><div><ul class="wl-places-list">';
+echo '<aside class="widget sidebar-item"><h3 class="widget-title">'.$title.'</h3><div><ul class="wl-places-list">';
 
 foreach ($posts as $post):
     foreach (get_post_places($post) as $place):
@@ -30,5 +30,5 @@ include($places_list_include);
 	$index=$index+1;
 	endforeach;
 endforeach;
-echo "</ul></div></li>";
+echo "</ul></div></aside>";
 ?>	
