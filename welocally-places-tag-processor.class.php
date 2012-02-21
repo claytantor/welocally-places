@@ -55,7 +55,6 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
                 
                 if ($tag->categories && get_post_type($postId) != 'page') {
                     $customCategories = array();
-                    $customCategories[] = $wlPlaces->create_category_if_not_exists();
                     
                     foreach ($tag->categories as $customCategory) {
                         $customCategories[] = get_cat_ID($customCategory) ? get_cat_ID($customCategory) : wp_create_category($customCategory);
