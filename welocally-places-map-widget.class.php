@@ -37,7 +37,7 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 				if( function_exists( 'get_places' ) ) {
 					$old_display = $wp_query->get('placeMapDisplay');
 					$wp_query->set('placeMapDisplay', 'places');
-					$posts = get_places($limit, null, null ,WelocallyPlaces::CATEGORYNAME);
+					$posts = get_places($limit, null, null);
 				}
 				
 				if( $posts ) {

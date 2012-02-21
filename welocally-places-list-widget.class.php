@@ -36,7 +36,7 @@ if( !class_exists( 'WelocallyPlaces_Widget' ) ) {
 				if( function_exists( 'get_places' ) ) {
 					$old_display = $wp_query->get('placeDisplay');
 					$wp_query->set('placeDisplay', 'places');
-					$posts = get_places($limit, $order_by, $order_dir, WelocallyPlaces::CATEGORYNAME);
+					$posts = get_places($limit, $order_by, $order_dir);
 				}
 				
 				if( $posts ) {
