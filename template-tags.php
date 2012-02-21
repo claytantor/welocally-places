@@ -200,7 +200,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	function update_places(){
 		global $wlPlaces;
 		$cat_ID = $wlPlaces->placeCategory();		
-		$places_in_category_posts = get_places_posts_for_category($cat_ID);	
+		$places_in_category_posts = $wlPlaces->getPlacePostsInCategory($cat_ID, null);
 		
 		$index = 0;
 		foreach( $places_in_category_posts as $post ) {	
@@ -352,45 +352,30 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	 * http://codex.wordpress.org/Displaying_Posts_Using_a_Custom_Select_Query#Query_based_on_Custom_Field_and_Category
 	 *
 	 * @param int number of results to display for upcoming or past modes (default 10)
-	 * @param string category name to pull places from, defaults to the currently displayed category
+	 * @param string column name used for ordering
+	 * @param string order direction
+	 * @param string category name to pull places from, defaults to the currently displayed category (if any) or else, everything
+	 * @uses WelocallyPlaces::getPlacePosts()
 	 * @uses $wpdb
 	 * @uses $wp_query
 	 * @return array results
 	 */
 	function get_places( $numResults = null, $orderBy = null, $orderDir = null, $catName = null ) {
-		if( !$numResults ) $numResults = get_option( 'posts_per_page', 10 );
-		global $wpdb, $wlPlaces;
-		$wlPlaces->setOptions();
-		if( $catName ) {
-			$categoryId = get_cat_id( $catName );		
-		} else {
-			$categoryId = get_query_var( 'cat' );
-		}		
-		$extraSelectClause ='';
-		$orderClause = '';
-		if($orderBy) {
-			$orderClause = "ORDER BY ".$orderBy." ".$orderDir;
-		}
-		$placesQuery = "
-			SELECT $wpdb->posts.*
-				$extraSelectClause
-			 	FROM $wpdb->posts 
-			LEFT JOIN $wpdb->postmeta as d1 ON($wpdb->posts.ID = d1.post_id)
-			LEFT JOIN $wpdb->term_relationships ON($wpdb->posts.ID = $wpdb->term_relationships.object_id)
-			LEFT JOIN $wpdb->term_taxonomy ON($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)
-			WHERE $wpdb->term_taxonomy.term_id = $categoryId
-			AND $wpdb->term_taxonomy.taxonomy = 'category'
-			AND $wpdb->posts.post_status = 'publish'
-			GROUP BY $wpdb->posts.ID ".$orderClause." LIMIT $numResults";
-			
-		/*syslog(LOG_WARNING, $placesQuery);*/
-		$return = $wpdb->get_results($placesQuery, OBJECT);
-		return $return;
+		global $wlPlaces;
+
+		if (!$numResults)
+			$numResults = get_option('posts_per_page', 10);
+
+		$categoryId = $catName ? intval(get_cat_ID($catName)) : intval(get_query_var('cat'));
+
+		return $wlPlaces->getPlacePosts('post', $categoryId, array('limit' => $numResults,
+											  			 		   'order_by' => $orderBy,
+											  			  		   'order_dir' => $orderDir));
 	}
 	
 	/**
 	 * @see WelocallyPlaces::getPlacePostsInCategory()
-	 * @deprecated deprecated since 1.1.17.
+	 * @deprecated deprecated since 1.1.17
 	 */
 	function get_places_posts_for_category($categoryId){
 		global $wlPlaces;
