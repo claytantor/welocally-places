@@ -679,11 +679,74 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$return = $wpdb->get_results($categories_query, OBJECT);
 			return $return;
 		}
-		
-		
-		
-		
+
+		/**
+		 * Returns posts with associated place information.
+		 * @param string|array post types to search for (defaults to 'post'), use false/null to search all post types
+		 * @param string|int|array name or ID of category to search in or array of such IDs/names in order to search in several categories at once (intval is required for integers)
+		 * @param array array of other options: 'limit' (max number of results), 'order_by' (column name for ordering) and 'order_dir' (ordering direction)
+		 * @return array posts with associated places that match the filtering options
+		 */
+		public function getPlacePosts($post_type='post', $category=null, $opts=array()) {
+			global $wpdb, $wlPlaces;
+			$wlPlaces->setOptions();
+
+			$options = array_merge(array('limit' => null, 'order_by' => "{$wpdb->posts}.ID", 'order_dir' => 'asc'), $opts);
+
+			// filter by post type
+			$post_typeClause = '1=1';
+			if (is_array($post_type) && !empty($post_type)) {
+				$post_typeClause = "{$wpdb->posts}.post_type IN ('" . implode('\',\'', $post_type) . "')";
+			} elseif (is_string($post_type)) {
+				$post_typeClause = "{$wpdb->posts}.post_type = '" . $wpdb->escape($post_type) . "'";
+			}
+
+			// filter by categories
+			$categoriesClause = '1=1';
+			$categories = array();
+			if (!is_array($category)) $category = array($category);
+
+			foreach ($category as $cat) {
+				if (is_string($cat)) {
+					if ($catid = get_cat_ID($cat))
+						$categories[] = $catid;
+				} elseif (is_int($cat) && $cat > 0) {
+					$categories[] = $cat;
+				}
+			}
+
+			if ($categories) {
+				$categoriesClause = "{$wpdb->term_taxonomy}.term_id IN (" . implode(',', $categories) . ")";
+			}
+
+			// ordering/limit number
+			$orderClause = '';
+			if ($options['order_by'])
+				$orderClause = sprintf('ORDER BY %s %s', $options['order_by'], $options['order_dir'] ? $options['order_dir'] : 'ASC');
+			
+			$limitClause = '';
+			if ($options['limit'] && $options['limit'] > 0) {
+				$limitClause = sprintf('LIMIT %d', $options['limit']);
+			}
+
+			$query = "
+				SELECT {$wpdb->posts}.* FROM {$wpdb->posts}
+				LEFT JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)
+				LEFT JOIN {$wpdb->term_taxonomy} ON ({$wpdb->term_taxonomy}.term_taxonomy_id = {$wpdb->term_relationships}.term_taxonomy_id)
+				WHERE {$wpdb->term_taxonomy}.taxonomy = 'category'
+				AND {$categoriesClause}
+				AND {$wpdb->posts}.post_status = 'publish'
+				GROUP BY {$wpdb->posts}.ID
+				{$orderClause}
+				{$limitClause}
+			";
+
+	  		$results = $wpdb->get_results($query);	  		
+			return $results;
+		}
+			
 	}
+
 	global $wlPlaces;
 	$wlPlaces = new WelocallyPlaces();
 }
