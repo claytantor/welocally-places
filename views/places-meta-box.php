@@ -140,7 +140,9 @@ function searchLocations(location, queryString, radiusKm) {
       },
 	  error : function(jqXHR, textStatus, errorThrown) {	  		
 	  		if(textStatus != 'abort'){
-	  			setStatus('ERROR : '+textStatus, 'error', true);
+	  			setStatus('ERROR : '+textStatus, 'error', false);
+	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
+	  			
 	  		}	else {
 	  			console.log(textStatus);
 	  		}		
@@ -326,7 +328,8 @@ function getCategories(type, category) {
 	      },
 		  error : function(jqXHR, textStatus, errorThrown) {
 			if(textStatus != 'abort'){
-	  			setStatus('ERROR : '+textStatus, 'error', true);
+	  			setStatus('ERROR : '+textStatus, 'error', false);
+	  			jQuery('#edit-place-categories-selection').append(jQuery('#cancel-finder-workflow'));	
 	  		}	else {
 	  			console.log(textStatus);
 	  		}	
@@ -342,7 +345,8 @@ function getCategories(type, category) {
 		  	}
 		  	
 			if(data.errors != null) {
-				buildErrorMessages(data.errors);		
+				buildErrorMessages(data.errors);	
+				jQuery('#edit-place-categories-selection').append(jQuery('#cancel-finder-workflow'));		
 			} else {
 				currentCategories = data;
 				jQuery.each(data, function(key, val) {
@@ -826,7 +830,7 @@ jQuery(document).ready(function(jQuery) {
 	      },
 		  error : function(jqXHR, textStatus, errorThrown) {
 			if(textStatus != 'abort'){
-	  			setStatus('ERROR : '+textStatus, 'error', true);
+	  			setStatus('ERROR : '+textStatus, 'error', false);
 	  		}	else {
 	  			console.log(textStatus);
 	  		}		

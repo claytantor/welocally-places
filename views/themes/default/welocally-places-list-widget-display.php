@@ -15,7 +15,9 @@ foreach ($posts as $post):
  */
 $PlaceSelected	= $place;
 
-if( $PlaceSelected != '' && $_REQUEST['json'] != 'get_post') : 
+
+//inefficient
+if( $PlaceSelected != '' && $_REQUEST['json'] != 'get_post' && $index<$instance['limit'] ) : 
 
 $places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/places-list-include.php';
 include($places_list_include);
