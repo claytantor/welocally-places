@@ -272,29 +272,39 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	 * 
 	 */
 	function get_places_legacy_count() {
-		global $wlPlaces;
-		$cat_ID = $wlPlaces->placeCategory();
+		global $wpdb;
+			
+		$query = "SELECT $wpdb->postmeta.*
+			 	FROM $wpdb->postmeta 
+			WHERE $wpdb->postmeta.meta_key = '_PlaceSelected'";
+			
+		$return = $wpdb->get_results($query, OBJECT);
+		return count($return);
 		
-		$places_in_category_posts = get_places_posts_for_category($cat_ID);			
-					
-		$index = 0;
-		foreach( $places_in_category_posts as $post ) {	
-			
-			$placeJsonRaw = str_replace(
-						"\'", "", 
-						get_post_meta( $post->ID, '_PlaceSelected', true ));		
-					
-			$placeJson = 
-				json_decode($placeJsonRaw, true); 
-			
-			$pname = str_replace("\\'", "'", $placeJson{'name'});
-			
-			//error_log("place json name:".$pname, 0);
-			if($pname != null)
-				$index = $index+1; 
-			
-		}
-		return $index;
+		
+//		global $wlPlaces;
+//		$cat_ID = $wlPlaces->placeCategory();
+//		
+//		$places_in_category_posts = get_places_posts_for_category($cat_ID);			
+//					
+//		$index = 0;
+//		foreach( $places_in_category_posts as $post ) {	
+//			
+//			$placeJsonRaw = str_replace(
+//						"\'", "", 
+//						get_post_meta( $post->ID, '_PlaceSelected', true ));		
+//					
+//			$placeJson = 
+//				json_decode($placeJsonRaw, true); 
+//			
+//			$pname = str_replace("\\'", "'", $placeJson{'name'});
+//			
+//			//error_log("place json name:".$pname, 0);
+//			if($pname != null)
+//				$index = $index+1; 
+//			
+//		}
+//		return $index;
 		
 	}
 	
@@ -409,10 +419,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		//iterate through those, we could probably come up with a query here 
 		//because we are effectively creating a join, but this is already a pretty
-		//complex query, this should probably be improved later
-			
-			
-			
+		//complex query, this should probably be improved later			
 		$return = $wpdb->get_results($placesQuery, OBJECT);
 		return $return;
 	}

@@ -29,7 +29,6 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-manager', 
 	}
 	
 	if(!empty($_POST['post_id_meta'])){
-		print_r($_POST['post_id_meta']);
 		delete_post_places_meta($_POST['post_id_meta']);
 	}
 		
@@ -114,8 +113,20 @@ endif;
 	
 <form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">
 <fieldset>
-<span class="wl_options_heading"><?php _e( 'Post Place Metadata' ); ?></span>
-<table class="form-table">	
+<span class="wl_options_heading"><?php _e( 'Legacy Places Support' ); ?></span>
+<table class="form-table">
+	<tr valign="top">	
+		<td>			
+		<?php if(get_places_legacy_count() > 0): ?>	
+		<div><img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_cancel.png" alt="" title=""/></div>
+		<div><strong>You need to relink the places in this section!</strong>&nbsp; You have recenty upgraded Welocally Places. <?php print_r(get_places_legacy_count());  ?> Legacy Posts were found.  
+		We have created a <a href="http://welocally.com/?p=780" target="_new">Release Guide</a>. Finally, if you have problems <a href="http://www.welocally.com/?page_id=139" target="_new">email us</a>. 
+		<p/><strong>ALWAYS BACKUP PRIOR TO UPGRADE</strong></div>
+		<?php else: ?>
+		<img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_check.png" alt="" title=""/>	Your places are up to date. 	
+		<?php endif; ?>
+		</td>
+	</tr>
 <?php
 $places_found_meta = false;
 $index = 0;
