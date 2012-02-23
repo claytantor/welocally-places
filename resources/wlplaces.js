@@ -76,11 +76,13 @@ if (!window.WELOCALLY) {
         	    }
         },
         places: {
+        	
         	//PLACES SEARCH META
         	search: {       		
         	},
         	//MAP SECTION=========
         	map: {
+        	
         		/**
         		 * make the item for the search results list
         		 */
@@ -129,6 +131,7 @@ if (!window.WELOCALLY) {
         	
         	//TAGS SECTION=========
             tag: {
+        		postMaps: new Array(),
             	init: function() {
                     // themes can screw up google maps
                     jQuery('.map_canvas_post img').css('max-width' ,'1030px');
@@ -185,56 +188,44 @@ if (!window.WELOCALLY) {
                 	 }
 
             		 if(showMap && customStyle ){		 	
+            		 	console.log("using custom style");
             		 	
             		 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
             		
-            			var welocallyMapStyle = options.map_custom_style;
-            			
-            			
-            			// Create a new StyledMapType object, passing it the array of styles,
-            			// as well as the name to be displayed on the map type control.
-            			var styledMapType = new google.maps.StyledMapType(welocallyMapStyle,
-            				{name: "Custom"});
-            			
-            			//this should be an option
+            			var welocallyMapStyle = eval(options.map_custom_style);
+            			            			
             			var mapOptions = {
-            			  zoom: 16,
-            			  center: latlng,
-            			  mapTypeControlOptions: {
-            				mapTypeIds: ['welocally_style']
-            			  }
-            			};
+							zoom : 16,
+							center : latlng,
+							mapTypeId: google.maps.MapTypeId.ROADMAP,
+							styles: welocallyMapStyle
+						};
             			
-
-            			
-            			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
+            			var map_canvas_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
             				mapOptions);
             			
-            			//we need this to override what themes sometimes do to images
-            			google.maps.event.addListener(map_post, 'tilesloaded', function() {
-            				jQuery('.map_canvas_post img').css('max-width','none');
-            			});
-            			
-            			google.maps.event.addListener(map_post, 'mouseover', function() {
-            				jQuery(this).css('cursor','move');
-            			});
-            			
-            				
-            			//Associate the styled map with the MapTypeId and set it to display.
-            			map_post.mapTypes.set('welocally_style', styledMapType);
-            			map_post.setMapTypeId('welocally_style');
-            			
-            			
+//            			//we need this to override what themes sometimes do to images
+//            			google.maps.event.addListener(map_canvas_post, 'tilesloaded', function() {
+//            				jQuery('.map_canvas_post img').css('max-width','none');
+//            			});
+//            			
+//            			google.maps.event.addListener(map_canvas_post, 'mouseover', function() {
+//            				jQuery(this).css('cursor','move');
+//            			});
+//            			
+      			        			
             			//home location
             			var mMarker = new google.maps.Marker({
             				position: latlng,
-            				map: map_post,
+            				map: map_canvas_post,
             				icon: options.where_image
             			});
             			
             			jQuery('.map_canvas_post', $sel).show();
+            			jQuery('.map_canvas_post img', $sel).css('max-width','none');
             			
-            			
+            			WELOCALLY.places.tag.postMaps.push(map_canvas_post);
+            			          			
             		 
             		 } else if(showMap && !customStyle ){
         			 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
@@ -245,28 +236,30 @@ if (!window.WELOCALLY) {
         				  mapTypeId: google.maps.MapTypeId.ROADMAP
         				};
             			
-            			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
-            				mapOptions);
+            			var map_canvas_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
+                				mapOptions);
             		
-            			//we need this to override what themes sometimes do to images
-            			google.maps.event.addListener(map_post, 'tilesloaded', function() {
-            				jQuery('.map_canvas_post img').css('max-width','none');
-            			});
-            			
-            			google.maps.event.addListener(map_post, 'mouseover', function() {
-            				jQuery(this).css('cursor','move');
-            			});
+//            			//we need this to override what themes sometimes do to images
+//            			google.maps.event.addListener(map_post, 'tilesloaded', function() {
+//            				jQuery('.map_canvas_post img').css('max-width','none');
+//            			});
+//            			
+//            			google.maps.event.addListener(map_post, 'mouseover', function() {
+//            				jQuery(this).css('cursor','move');
+//            			});
             			
             			
             			//home location
             			var mMarker = new google.maps.Marker({
             				position: latlng,
-            				map: map_post,
+            				map: map_canvas_post,
             				icon: options.where_image
             			});
             			
             			jQuery('.map_canvas_post', $sel).show();
             			jQuery('.map_canvas_post img', $sel).css('max-width','none');
+            			
+            			WELOCALLY.places.tag.postMaps.push(map_canvas_post);
             			
             		 }
                 },                 

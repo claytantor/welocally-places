@@ -95,14 +95,9 @@ jQuery(document).ready(function(jQuery) {
 	//make the style map
 	var welocallyMapStyle = <?php printf(wl_get_option("map_custom_style"))  ?>;
 
-	// Create a new StyledMapType object, passing it the array of styles,
-  	// as well as the name to be displayed on the map type control.
-  	var styledMapType = new google.maps.StyledMapType(welocallyMapStyle, {name: "Custom"});
-  	
   	var mapOptions = {
-      mapTypeControlOptions: {
-      	mapTypeIds: ['welocally_style']
-      }
+  		mapTypeId: google.maps.MapTypeId.ROADMAP,
+		styles: welocallyMapStyle
     };
     
     var wl_map_widget = new Array();
@@ -110,8 +105,6 @@ jQuery(document).ready(function(jQuery) {
 	for (var i=0; i<map_canvas_widgets.length; i++) {
 		wl_map_widget[i] = new google.maps.Map(map_canvas_widgets[i],
 	        mapOptions);
-	    wl_map_widget[i].mapTypes.set('welocally_style', styledMapType);
-  		wl_map_widget[i].setMapTypeId('welocally_style');  
 	}
     
 

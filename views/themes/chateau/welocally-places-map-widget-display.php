@@ -29,11 +29,11 @@ include($infobox_include);
 			<div class="wl-place-excerpt" id="details-place-excerpt"></div>				
 		</div>				
 	</div>
-	<div class="wl-place-widget-website text-align-right">
+	<?php /*<div class="wl-place-widget-website text-align-right">
 		<a href="<?php echo places_get_mapview_link(); ?>">
 			<?php _e('view larger', $wlPlaces->pluginDomain)?>
 		</a>
-	</div>
+	</div>*/ ?>
 </div>
 </li>
 
