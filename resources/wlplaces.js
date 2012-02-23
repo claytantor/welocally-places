@@ -204,10 +204,14 @@ if (!window.WELOCALLY) {
             			var map_canvas_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
             				mapOptions);
             			
-//            			//we need this to override what themes sometimes do to images
-//            			google.maps.event.addListener(map_canvas_post, 'tilesloaded', function() {
-//            				jQuery('.map_canvas_post img').css('max-width','none');
-//            			});
+            			//we need this to override what themes sometimes do to images
+            			google.maps.event.addListener(map_canvas_post, 'tilesloaded', function() {
+            				jQuery('.map_canvas_post img', $sel).css('max-width','none');
+            				jQuery('.map_canvas_post img', $sel).css('padding','0px');
+            				jQuery('.map_canvas_post img', $sel).css('margin','0px');
+            				jQuery('.map_canvas_post img', $sel).removeAttr( 'max-width' );
+            				
+            			});
 //            			
 //            			google.maps.event.addListener(map_canvas_post, 'mouseover', function() {
 //            				jQuery(this).css('cursor','move');
@@ -222,7 +226,7 @@ if (!window.WELOCALLY) {
             			});
             			
             			jQuery('.map_canvas_post', $sel).show();
-            			jQuery('.map_canvas_post img', $sel).css('max-width','none');
+            			//jQuery('.map_canvas_post img', $sel).css('max-width','none');
             			
             			WELOCALLY.places.tag.postMaps.push(map_canvas_post);
             			          			
