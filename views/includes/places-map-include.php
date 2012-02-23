@@ -103,8 +103,16 @@ jQuery(document).ready(function(jQuery) {
     var wl_map_widget = new Array();
 	
 	for (var i=0; i<map_canvas_widgets.length; i++) {
-		wl_map_widget[i] = new google.maps.Map(map_canvas_widgets[i],
+		wl_map_widget[i] = new google.maps.Map(
+			map_canvas_widgets[i],
 	        mapOptions);
+
+		google.maps.event.addListener(map_canvas_widgets[i], 'tilesloaded', function() {
+			jQuery('.map_canvas_post img', $sel).css('max-width','none');
+			WELOCALLY.util.preload([
+			         'http://maps.gstatic.com/mapfiles/openhand_8_8.cur'
+			]);          				
+		});    
 	}
     
 
@@ -117,14 +125,20 @@ jQuery(document).ready(function(jQuery) {
 	var wl_map_widget = new Array();
 	
 	for (var i=0; i<map_canvas_widgets.length; i++) {
-		wl_map_widget[i] = new google.maps.Map(map_canvas_widgets[i],
+	
+		wl_map_widget[i] = new google.maps.Map(
+			map_canvas_widgets[i],
 	        mapOptions);
+	    
+	    google.maps.event.addListener(map_canvas_widgets[i], 'tilesloaded', function() {
+			jQuery('.map_canvas_post img', $sel).css('max-width','none');
+			WELOCALLY.util.preload([
+			         'http://maps.gstatic.com/mapfiles/openhand_8_8.cur'
+			]);          				
+		});
 	}
 
-
 <?php  endif; ?>
-
-    
 
 	var places = new Array();
 

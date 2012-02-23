@@ -12,6 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+function preload(arrayOfImages) {
+    $(arrayOfImages).each(function(){
+        $('<img/>')[0].src = this;
+        // Alternatively you could use:
+        // (new Image()).src = this;
+    });
+}
+
+
 function replaceAll(txt, replace, with_this) {
   return txt.replace(new RegExp(replace, 'g'),with_this);
 }

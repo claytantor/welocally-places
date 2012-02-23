@@ -27,6 +27,13 @@ if (!window.WELOCALLY) {
     		}
     	},
         util: {
+    			preload: function(arrayOfImages) {
+    			    jQuery(arrayOfImages).each(function(){
+    			    	jQuery('<img/>')[0].src = this;
+    			        // Alternatively you could use:
+    			        // (new Image()).src = this;
+    			    });
+    			},
                 update: function() {
                         var obj = arguments[0], i = 1, len=arguments.length, attr;
                         for (; i<len; i++) {
@@ -207,17 +214,11 @@ if (!window.WELOCALLY) {
             			//we need this to override what themes sometimes do to images
             			google.maps.event.addListener(map_canvas_post, 'tilesloaded', function() {
             				jQuery('.map_canvas_post img', $sel).css('max-width','none');
-            				jQuery('.map_canvas_post img', $sel).css('padding','0px');
-            				jQuery('.map_canvas_post img', $sel).css('margin','0px');
-            				jQuery('.map_canvas_post img', $sel).removeAttr( 'max-width' );
-            				
+            				WELOCALLY.util.preload([
+            				         'http://maps.gstatic.com/mapfiles/openhand_8_8.cur'
+            				]);          				
             			});
-//            			
-//            			google.maps.event.addListener(map_canvas_post, 'mouseover', function() {
-//            				jQuery(this).css('cursor','move');
-//            			});
-//            			
-      			        			
+            			         			
             			//home location
             			var mMarker = new google.maps.Marker({
             				position: latlng,
@@ -226,7 +227,6 @@ if (!window.WELOCALLY) {
             			});
             			
             			jQuery('.map_canvas_post', $sel).show();
-            			//jQuery('.map_canvas_post img', $sel).css('max-width','none');
             			
             			WELOCALLY.places.tag.postMaps.push(map_canvas_post);
             			          			
@@ -242,16 +242,15 @@ if (!window.WELOCALLY) {
             			
             			var map_canvas_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
                 				mapOptions);
-            		
-//            			//we need this to override what themes sometimes do to images
-//            			google.maps.event.addListener(map_post, 'tilesloaded', function() {
-//            				jQuery('.map_canvas_post img').css('max-width','none');
-//            			});
-//            			
-//            			google.maps.event.addListener(map_post, 'mouseover', function() {
-//            				jQuery(this).css('cursor','move');
-//            			});
             			
+            			//we need this to override what themes sometimes do to images
+            			google.maps.event.addListener(map_canvas_post, 'tilesloaded', function() {
+            				jQuery('.map_canvas_post img', $sel).css('max-width','none');
+            				WELOCALLY.util.preload([
+            				         'http://maps.gstatic.com/mapfiles/openhand_8_8.cur'
+            				]);          				
+            			});
+            		
             			
             			//home location
             			var mMarker = new google.maps.Marker({
