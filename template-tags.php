@@ -266,6 +266,18 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		return trim($resultJson );
 	}
 	
+	//select post_id from wp_postmeta where meta_key='_PlaceSelected';
+	function get_legacy_posts() {
+		global $wpdb;
+		
+		$query = "SELECT $wpdb->posts.*
+			 	FROM $wpdb->posts,$wpdb->postmeta  
+			WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id  
+			AND $wpdb->postmeta.meta_key='_PlaceSelected'"; 
+		
+		return $wpdb->get_results($query, OBJECT);
+	}
+	
 	/**
 	 * this fuction is used to determine the number of legacy places that will need to be
 	 * converted.
@@ -424,7 +436,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		return $return;
 	}
 	
-	function get_place_by_post_id( $postId = null) {
+	function get_legacy_place_by_post_id( $postId = null) {
 		global $wpdb;
 			
 		$query = "SELECT $wpdb->postmeta.*

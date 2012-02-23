@@ -130,8 +130,9 @@ endif;
 <?php
 $places_found_meta = false;
 $index = 0;
-foreach( $posts as $post ) {
-    $places = get_post_places_meta($post->ID);  
+$legacy_posts = get_legacy_posts();
+foreach( $legacy_posts as $post ) {
+    $places = get_legacy_place_by_post_id($post->ID);  
     echo("<tr class=\"d".($index & 1)."\">");
     if(count($places)>0):
     $places_found_meta = true;
