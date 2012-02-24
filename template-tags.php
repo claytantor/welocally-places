@@ -49,7 +49,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$default_font = 'Sorts Mill Goudy'; 
 		$default_font_color = '000000'; 
 		$default_font_size = '1.2'; 
-		$default_cat_map_layout = 'center'; 
+		$default_cat_map_layout = 'none'; 
 		$default_cat_map_select_width = '160'; 
 		$default_cat_map_select_height = '160'; 
 		$default_api_endpoint = 'https://api.welocally.com'; 
