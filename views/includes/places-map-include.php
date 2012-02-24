@@ -44,9 +44,6 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 	color: #<?php echo wl_get_option("color_place_address", "000000"); ?>; 
 }
 .wl-place-widget-address{ }
-
-
-
 </style>
 
 
