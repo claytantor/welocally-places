@@ -140,8 +140,10 @@ function searchLocations(location, queryString, radiusKm) {
       },
 	  error : function(jqXHR, textStatus, errorThrown) {	  		
 	  		if(textStatus != 'abort'){
-	  			setStatus('ERROR : '+textStatus, 'error', false);
+	  			setStatus('ERROR : '+textStatus+" there may been a network error or a problem with your settings.", 'error', false);
 	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
+	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
+	  			jQuery('#add-place-section').show();
 	  			
 	  		}	else {
 	  			console.log(textStatus);
@@ -171,10 +173,15 @@ function searchLocations(location, queryString, radiusKm) {
 				jQuery("#results").show();	
 				jQuery('#add-place-section').show();
 				
-			} else if(data == null && data.errors != null) {
+			} else if(data != null && data.errors != null) {
 			
 				buildErrorMessages(data.errors);	
 					
+			} else {
+				setStatus('There was a problem, please check your settings and netowrk.', 'error', false);
+	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
+	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
+	  			jQuery('#add-place-section').show();
 			}
 	  }
 	});
@@ -182,9 +189,11 @@ function searchLocations(location, queryString, radiusKm) {
 }
 
 function buildListItemForPlace(place,i) {
-        var itemLabel = '<b>'+place.properties.name+'</b>';
+        var itemLabel = '<b>'+place.properties.name+'</b> - '+place.distance.toFixed(2)+' km';
         if (place.properties.address) {
-            itemLabel += "<br>" + place.properties.address;
+            itemLabel += "<br>" + place.properties.address+" "+
+            	place.properties.city+" "+place.properties.province+" "
+            	+place.properties.postcode;
         }
 		return '<li class=\"ui-widget-content\" id="f'+i+'" title="select place">'+itemLabel+'</li>';
 }
@@ -344,7 +353,7 @@ function getCategories(type, category) {
 		  		jQuery('#edit-place-categories-selection-list').append('<li style="display:inline-block;">'+base+'</li>');
 		  	}
 		  	
-			if(data.errors != null) {
+			if(data != null && data.errors != null) {
 				buildErrorMessages(data.errors);	
 				jQuery('#edit-place-categories-selection').append(jQuery('#cancel-finder-workflow'));		
 			} else {

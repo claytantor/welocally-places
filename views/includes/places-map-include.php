@@ -50,7 +50,9 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 <script type="text/javascript" charset="utf-8">
 var wl_map_widget;
 
+
 jQuery(document).ready(function(jQuery) {
+	
 	
 	 if (typeof(jQuery.fn.parseJSON) == "undefined" 
 	 	|| typeof(jQuery.parseJSON) != "function") { 
@@ -74,7 +76,15 @@ jQuery(document).ready(function(jQuery) {
 			}
 		});
 	}	
-
+	
+	jQuery('#map_widget_container ul').css('list-style-type','none');
+	jQuery('#map_widget_container ul').find('*')
+		.css('padding','0x')
+		.css('margin','0x');
+	jQuery('#info-contents-box').css('line-height','15px');
+	
+	//#sidebar .widget ul li a {background:url(images/ico-meta.gif) no-repeat 0 8px; padding:4px 0 4px 15px; line-height:16px;}
+	
 	
 	//setup the bounds
 	var bounds = new google.maps.LatLngBounds();
@@ -94,7 +104,8 @@ jQuery(document).ready(function(jQuery) {
 
   	var mapOptions = {
   		mapTypeId: google.maps.MapTypeId.ROADMAP,
-		styles: welocallyMapStyle
+		styles: welocallyMapStyle,
+		draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur)'
     };
     
     var wl_map_widget = new Array();
@@ -103,20 +114,17 @@ jQuery(document).ready(function(jQuery) {
 		wl_map_widget[i] = new google.maps.Map(
 			map_canvas_widgets[i],
 	        mapOptions);
-
-		google.maps.event.addListener(map_canvas_widgets[i], 'tilesloaded', function() {
-			jQuery('.map_canvas_post img', $sel).css('max-width','none');
-			WELOCALLY.util.preload([
-			         'http://maps.gstatic.com/mapfiles/openhand_8_8.cur'
-			]);          				
-		});    
+	        
+		WELOCALLY.places.map.setMapEvents(wl_map_widget[i]);
+		
 	}
     
 
 <?php else:?>  	
   	
 	var mapOptions = {
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur), move'
     };
 
 	var wl_map_widget = new Array();
@@ -127,12 +135,9 @@ jQuery(document).ready(function(jQuery) {
 			map_canvas_widgets[i],
 	        mapOptions);
 	    
-	    google.maps.event.addListener(map_canvas_widgets[i], 'tilesloaded', function() {
-			jQuery('.map_canvas_post img', $sel).css('max-width','none');
-			WELOCALLY.util.preload([
-			         'http://maps.gstatic.com/mapfiles/openhand_8_8.cur'
-			]);          				
-		});
+	    setEvents(wl_map_widget[i]);
+	    
+		
 	}
 
 <?php  endif; ?>
@@ -175,7 +180,6 @@ foreach( $posts as $post ) {
 			'<?php echo wl_get_option("map_icon_web"); ?>',
 			'<?php echo wl_get_option("map_icon_directions"); ?>',
 			false,
-			'',
 			false,
 			''		
 			);

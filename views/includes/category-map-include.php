@@ -25,7 +25,6 @@
     
     #content-body ul, #content-body ol { margin: 0px;  }
 
-
 	#selectable .ui-selecting { background: #C4C4C4; }
 	#selectable .ui-selected { background: #e4e4e4; }
 	#selectable .wl-item-content { 
@@ -145,7 +144,6 @@ function addItemForCategoryPlace(
 		webicon,
 		directionsicon,
 		showLink,
-		link,
 		showThumb,
 		thumbUrl);  	
 	
@@ -188,23 +186,22 @@ jQuery(document).ready(function(jQuery) {
 <?php if(wl_get_option('map_custom_style') != '') : ?>	
 
 	var welocallyMapStyle = <?php printf(wl_get_option("map_custom_style"))  ?>;
-
-	// Create a new StyledMapType object, passing it the array of styles,
-  	// as well as the name to be displayed on the map type control.
-  	var styledMapType = new google.maps.StyledMapType(welocallyMapStyle, {name: "Custom"});
-  	
-  	var mapOptions = {
-      mapTypeControlOptions: {
-      	mapTypeIds: ['welocally_style']
-      }
-    };
-    
+	
+	var mapOptions = {
+		zoom : 16,
+		center : latlng,
+		mapTypeId: google.maps.MapTypeId.ROADMAP,
+		styles: welocallyMapStyle
+	};
+  
     wl_map_main = new google.maps.Map(document.getElementById("map_canvas"),
         mapOptions);
         
-    //Associate the styled map with the MapTypeId and set it to display.
-  	wl_map_main.mapTypes.set('welocally_style', styledMapType);
-  	wl_map_main.setMapTypeId('welocally_style');  
+    WELOCALLY.places.map.setMapEvents(wl_map_main);
+    
+   
+
+
 
 <?php else:?>  	
   	
@@ -214,7 +211,9 @@ jQuery(document).ready(function(jQuery) {
     
     wl_map_main = new google.maps.Map(document.getElementById("map_canvas"),
         mapOptions);
-
+        
+    WELOCALLY.places.map.setMapEvents(wl_map_main);
+    
 
 <?php  endif; ?>
 	//the loop
@@ -316,17 +315,32 @@ endforeach;
 		   		var selectedItem = items[index];
 		   		var placeLatLng = new google.maps.LatLng(selectedItem.place.geometry.coordinates[1], selectedItem.place.geometry.coordinates[0]);
 		   		wl_map_main.panTo(placeLatLng);
-		   		
-				boxText.innerHTML = 
-					buildContentForInfoWindow(
+		   				   	
+		   		var contentsBox = jQuery(document.createElement('div'));
+					
+		   		var contents = buildContentForInfoWindow(
+		   			WELOCALLY.places.map.infobox.baseWidth,
 					selectedItem.place, ",", 
 					selectedItem.marker.webicon, 
 					selectedItem.marker.directionsicon,
 					selectedItem.marker.linkedTitle,
 					selectedItem.marker.linkUrl,
 					selectedItem.marker.showThumb,
-					selectedItem.marker.thumbUrl);
+					selectedItem.marker.thumbUrl,
+					WELOCALLY.places.map.infobox.thumbMaxSize);
+			
+				jQuery(contentsBox).html(contents);
+				
+				boxText.innerHTML = contents;
+				
+				WELOCALLY.places.map.infobox.setOffset(contentsBox,ib);
+		
 				ib.open(wl_map_main, selectedItem.marker);
+				ib.show();
+				ib_widget.hide();
+				
+				jQuery('#info-contents-box ul li a').css('background','none').css('padding','0px');
+							
 				lastindex= index;
 		   },
 		   cancel: ":input,option,a"

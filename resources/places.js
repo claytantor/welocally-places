@@ -14,8 +14,8 @@
  */
 
 function preload(arrayOfImages) {
-    $(arrayOfImages).each(function(){
-        $('<img/>')[0].src = this;
+	jQuery(arrayOfImages).each(function(){
+    	jQuery('<img/>')[0].src = this;
         // Alternatively you could use:
         // (new Image()).src = this;
     });
@@ -80,7 +80,6 @@ function addItemMarker(
 	webicon,
 	directionsicon,
 	linkedTitle,
-	linkUrl,
 	showThumb,
 	thumbUrl) {
 	
@@ -99,7 +98,6 @@ function addItemMarker(
 		webicon: webicon,
 		directionsicon: directionsicon,
 		linkedTitle: linkedTitle,
-		linkUrl: linkUrl,
 		showThumb: showThumb,
 		thumbUrl: thumbUrl
 	});
@@ -114,23 +112,51 @@ function addItemMarker(
 			
 			map.panTo(mMarker.position);
 						
-			boxText.innerHTML = buildContentForInfoWindow(
-				mMarker.place, ', ', mMarker.webicon, mMarker.directionsicon, 
-				mMarker.linkedTitle, mMarker.linkUrl, 
-				mMarker.showThumb, mMarker.thumbUrl);
-					
+			//lets do this the jquery way
+			var contentsBox = jQuery(document.createElement('div'));
+			
+			var contents = buildContentForInfoWindow(
+					WELOCALLY.places.map.infobox.baseWidth,
+					mMarker.place, ', ', mMarker.webicon, mMarker.directionsicon, 
+					mMarker.linkedTitle, mMarker.link, 
+					mMarker.showThumb, mMarker.thumbUrl, 
+					WELOCALLY.places.map.infobox.thumbMaxSize);
+			
+			
+			jQuery(contentsBox).html(contents);
+						
+			boxText.innerHTML = contents;
+			 
+			jQuery(boxText).find('li a img').load(function(){
+				console.log('image loaded');
+				jQuery(boxText).find('li a').css('background','none').css('padding','0px'); 
+				jQuery(boxText).css('line-height','15px');
+				jQuery(boxText).find('ul').css('margin','0px');
+			});
+						
 			//if this is the widget show the excerpt
 			if(container == 'places-map'){
-				ib_widget.open(mMarker.map, this);
+				
+				WELOCALLY.places.map.infobox.setOffset(contentsBox,ib_widget);
+				ib_widget.open(mMarker.map, this);	
+				ib_widget.show();
+				ib.hide();
 				jQuery('#details-place-name').html('<a href="'+
 						mMarker.link+'" >'+placeSelected.properties.name+'</a>');
 				jQuery('#details-place-excerpt').html(mMarker.excerpt);
 				jQuery('#place-details').show();
 				jQuery('#sp-click-action-call').hide();
-			} else {
+				
+			} else if(container == 'category-map') {
+								
+				WELOCALLY.places.map.infobox.setOffset(contentsBox,ib);
 				ib.open(mMarker.map, this);
+				ib.show();
+				ib_widget.hide();
 			}
-	
+			jQuery('#info-contents-box ul li a').css('background','none').css('padding','0px');
+			
+			
 		
 	});
 	
@@ -169,123 +195,104 @@ function buildContentForSelector(place,excerpt,position,link, showExcerpt) {
 		return content;
 }
 
-function buildContentForInfoWindow(place, catsDiv, wicon, dicon,
-		linkedTitle, linkUrl, 
-		showThumb, thumbUrl) {
+function buildContentForInfoWindow(
+		baseWidth,
+		place, 
+		catsDiv, 
+		wicon, 
+		dicon,
+		linkedTitle, 
+		linkUrl, 
+		showThumb, 
+		thumbUrl,
+		thumbMax) {
 						
-	var placeNameTemplate1= '<div class="wl-place-name wl-place-widget-name"><a href="{PLACE_POST_LINK}">{PLACE_NAME}</a></div>';
+	//lets do this the jquery way
+	//var baseWidth = 100;
 	
-	var placeNameTemplate2= '<div class="wl-place-name wl-place-widget-name">{PLACE_NAME}</div>';
+	var contentsBox = jQuery(document.createElement('div'))
+		.attr('id','info-contents-box');
 	
-	var webTemplate='<li style="display:inline-block; margin-right:0px"><a href="{WEB_LINK}" target="_blank"><img src="{WEB_ICON}" border="0" class="wl-link-image" border="0"></a><div style="position:relative; display: inline-block; font-size:85%; top: -10px"><a href="{WEB_LINK}" target="_blank">web</a></div></li> ';
-
-	var directionsTemplate='<li style="display:inline-block; margin-right:0px"><a href="{DRIVE_LINK}" target="_blank"><img src="{DRIVE_ICON}" class="wl-link-image"></a><div style="position:relative; display: inline-block; font-size:85%; top: -10px"><a href="{DRIVE_LINK}" target="_blank">directions</a></div></li>';
-	
-	var thumbTemplate1='<a href="{PLACE_POST_LINK}"><img src="{THUMB_IMAGE_URL}" border="0" style="float:left; margin-right:5px; max-width:150px; max-height:150px"></a>';
-
-	var thumbTemplate2='<img src="{THUMB_IMAGE_URL}" border="0" style="float:left; margin-right:5px; max-width:150px; max-height:150px">';
-	
-	var content='<div id="infobox_content">{THUMB_CONTENT}<div style="margin-left:5px">{PLACE_NAME_CONTENT}<div class="wl-place-address wl-place-widget-address">{PLACE_ADDRESS}</div><div class="wl-place-widget-phone">{PLACE_PHONE}</div><div class="wl-place-widget-links"> <ul style="text-align:left; list-style-type: none; padding: 0px; margin: 0px;">{WEB_CONTENT}{DIRECTIONS_CONTENT}</ul></div></div></div><div style="clear:left; height:1px">&nbsp;</div>';
-			
-		//thumb
-		if(showThumb){
-			
-			if(linkedTitle){
-				var thumbContent = thumbTemplate1
-					.replace('{PLACE_POST_LINK}', linkUrl)
-					.replace('{THUMB_IMAGE_URL}',thumbUrl)
-					.replace('{THUMB_IMAGE_URL}',thumbUrl);
-				content = content.replace('{THUMB_CONTENT}',thumbContent);
-				
-			} else {
-				var thumbContent = thumbTemplate2
+	if(showThumb){	
+		var size = eval(thumbMax.replace('px',''))+baseWidth;
+		jQuery(contentsBox)
+		.css('width',size+'px')
+		.css('height',size+'px')
+		.append('<img class="infobox-img" src="{THUMB_IMAGE_URL}" border="0" style="float:left; margin-right:5px; max-width:{THUMB_MAX}; max-height:{THUMB_MAX}">'
 				.replace('{THUMB_IMAGE_URL}',thumbUrl)
-				.replace('{THUMB_IMAGE_URL}',thumbUrl);
-				content = content.replace('{THUMB_CONTENT}',thumbContent);
-			}
-			
-			
-			
-		} else {
-			content = content.replace('{THUMB_CONTENT}','');
-		}
-		
-		content = content.replace('{THUMB_CONTENT}','');
-		
-		//placename
-		if(linkedTitle){
-			var placeNameContent = placeNameTemplate1
-				.replace('{PLACE_POST_LINK}', linkUrl)
-				.replace('{PLACE_NAME}', place.properties.name);
-			
-			content = content.replace('{PLACE_NAME_CONTENT}',placeNameContent);
-			
-		} else {
-			var placeNameContent = placeNameTemplate2
-			.replace('{PLACE_NAME}', place.properties.name);
-		
-			content = content.replace('{PLACE_NAME_CONTENT}',placeNameContent);
-		}
-		
-		
-				
-		//address
-		if(place.properties.city != null && place.properties.province != null){
-			var fullAddress = place.properties.city+" "+place.properties.province;
-			if(place.properties.address != null)
-				fullAddress=place.properties.address+", "+fullAddress;
-			if(place.properties.postalcode != null)
-				fullAddress=fullAddress+" "+place.properties.postalcode;			
-			var content= content		
-			.replace('{PLACE_ADDRESS}', fullAddress);
-			
-			var searchQuery = replaceAll(fullAddress, ',', '');
-			searchQuery = replaceAll(searchQuery, ' ', '+');
-			
-			var drivingUrl = 'http://maps.google.com/maps?f=d&source=s_q&hl=en&geocode=&q='+searchQuery;
-					
-			var directionsContent = 
-				replaceAll(directionsTemplate, '{DRIVE_LINK}', drivingUrl); 		
+				.replace('{THUMB_MAX}',thumbMax)
+				.replace('{THUMB_MAX}',thumbMax)
+				);
+		jQuery(contentsBox).css('height',jQuery('.infobox-img',contentsBox).css('max-height'));
+	} else {
+		jQuery(contentsBox)
+		.css('width',baseWidth+'px');
+	}
 	
-			directionsContent = directionsContent		
-				.replace('{DRIVE_ICON}', dicon);	
-			content= content		
-				.replace('{DIRECTIONS_CONTENT}', directionsContent);		
-			
-			
-		} else {
-			content= content		
-				.replace('{PLACE_ADDRESS}', '');
-			content= content		
-				.replace('{DIRECTIONS_CONTENT}', '');
-		}
-		
-		//phone
-		if(place.phone != null) {	
-			content= content		
-			.replace('{PLACE_PHONE}', place.phone);
-		} else {
-			content= content		
-			.replace('{PLACE_PHONE}', '');
-		}
-		
-		//website
-		if(place.website != null && place.website != '') {
-			
-			var webContent = 
-				replaceAll(webTemplate, '{WEB_LINK}', place.website ); 
-			webContent = 
-				replaceAll(webContent, '{WEB_ICON}', wicon ); 
-			content= content		
-				.replace('{WEB_CONTENT}', webContent);
-			
-			
-		} else {
-			content= content		
-			.replace('{WEB_CONTENT}', '');
-		}
+	//place name
+	jQuery(contentsBox).append(
+			'<div class="wl-place-name wl-widget-place-name"><a href="{PLACE_POST_LINK}">{PLACE_NAME}</a></div>'
+			.replace('{PLACE_POST_LINK}',linkUrl)
+			.replace('{PLACE_NAME}',place.properties.name)			
+	);
 	
-		return content;
+	//address
+	var fullAddress = '';
+		
+	if(place.properties.city != null && place.properties.province != null){
+		var fullAddress = place.properties.city+" "+place.properties.province;
+		if(place.properties.address != null)
+			fullAddress=place.properties.address+", "+fullAddress;
+		if(place.properties.postcode != null)
+			fullAddress=fullAddress+" "+place.properties.postcode;	
+	}
+		
+	jQuery(contentsBox).append(
+			'<div class="wl-place-address wl-place-widget-address">{PLACE_ADDRESS}</div>'
+			.replace('{PLACE_ADDRESS}',fullAddress));
+	
+	//phone
+	if(place.properties.phone != null) {	
+		jQuery(contentsBox).append(
+				'<div>{PLACE_PHONE}</div>'
+				.replace('{PLACE_PHONE}',place.properties.phone));
+	} 
+		
+	//links
+	var infoBoxLinks = jQuery(document.createElement('ul')).attr('id','info-box-links');
+	jQuery(infoBoxLinks)
+		.css('display','inline-block')
+		.css('list-style-type:','none');		
+	var linkTemplate = '<li style="display:inline-block;"><a href="{PLACE_LINK_URL}"><img src="{PLACE_LINK_TYPE_IMG}"/></a></li>';
+	
+	if(place.properties.website != null) {
+		jQuery(infoBoxLinks).append(
+				new String(linkTemplate)
+				.replace('{PLACE_LINK_URL}',place.properties.website)
+				.replace('{PLACE_LINK_TYPE_IMG}',wicon)			
+		);
+		
+	}
+	
+	if(place.properties.city != null && 
+			place.properties.province != null &&
+			place.properties.postcode != null){	
+		
+		var searchQuery = replaceAll(fullAddress, ',', '');
+		searchQuery = replaceAll(searchQuery, ' ', '+');
+		var drivingUrl = 'http://maps.google.com/maps?f=d&source=s_q&hl=en&geocode=&q='+searchQuery;
+		
+		jQuery(infoBoxLinks).append(
+				new String(linkTemplate)
+				.replace('{PLACE_LINK_URL}',drivingUrl)
+				.replace('{PLACE_LINK_TYPE_IMG}',dicon)
+		);		
+	}
+	
+	jQuery(contentsBox).append(infoBoxLinks);
+
+	return jQuery('<div>').append(jQuery(contentsBox).clone()).html(); 
+
 }
 
 
@@ -467,6 +474,7 @@ InfoBox.prototype.createInfoBoxDiv_ = function () {
       this.eventListener4_ = google.maps.event.addDomListener(this.div_, "mouseover", function (e) {
         this.style.cursor = "default";
       });
+      
     }
 
     this.contextListener_ = google.maps.event.addDomListener(this.div_, "contextmenu", ignoreHandler);
@@ -1025,8 +1033,5 @@ InfoBox.prototype.close = function () {
 };
 
 
-//every document
-jQuery(document).ready(function(jQuery) {
-	jQuery('.map_canvas_post img').css('max-width','100%');
-});
+
 

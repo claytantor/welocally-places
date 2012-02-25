@@ -1,3 +1,15 @@
+<script type="text/javascript">
+jQuery(document).ready(function() {	
+	jQuery('.place-links-all').find('*')
+		.css('margin','0px')
+		.css('padding','0px');
+		
+	jQuery('.wl-place-content').filter(function(){
+		jQuery(this).css('width',jQuery(this).parent().width()-5);	
+	});
+
+});
+</script>
 <style>
 	#place-details { width: 100%; display: none; background-color: #eeeeee; }
 	#sp-click-action-call { width: 100%; background-color: #eeeeee; }
@@ -15,7 +27,7 @@
 		border:0px;
 	}
 	
-.wl-place-widget-links { text-align:right; }
+ul.wl-place-links { padding-left: 0px; }
 
 #details-place-name{ margin: 3px;}
 
@@ -50,7 +62,7 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 	<div class="wl-place-name" id="place-name-<?php echo $t->uid; ?>"></div>
 	<div class="wl-place-address" id="place-address-<?php echo $t->uid; ?>"></div>
 	<div class="wl-place-phone" id="place-phone-<?php echo $t->uid; ?>"></div>	
-	<div>
+	<div class="place-links-all">
 		<ul class="wl-place-links">
 			<li class="wl-place-links-lines" >
 				<span class="wl-place-website" id="place-website-<?php echo $t->uid; ?>"></span>
@@ -58,7 +70,7 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 			<li class="wl-place-links-lines" >
 				<span class="wl-place-driving" id="place-driving-<?php echo $t->uid; ?>"></span>
 			</li>
-			<li class="wl-place-links-lines">
+			<li class="wl-place-links-lines" id="place-embed">
 				<table>
 					<tbody>
 					<tr>
@@ -79,22 +91,14 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 			</li>
 		</ul>
 		<div class="share-place-tag" id="share-tag-<?php echo $t->uid; ?>">
-			<table width="100%">
+		<table width="100%">
 				<tr><td colspan="2"><input class="share-place-tag-tagtext" type="text" id="place-tag-field-<?php echo $t->uid; ?>"></input></td></tr>
 				<tr><td align="left"><div>Place this tag in your own <a href="http://welocally.com/?page_id=2">Welocally Places</a> powered <a href="http://wordpress.org/extend/plugins/welocally-places/">wordpress</a> site.</div></td>
 				<td align="right"><a href="http://welocally.com/?page_id=2"><img width="95" height="20" 
 				src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/places_powered.png" 
 				alt="" title="Powered by Welocally Places"/></a></td></tr>
 			</table>
-			<?php /*<div class="tag-line">
-				<input class="share-place-tag-tagtext" type="text" id="place-tag-field-<?php echo $t->uid; ?>"></input>
-			</div>
-			<div style="display:inline-block; width:100%; height:10px">
-				<div class="share-place-tag-info">Place this tag in your own <a href="http://welocally.com/?page_id=2">Welocally Places</a> powered <a href="http://wordpress.org/extend/plugins/welocally-places/">wordpress</a> site.</div>
-				<div class="tag-powered-by"><a href="http://welocally.com/?page_id=2"><img width="95" height="20" 
-				src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/places_powered.png" 
-				alt="" title="Powered by Welocally Places"/></a></div>
-			</div>*/ ?>
+			
 		</div>	
 	</div>
 
