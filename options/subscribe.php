@@ -142,17 +142,22 @@ function set_form_fields( key, token, status) {
 		jQuery("#token-assigned").html(token);
 		jQuery("#welocally-places-display_token").val(token);
 		jQuery("#siteToken").val(token);
-	}
+	} 
 		
 	if(status != null) {
 		jQuery("#publisher-status").html(status);
 		if(status == 'KEY_ASSIGNED') {
+			
 			wl_set_cancelled_state_ajax();
+			
+			jQuery("#token-box").hide();
+			
 			jQuery("#siteToken").val('');
+			jQuery("#token-assigned").val('');
+			
 			jQuery("#key-section").show();
 			
-						
-			jQuery("#token-section").hide();
+			
 		    jQuery("#save_options_button").hide();
 			
 			jQuery("#offer-section").show();
@@ -163,12 +168,20 @@ function set_form_fields( key, token, status) {
 			jQuery("#subscribed-action").hide();
 			jQuery("#key-assigned-action").show();
 			
-			var statusimg = '<img width="75" hieght="75" style="float: left;" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/free1.png" alt="" title=""/>'+
-			'<span class="options-text">We have assigned a key to you, but to use or basic service you must register. Go ahead, its easy. Just press the <em>Save Settings</em> button and we will send you your secret token.</span>'; 
+			var statusimg = '<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/free1.png" alt="" title=""/>'+
+			'<span class="options-text">We have assigned a key to you, but to use or basic service you must register. Go ahead, its easy. Just press the <strong>Register Now</strong> button and we will send you your secret token.</span>'; 
 			jQuery("#action-area").html(statusimg);
+			
+			jQuery("#primary-action-button").val('Register Now');
+			
+			
+			
 			
 						
 		}  else if(status == 'REGISTERED') {
+			
+			jQuery("#token-box").show();
+			
 			jQuery("#key-section").show();
 			jQuery("#token-section").show();
 			
@@ -177,17 +190,24 @@ function set_form_fields( key, token, status) {
 			jQuery("#key-assigned-action").show();	
 			
 			
-			var statusimg = '<img width="75" hieght="75" style="float: left;" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/token1.png" alt="" title=""/>'+
+			var statusimg = '<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/token1.png" alt="" title=""/>'+
 				'<span class="options-text">Great you are almost there! Now look the your inbox for the email address you gave us, and there should be an email with your free token. Enter it in into the Publisher Token field and press the <em>Save Settings</em> button.</span>'; 
 			jQuery("#action-area").html(statusimg);
 			
+			jQuery("#primary-action-button").val('Save Token');
+			
 					
 		} else if(status == 'SUBSCRIBED') {
+			
+			jQuery("#token-box").show();
+			
 			jQuery("#key-section").show();
+			jQuery("#token-section").show();
+			
 			jQuery("#paypal-subscribe").hide();		
 			jQuery("#action-getkey").show();
 			
-			jQuery("#token-section").show();
+			
 		    jQuery("#save_options_button").show();
 			
 			if(!subscribed_saved) {
@@ -200,17 +220,22 @@ function set_form_fields( key, token, status) {
 			    jQuery("#finished-action").show();						
 			}
 			
-			var statusimg = '<img width="75" hieght="75" style="float: left;" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribed1.png" alt="" title=""/>'+
+			var statusimg = '<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribed1.png" alt="" title=""/>'+
 				'<span class="options-text">You did it! You signed up for our product and now you can use it. You have been given access to our user portal with help, support and a whole bunch of other free welocally resouces. Be sure to <a href="<?php echo wl_server_base().'/admin/home'?>" target="_blank">log into your portal</a> as soon as possible.</span>'; 
 			jQuery("#action-area").html(statusimg);
 			
+			jQuery("#primary-action-button").val('Save Settings');
+			
 			
 		} else if(status == 'CANCELLED') {
+			
+			jQuery("#token-box").hide();
 				
 			//ajax post to admin server
 			wl_set_cancelled_state_ajax();
 			
 			jQuery("#key-section").show();
+			jQuery("#token-section").show();
 			
 			//the button token
 			if(buttonToken != null) {
@@ -222,12 +247,12 @@ function set_form_fields( key, token, status) {
 			jQuery("#offer-section").show();
 			jQuery("#paypal-subscribe").show();		
 			jQuery("#save_options_button").hide();
-			jQuery("#token-section").hide();
-			
-			
+						
 			jQuery("#finished-action").hide();
 			jQuery("#subscribed-action").hide();
 			jQuery("#key-assigned-action").show();
+			
+			jQuery("#primary-action-button").val('Save Settings');
 		}  
 	}
 	
@@ -325,6 +350,10 @@ function set_form_fields( key, token, status) {
 	display: none;
 }
 
+#token-section {
+	display: none;
+}
+
 #offer-section {
 	display: none;
 }
@@ -341,9 +370,7 @@ function set_form_fields( key, token, status) {
 	display: none;
 }
 
-#token-section {
-	display: none;
-}
+
 
 #wl_api_endpoint {
 	display: none;
@@ -469,16 +496,18 @@ $options = wl_set_general_defaults();
 										<div id="key-assigned" class="assigned-field"></div>
 										<input  class="option-form-field"  type="text"  style="display:none" name="siteKey" id="siteKey"  value="<?php echo wl_get_option('siteKey',null) ?>" /> 
 									</div>
-									<div id="token-section">
-										<label for="siteToken" >Publisher Token:</label>
-										<div><em>Please place the token you recieved by email here.</em></div>
-										<div id="token-assigned" class="assigned-field"><?php echo wl_get_option('siteToken','') ?></div>
-										<div><input  class="option-form-field" type="text" style="display:none" name="siteToken" id="siteToken" value="<?php echo wl_get_option('siteToken','') ?>" /></div>
+									<div id="token-box">
+										<div id="token-section">
+											<label for="siteToken" >Publisher Token:</label>
+											<div><em>Please place the token you recieved by email here.</em></div>
+											<div id="token-assigned" class="assigned-field"><?php echo wl_get_option('siteToken','') ?></div>
+											<div><input  class="option-form-field" type="text" style="display:none" name="siteToken" id="siteToken" value="<?php echo wl_get_option('siteToken','') ?>" /></div>
+										</div>
 									</div>
 								</fieldset>
 								<?php wp_nonce_field( 'welocally-places-subscribe','welocally_places_subscribe_nonce', true, true ); ?>
 								
-								<p class="submit"><input type="submit" class="button-primary" value="<?php _e( 'Save Settings' ); ?>"/></p>
+								<p class="submit"><input type="submit" id="primary-action-button" class="button-primary" value="Register Now"/></p>
 																
 								</form>
 							</div>

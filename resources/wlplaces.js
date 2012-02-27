@@ -89,6 +89,55 @@ if (!window.WELOCALLY) {
         	},
         	//MAP SECTION=========
         	map: {
+        		infobox: {
+        			baseOffsetX: 0,
+        			baseOffsetY: -5,
+        			baseWidth: 150,
+        	        thumbMaxSize: '150px',
+        	        setOffset: function(contentsBox,infobox){
+						var width = 
+							eval(jQuery(contentsBox)
+									.find('#info-contents-box')
+									.css('width')
+									.replace('px',''));
+						
+						var offsetX = ((width/2)+10)*-1;
+						infobox.pixelOffset_ = 
+							new google.maps.Size(
+									offsetX+WELOCALLY.places.map.infobox.baseOffsetX, 
+									WELOCALLY.places.map.infobox.baseOffsetY);
+        			}
+        		},
+        		
+        		setMapEvents: function(map){
+        			google.maps.event.addListener(map, 'tilesloaded', function() {
+        				jQuery(map).find('img').css('max-width','none');
+        				WELOCALLY.util.preload([
+        				         'http://maps.google.com/mapfiles/openhand.cur'
+        				]);          				
+        			});    
+        			
+        			//we need this to override what themes sometimes do to images
+        			google.maps.event.addListener(map, 'idle', function() {
+        				map.setOptions({ draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur), move' });
+        				jQuery('#info-contents-box').css('line-height','15px');
+        			});
+        			
+        			//we need this to override what themes sometimes do to images
+        			google.maps.event.addListener(map, 'mouseover', function() {
+        				map.setOptions({ draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur), move' });
+        				jQuery('#info-contents-box').css('line-height','15px');
+        				jQuery('#info-contents-box ul').css('margin','0px');
+        			});
+        			
+        			//we need this to override what themes sometimes do to images
+        			google.maps.event.addListener(map, 'mousemove', function() {
+        				map.setOptions({ draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur), move' });
+        				jQuery('#info-contents-box').css('line-height','15px');
+        				jQuery('#info-contents-box ul').css('margin','0px');
+        			});      			
+
+        		},
         	
         		/**
         		 * make the item for the search results list
@@ -211,14 +260,9 @@ if (!window.WELOCALLY) {
             			var map_canvas_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
             				mapOptions);
             			
-            			//we need this to override what themes sometimes do to images
-            			google.maps.event.addListener(map_canvas_post, 'tilesloaded', function() {
-            				jQuery('.map_canvas_post img', $sel).css('max-width','none');
-            				WELOCALLY.util.preload([
-            				         'http://maps.gstatic.com/mapfiles/openhand_8_8.cur'
-            				]);          				
-            			});
-            			         			
+            			//make this a function
+            			WELOCALLY.places.map.setMapEvents(map_canvas_post);
+            			
             			//home location
             			var mMarker = new google.maps.Marker({
             				position: latlng,
@@ -243,13 +287,7 @@ if (!window.WELOCALLY) {
             			var map_canvas_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
                 				mapOptions);
             			
-            			//we need this to override what themes sometimes do to images
-            			google.maps.event.addListener(map_canvas_post, 'tilesloaded', function() {
-            				jQuery('.map_canvas_post img', $sel).css('max-width','none');
-            				WELOCALLY.util.preload([
-            				         'http://maps.gstatic.com/mapfiles/openhand_8_8.cur'
-            				]);          				
-            			});
+            			WELOCALLY.places.map.setMapEvents(map_canvas_post);
             		
             			
             			//home location

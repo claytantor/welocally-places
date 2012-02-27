@@ -333,7 +333,7 @@ h4.wl-place-day + .post .entry-title {margin-top:6px;}
 
 .map_canvas_post {display:none; height:250px}
 
-.wl-place-content { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+.wl-place-content { list-style-type: none; margin: 0; padding: 3px; width: 100%; }
 .wl-place-content ul {margin: 0; padding: 0;}
 .wl-place-content li { 
 			font-size: 1.0em;			
@@ -536,7 +536,25 @@ max-width: 1030px;
 	width:26%;
 }
 
-.wl-place-links{  }
-  
+/*style of the links below a place*/ 
+ul.wl-place-links{ 
+	list-style-type:none; 
+	margin: 0px; 
+	padding: 0px; 
+	-webkit-padding-start: 0px;
+	padding-left: 0px;
+}
+ul.wl-place-links li{ display:inline-block; margin: 0px 0px 0px 0px; padding: 0px; padding-left: 0px; }
+
+.share-place-tag { background-color: #f9f9f9; border: 1px solid #e1e1e1; padding: 3px;}
+
+/*ul.wl-place-links li a{ border-left:8px solid white; text-decoration:none; padding:0;  }*/
+
+
+
+
+
+.wl-place-widget-links { text-align:right; }
+
 div.gmap img {max-width:100000px; max-width: none} 
 

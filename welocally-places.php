@@ -76,7 +76,13 @@ function welocally_register($selectedPostJson) {
 
 function welocally_save_place() {
 
-	$selectedPostJson = json_encode($_POST['place']);
+	$placeToSave = $_POST['place'];
+	$placeToSave['properties']['name'] = stripslashes($_POST['place']['properties']['name']);
+	$placeToSave['properties']['address'] = stripslashes($_POST['place']['properties']['address']);
+	
+	$selectedPostJson = json_encode($placeToSave);
+	error_log("place 1:".print_r($placeToSave, true),0);
+	error_log("place 2:".strval($selectedPostJson),0);
 
 	//set POST variables 
 	$url = wl_server_base() . '/geodb/place/1_0/';
