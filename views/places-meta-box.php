@@ -14,7 +14,7 @@ WELOCALLY.meta = {
 	}
 }
 
-var jsonObjFeatures = []; //declare features array
+var jsonObjFeatures = []; //declare features array now
 var markersArray = [];
 var selectedFeatureIndex = 0;
 var selectedClassifierLevel='';
@@ -681,7 +681,7 @@ function nextHandler(event) {
 		});       		
 	}	
 	
-	if(!error){
+	if(!error){ 
 		jQuery('#'+phase).hide();	
 	}
 	

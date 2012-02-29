@@ -28,12 +28,12 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	$options[ 'infobox_thumb_width' ] = $_POST[ 'welocally_infobox_thumb_width' ];
 	$options[ 'infobox_thumb_height' ] = $_POST[ 'welocally_infobox_thumb_height' ];
 	
-	$options[ 'map_default_marker' ] = $_POST[ 'welocally_map_default_marker' ];
-	$options[ 'map_infobox_marker' ] = $_POST[ 'welocally_map_infobox_marker' ];
-	$options[ 'map_infobox_close' ] = $_POST[ 'welocally_map_infobox_close' ];
-	$options[ 'map_icon_web' ] = $_POST[ 'welocally_map_icon_web' ];
-	$options[ 'map_icon_directions' ] = $_POST[ 'welocally_map_icon_directions' ];
-	$options[ 'map_custom_style' ] = str_replace( '\"', '"', $_POST[ 'welocally_map_custom_style' ] ) ;
+	$options[ 'map_default_marker' ] = trim($_POST[ 'welocally_map_default_marker' ])? trim($_POST[ 'welocally_map_default_marker' ]):plugins_url() . "/welocally-places/resources/images/marker_generic_32.png";
+	$options[ 'map_infobox_marker' ] = trim($_POST[ 'welocally_map_infobox_marker' ])? trim($_POST[ 'welocally_map_infobox_marker' ]):plugins_url() . "/welocally-places/resources/images/tipbox_180.png";
+	$options[ 'map_infobox_close' ] = trim($_POST[ 'welocally_map_infobox_close' ])? trim($_POST[ 'welocally_map_infobox_close' ]):plugins_url() . "/welocally-places/resources/images/infobox_close_16.png";
+	$options[ 'map_icon_web' ] = trim($_POST[ 'welocally_map_icon_web' ])?trim($_POST[ 'welocally_map_icon_web' ]):plugins_url() . "/welocally-places/resources/images/mapicons_web.png";
+	$options[ 'map_icon_directions' ] = trim($_POST[ 'welocally_map_icon_directions' ])? trim($_POST[ 'welocally_map_icon_directions' ]):plugins_url() . "/welocally-places/resources/images/mapicons_car.png";
+	$options[ 'map_custom_style' ] = base64_encode(str_replace( '\"', '"', $_POST[ 'welocally_map_custom_style' ] ) );
 
 	$options[ 'font_place_name' ] = $_POST[ 'welocally_font_place_name' ];
 	$options[ 'color_place_name' ] = $_POST[ 'welocally_color_place_name' ];
@@ -259,7 +259,7 @@ jQuery(document).ready(function() {
 	<tr>
 	<th scope="row"><?php _e( 'Custom Map Style' ); ?></th>
 		<td>
-			<textarea rows="4" cols="60" name="welocally_map_custom_style"><?php printf($options[ 'map_custom_style' ]); ?></textarea><br/>
+			<textarea rows="4" cols="60" name="welocally_map_custom_style"><?php printf(base64_decode($options[ 'map_custom_style' ])); ?></textarea><br/>
 			<span class="description"><?php _e( 'This is the custom styling for your maps. Leave blank to use default style. To style your map use the <a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html">Maps Style Wizard</a>' ); ?></span>
 		</td>
 	</tr>	
