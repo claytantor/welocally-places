@@ -27,6 +27,15 @@ if (!window.WELOCALLY) {
     		}
     	},
         util: {
+	    		trim: function (str) { 
+	    			return WELOCALLY.util.ltrim(WELOCALLY.util.rtrim(str), ' '); 
+	    		}, 
+	    		ltrim: function (str) { 
+	    			return str.replace(new RegExp("^[" + ' ' + "]+", "g"), ""); 
+	    		},    		 
+	    		rtrim: function (str) { 
+	    			return str.replace(new RegExp("[" + ' ' + "]+$", "g"), ""); 
+	    		},
     			preload: function(arrayOfImages) {
     			    jQuery(arrayOfImages).each(function(){
     			    	jQuery('<img/>')[0].src = this;

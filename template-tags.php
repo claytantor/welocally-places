@@ -293,31 +293,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$return = $wpdb->get_results($query, OBJECT);
 		return count($return);
 		
-		
-//		global $wlPlaces;
-//		$cat_ID = $wlPlaces->placeCategory();
-//		
-//		$places_in_category_posts = get_places_posts_for_category($cat_ID);			
-//					
-//		$index = 0;
-//		foreach( $places_in_category_posts as $post ) {	
-//			
-//			$placeJsonRaw = str_replace(
-//						"\'", "", 
-//						get_post_meta( $post->ID, '_PlaceSelected', true ));		
-//					
-//			$placeJson = 
-//				json_decode($placeJsonRaw, true); 
-//			
-//			$pname = str_replace("\\'", "'", $placeJson{'name'});
-//			
-//			//error_log("place json name:".$pname, 0);
-//			if($pname != null)
-//				$index = $index+1; 
-//			
-//		}
-//		return $index;
-		
 	}
 	
 	

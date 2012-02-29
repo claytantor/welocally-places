@@ -453,16 +453,6 @@ function cancelHandler(event) {
         return nextHandler(event);
         
 }
-function trim(str) { 
-	return ltrim(rtrim(str), ' '); 
-} 
-function ltrim(str) { 
-	return str.replace(new RegExp("^[" + ' ' + "]+", "g"), ""); 
-} 
- 
-function rtrim(str) { 
-	return str.replace(new RegExp("[" + ' ' + "]+$", "g"), ""); 
-}
 
 function nextHandler(event) {
 	console.log('next phase:'+event.data.phase);
@@ -491,12 +481,13 @@ function nextHandler(event) {
 		
 							
 	} else if(phase=='search-place-name-section'){
+		if (WELOCALLY.util.trim(jQuery("#edit-place-name").val()) == ''){
+			setStatus('Empty. Please enter a place name.','error', false);
+			error = true;
 
-		if (trim(jQuery("#edit-place-name").val()) == ''){
-			error = 'Search term can\'t be empty';
-		}else{
-	    	selectedPlace.properties.name = jQuery("#edit-place-name").val();
-	    	
+		} else {
+			selectedPlace.properties.name = jQuery("#edit-place-name").val();
+    	
 	    	jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
 	    	jQuery('#place-street-title').html('Location: Choose the location or full address you would like to search from. ie. Oakland, CA 94612');
 								
@@ -517,18 +508,12 @@ function nextHandler(event) {
 			jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, nextHandler);		
 			jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
 		}
-		
-		
-			
+					
 	} else if(phase=='search-place-address-section'){
-		setStatus('Geocoding...','message', true);
-		if(trim(jQuery('#edit-place-street').val()) == ''){
-			error = 'Location can\'t be empty';
-		}else{	
-		var address = jQuery('#edit-place-street').val();
-		geocoder.geocode( { 'address': address}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
 				
+		setStatus('Geocoding...','message', true);
+		
+		var address = jQuery('#edit-place-street').val();
 		
 		jQuery('#search-geocoded-section').append(jQuery('#back-action'));
 		
@@ -580,7 +565,7 @@ function nextHandler(event) {
 						
 				deleteOverlays();
 				map.setCenter(selectedGeocode.geometry.location);								
-				addMarker(selectedGeocode.geometry.location);					
+				addMarker(map,selectedGeocode.geometry.location);					
 				
 				jQuery('.resetable', jQuery('#search-geocoded-section')).show();	
 				jQuery('#back-action').hide();											
@@ -594,44 +579,36 @@ function nextHandler(event) {
 				
 						
 			} else {
-				setStatus('There was a problem geocoding with the specified location, please make your search more specific and try again.', 'update', false);
-					error = 'There was a problem geocoding with the specified location, please make your search more specific and try again.';
-					var section = jQuery('#search-geocoded-section');	
-					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-name-section' }, nextHandler);
-					section.append(jQuery('#back-action'));
-					section.show();
 				console.log("Geocode was not successful for the following reason: " + status);
+				setStatus('There was a problem geocoding with the specified location, please make your search more specific and try again. status:'+status, 'update', false);
+				
 		  	} 
 		});
     		
 	} else if(phase=='edit-place-name-section'){
 			
-		if(trim(jQuery('#edit-place-name').val()) == ''){
-			error = 'Place Name can\'t be empty';
-		}else{
-			selectedPlace.properties.name = jQuery("#edit-place-name").val();
-			jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
-						
-		    //put the address search in the top
-		    jQuery('#place-street-title').html('Location: Enter full street address where the place is as one line ie. 1714 Franklin Street, Oakland, CA 94612');
 			
-		    var section = jQuery('#edit-place-address-section');
-		    section.append(jQuery('#edit-place-name-selected'));
-			section.append(jQuery('#street-name-input'));
-			section.append(jQuery('#street-address-saved'));			
-			section.append(jQuery('#back-action'));
-			section.append(jQuery('#next-action'));	
-			jQuery('#back-action').show();
-			section.show();	
+		selectedPlace.properties.name = jQuery("#edit-place-name").val();
+		jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
 					
-			jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, nextHandler);		
-			jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, backHandler);
-		}
+	    //put the address search in the top
+	    jQuery('#place-street-title').html('Location: Enter full street address where the place is as one line ie. 1714 Franklin Street, Oakland, CA 94612');
+		
+	    var section = jQuery('#edit-place-address-section');
+	    section.append(jQuery('#edit-place-name-selected'));
+		section.append(jQuery('#street-name-input'));
+		section.append(jQuery('#street-address-saved'));			
+		section.append(jQuery('#back-action'));
+		section.append(jQuery('#next-action'));	
+		jQuery('#back-action').show();
+		section.show();	
+				
+		jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, nextHandler);		
+		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, backHandler);
+		
 		
 	} else if(phase=='edit-place-address-section'){
-		if(trim(jQuery('#edit-place-street').val()) == ''){
-			error = 'Location can\'t be empty';
-		}else{			
+					
 		setStatus('Geocoding...','message', true);
 		var address = jQuery('#edit-place-street').val();
 		
@@ -647,9 +624,6 @@ function nextHandler(event) {
 				
 		geocoder.geocode( { 'address': address}, function(results, status) {
 			if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
-				jQuery('#edit-geocoded-section').append(jQuery('#back-action'));
-				jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-geocoded-section' }, backHandler);
-				
 				jQuery('#edit-geocoded-name-selected').html(selectedPlace.properties.name);
 				jQuery('#edit-geocoded-address-selected').html(results[0].formatted_address);										
 				
@@ -691,7 +665,7 @@ function nextHandler(event) {
 						
 				deleteOverlays();
 				map.setCenter(selectedGeocode.geometry.location);								
-				addMarker(selectedGeocode.geometry.location);					
+				addMarker(map,selectedGeocode.geometry.location);					
 															
 				setStatus('','message', false);		
 					
@@ -702,23 +676,15 @@ function nextHandler(event) {
 										
 						
 			} else {
-				setStatus('There was a problem geocoding with the specified location, please make your search more specific and try again.', 'update', false);
-					var section = jQuery('#edit-geocoded-section');	
-					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-geocoded-section' }, backHandler);
-					section.append(jQuery('#back-action'));
-					section.show();
 				console.log("Geocode was not successful for the following reason: " + status);
 		  	} 
 		});       		
-	}
-
-	if (error){
-		setStatus(error, 'error', false);
-	}else{
-		jQuery('#'+phase).hide();
 	}	
 	
-		
+	if(!error){
+		jQuery('#'+phase).hide();	
+	}
+	
 	return false;
 }
 
@@ -919,13 +885,13 @@ jQuery(document).ready(function(jQuery) {
 	jQuery( "#selectable-cat" ).selectable({
 		   selected: function(event, ui) {
 			   	if(selectedCategories.indexOf(ui.selected.innerText) == -1) {
-			   		selectedCategories = selectedCategories + ui.selected.innerHTML+",";
+			   		selectedCategories = selectedCategories + ui.selected.innerText+",";
 			   	}
 		   		jQuery( "#place-categories-selected" ).val(selectedCategories);		
 		   },
 		   unselected: function(event, ui) {
-		   		if(selectedCategories.indexOf(ui.unselected.innerHTML) != -1) {
-		   			var replaceText =  ui.unselected.innerHTML+",";
+		   		if(selectedCategories.indexOf(ui.unselected.innerText) != -1) {
+		   			var replaceText =  ui.unselected.innerText+",";
 		   			selectedCategories = selectedCategories.replace(new RegExp(replaceText, 'g'),"");
 		   			jQuery( "#place-categories-selected" ).val(selectedCategories);	
 		   		}		
@@ -936,17 +902,17 @@ jQuery(document).ready(function(jQuery) {
 		   selected: function(event, ui) {
 		   		
 		   		if(selectedClassifierLevel == 'Type'){
-		   			selectedPlace.classifiers[0].type = ui.selected.innerHTML;
+		   			selectedPlace.classifiers[0].type = ui.selected.innerText;
 		   		} else if(selectedClassifierLevel == 'Category'){
-		   			selectedPlace.classifiers[0].category = ui.selected.innerHTML;
+		   			selectedPlace.classifiers[0].category = ui.selected.innerText;
 		   		} else if(selectedClassifierLevel == 'Subcategory'){
-		   			selectedPlace.classifiers[0].subcategory = ui.selected.innerHTML;
+		   			selectedPlace.classifiers[0].subcategory = ui.selected.innerText;
 		   		}
 		   		
 		   		jQuery( "#edit-place-categories-selected-list")
 		   			.append(
 		   			'<li class="categories-selected-list-item">'+
-		   			selectedClassifierLevel+':'+ui.selected.innerHTML+'</li>');
+		   			selectedClassifierLevel+':'+ui.selected.innerText+'</li>');
 		   		
 		   		if(selectedPlace.classifiers[0].type != '' &&
 		   			selectedPlace.classifiers[0].category != '' &&
@@ -1005,14 +971,14 @@ jQuery(document).ready(function(jQuery) {
 	
 	jQuery( "#selectable-cat" ).selectable({
 		   selected: function(event, ui) {
-			   	if(selectedCategories.indexOf(ui.selected.innerHTML) == -1) {
-			   		selectedCategories = selectedCategories + ui.selected.innerHTML+",";
+			   	if(selectedCategories.indexOf(ui.selected.innerText) == -1) {
+			   		selectedCategories = selectedCategories + ui.selected.innerText+",";
 			   	}
 		   		jQuery( "#place-categories-selected" ).val(selectedCategories);		
 		   },
 		   unselected: function(event, ui) {
-		   		if(selectedCategories.indexOf(ui.unselected.innerHTML) != -1) {
-		   			var replaceText =  ui.unselected.innerHTML+",";
+		   		if(selectedCategories.indexOf(ui.unselected.innerText) != -1) {
+		   			var replaceText =  ui.unselected.innerText+",";
 		   			selectedCategories = selectedCategories.replace(new RegExp(replaceText, 'g'),"");
 		   			jQuery( "#place-categories-selected" ).val(selectedCategories);	
 		   		}		
