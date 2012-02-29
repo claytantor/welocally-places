@@ -49,7 +49,7 @@ if(!is_subscribed()) {
 $places_found = false;
 $index = 0;
 $pindex = 0;
-$posts = get_places($limit, null, null ,WelocallyPlaces::CATEGORYNAME);
+$posts = get_posts();
 foreach( $posts as $post ) {
     $places = get_post_places($post->ID);  
     echo("<tr class=\"d".($index & 1)."\">");
