@@ -2,8 +2,7 @@
 <script>
 if (!window.WELOCALLY) {
     window.WELOCALLY = {
-    	
-    }
+    };
 }
 
 //this can go farther
@@ -67,10 +66,10 @@ function setStatus(message, type, showloading){
 	
 }
 
-function addMarker(map_marker, location) {
-  var marker = new google.maps.Marker({
+function addMarker(location) {
+  marker = new google.maps.Marker({
     position: location,
-    map: map_marker
+    map: map
   });
   markersArray.push(marker);
 }
@@ -140,10 +139,8 @@ function searchLocations(location, queryString, radiusKm) {
       },
 	  error : function(jqXHR, textStatus, errorThrown) {	  		
 	  		if(textStatus != 'abort'){
-	  			setStatus('ERROR : '+textStatus+" there may been a network error or a problem with your settings.", 'error', false);
+	  			setStatus('ERROR : '+textStatus, 'error', false);
 	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
-	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
-	  			jQuery('#add-place-section').show();
 	  			
 	  		}	else {
 	  			console.log(textStatus);
@@ -151,8 +148,10 @@ function searchLocations(location, queryString, radiusKm) {
 	  },
 	  success : function(data, textStatus, jqXHR) {
 
+		    
 		    setStatus('', 'message', false);
-		    	  		
+		    
+	  		
 	  		if(data != null && data.length == 0) {
 	  			setStatus('Sorry no places were found that match your query.', 'update', false);
 	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
@@ -162,7 +161,8 @@ function searchLocations(location, queryString, radiusKm) {
 	  		} else if(data != null && data.length > 0) {
 				jQuery.each(data, function(i,item){
 					jsonObjFeatures.push(item);	    		
-					jQuery('#selectable').append(buildListItemForPlace(item,i));				
+					jQuery('#selectable').append(buildListItemForPlace(item,i));
+					
 				});
 				jQuery('#search-geocoded-section').append(jQuery('#results'));
 				jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));		
@@ -170,15 +170,10 @@ function searchLocations(location, queryString, radiusKm) {
 				jQuery("#results").show();	
 				jQuery('#add-place-section').show();
 				
-			} else if(data != null && data.errors != null) {
+			} else if(data == null && data.errors != null) {
 			
 				buildErrorMessages(data.errors);	
 					
-			} else {
-				setStatus('There was a problem, please check your settings and network.', 'error', false);
-	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
-	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
-	  			jQuery('#add-place-section').show();
 			}
 	  }
 	});
@@ -186,11 +181,9 @@ function searchLocations(location, queryString, radiusKm) {
 }
 
 function buildListItemForPlace(place,i) {
-        var itemLabel = '<b>'+place.properties.name+'</b> - '+place.distance.toFixed(2)+' km';
+        var itemLabel = '<b>'+place.properties.name+'</b>';
         if (place.properties.address) {
-            itemLabel += "<br>" + place.properties.address+" "+
-            	place.properties.city+" "+place.properties.province+" "
-            	+place.properties.postcode;
+            itemLabel += "<br>" + place.properties.address;
         }
 		return '<li class=\"ui-widget-content\" id="f'+i+'" title="select place">'+itemLabel+'</li>';
 }
@@ -204,10 +197,9 @@ function buildSelectedInfoForPlace(place) {
 }
 
 function buildCategorySelectionsForPlace(place, container) {
-		
 		container.html('');
+	
 		var index = -1;
-		
 		for (classifier in place.properties.classifiers) {
 			index = classifier;
 			container.append('<li class=\"ui-widget-content\">'+place.properties.classifiers[classifier].category+'</li>');
@@ -231,7 +223,9 @@ function setSelectedPlaceInfo(selectedItem, post) {
 		selectedPlace.properties.postcode);
 	
 	jQuery('#share-meta-tagtext').val(WELOCALLY.places.tag.makePlaceTag(selectedPlace, post));	
-	jQuery('#places-tag-selected').show(); 
+	jQuery('#places-tag-selected').show();
+	jQuery("#selected-place-info").html('');
+	jQuery("#selected-place-info").append(jQuery('#map_canvas')); 
 	
 	var selectedLocation = new google.maps.LatLng(selectedPlace.geometry.coordinates[1], selectedPlace.geometry.coordinates[0]);		
 	var myOptions = {
@@ -243,17 +237,10 @@ function setSelectedPlaceInfo(selectedItem, post) {
 	if(map==null){
 		map = new google.maps.Map(document.getElementById("map_canvas"),
 			myOptions);
-			
-		//need to add listeners
-		WELOCALLY.places.map.setMapEvents(map);		
-	
-	} else {
-		map.setCenter(selectedLocation);
 	}
 			
 	deleteOverlays();							
-	addMarker(map,selectedLocation);	
-	
+	addMarker(selectedLocation);	
 	
 	//hide the selection area
 	jQuery("#place-selector").hide();	
@@ -262,15 +249,12 @@ function setSelectedPlaceInfo(selectedItem, post) {
 	//set the form value
 	//this is wehere we should build the tag
 	jQuery("#place-selected").val(JSON.stringify(selectedItem));
-	
-	jQuery('#edit-place-name-selected')
+	jQuery('#edit-place-name-selected');
 	
 	//show the *selected* area	
-	jQuery("#selected-place-info").html('');
 	jQuery("#selected-place-info").append(jQuery('#places-tag-selected'));
 	jQuery("#selected-place-info").append(jQuery('#edit-place-name-selected'));
 	jQuery("#selected-place-info").append(jQuery('#search-geocoded-address-selected'));	
-	jQuery("#selected-place-info").append(jQuery('#map_canvas'));
 	
 	jQuery("#results").hide();
 	jQuery("#selected-place").show();		
@@ -310,7 +294,7 @@ function getCategories(type, category) {
 			    
 	
 	 var options = {
-		action: 'get_classifiers_types',
+		action: 'get_classifiers_types'
 	};
 	
 	var base;
@@ -358,7 +342,7 @@ function getCategories(type, category) {
 		  		jQuery('#edit-place-categories-selection-list').append('<li style="display:inline-block;">'+base+'</li>');
 		  	}
 		  	
-			if(data != null && data.errors != null) {
+			if(data.errors != null) {
 				buildErrorMessages(data.errors);	
 				jQuery('#edit-place-categories-selection').append(jQuery('#cancel-finder-workflow'));		
 			} else {
@@ -512,6 +496,7 @@ function nextHandler(event) {
 	} else if(phase=='search-place-address-section'){
 				
 		setStatus('Geocoding...','message', true);
+<<<<<<< HEAD
 		
 		var address = jQuery('#edit-place-street').val();
 		
@@ -519,18 +504,47 @@ function nextHandler(event) {
 		
 		
 		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
-		
+=======
+		if(trim(jQuery('#edit-place-street').val()) == ''){
+			error = 'Location can\'t be empty';
+		}else{	
+			var address = jQuery('#edit-place-street').val();
 			
-		geocoder.geocode( { 'address': address}, function(results, status) {
-			if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
-				jQuery('#search-geocoded-name-selected').html(selectedPlace.properties.name);
-				jQuery('#search-geocoded-address-selected').html(results[0].formatted_address);										
-				jQuery('#search-geocoded-section').append(jQuery('#search-geocoded-address-selected'));
-				jQuery('#search-geocoded-section').append(jQuery('#map_canvas'));	
-										
-				//do the map stuff
-				selectedGeocode = results[0];
+			geocoder.geocode( { 'address': address}, function(results, status) {
+				if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
+					jQuery('#search-geocoded-section').append(jQuery('#back-action'));
+					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
+					jQuery('#search-geocoded-name-selected').html(selectedPlace.properties.name);
+					jQuery('#search-geocoded-address-selected').html(results[0].formatted_address);										
+					jQuery('#search-geocoded-section').append(jQuery('#search-geocoded-address-selected'));
+					jQuery('#search-geocoded-section').append(jQuery('#map_canvas'));	
+											
+					//do the map stuff
+					selectedGeocode = results[0];
+>>>>>>> f64e2d359cb2c22f02fa2051736920be7992b519
+		
+					//set the model
+					selectedPlace.properties.address = 
+						getShortNameForType("street_number", selectedGeocode.address_components)+' '+
+						getShortNameForType("route", selectedGeocode.address_components);
+					
+					selectedPlace.properties.city = 
+						getShortNameForType("locality", selectedGeocode.address_components);
+					
+					selectedPlace.properties.province = 
+						getShortNameForType("administrative_area_level_1", selectedGeocode.address_components);
+			
+					selectedPlace.properties.postcode = 
+						getShortNameForType("postal_code", selectedGeocode.address_components);
+					
+					selectedPlace.properties.country = 
+						getShortNameForType("country", selectedGeocode.address_components);
+					
+					selectedPlace.geometry.coordinates = [];
+					selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lng());
+					selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lat());
 	
+<<<<<<< HEAD
 				//set the model
 				selectedPlace.properties.address = 
 					getShortNameForType("street_number", selectedGeocode.address_components)+' '+
@@ -584,6 +598,43 @@ function nextHandler(event) {
 				
 		  	} 
 		});
+=======
+			
+					var myOptions = {
+					  zoom: 15,
+					  mapTypeId: google.maps.MapTypeId.ROADMAP
+					};
+					
+					if(map==null){
+						map = new google.maps.Map(document.getElementById("map_canvas"),
+							myOptions);
+					}
+							
+					deleteOverlays();
+					map.setCenter(selectedGeocode.geometry.location);								
+					addMarker(selectedGeocode.geometry.location);					
+					
+					jQuery('.resetable', jQuery('#search-geocoded-section')).show();	
+					jQuery('#back-action').hide();											
+					jQuery('#search-geocoded-section').show();	
+									
+					setStatus('','message', false);
+					
+					//ajax call
+					searchLocations(selectedGeocode.geometry.location, selectedPlace.properties.name, 30);
+						
+			    } else {
+					setStatus('There was a problem geocoding with the specified location, please make your search more specific and try again.', 'update', false);
+					error = 'There was a problem geocoding with the specified location, please make your search more specific and try again.';
+					var section = jQuery('#search-geocoded-section');	
+					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-name-section' }, nextHandler);
+					section.append(jQuery('#back-action'));
+					section.show();
+					console.log("Geocode was not successful for the following reason: " + status);
+		  		} 
+		   });
+		}
+>>>>>>> f64e2d359cb2c22f02fa2051736920be7992b519
     		
 	} else if(phase=='edit-place-name-section'){
 			
@@ -608,6 +659,7 @@ function nextHandler(event) {
 		
 		
 	} else if(phase=='edit-place-address-section'){
+<<<<<<< HEAD
 					
 		setStatus('Geocoding...','message', true);
 		var address = jQuery('#edit-place-street').val();
@@ -642,17 +694,44 @@ function nextHandler(event) {
 				
 				selectedPlace.properties.province = 
 					getShortNameForType("administrative_area_level_1", selectedGeocode.address_components);
-		
-				selectedPlace.properties.postcode = 
-					getShortNameForType("postal_code", selectedGeocode.address_components);
-				
-				selectedPlace.properties.country = 
-					getShortNameForType("country", selectedGeocode.address_components);
-				
-				selectedPlace.geometry.coordinates = [];
-				selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lng());
-				selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lat());
+=======
+		if(trim(jQuery('#edit-place-street').val()) == ''){
+			error = 'Location can\'t be empty';
+		}else{			
+			setStatus('Geocoding...','message', true);
+			var address = jQuery('#edit-place-street').val();
 			
+			var section = jQuery('#edit-place-address-section');
+			section.append(jQuery('#back-action'));			
+			section.append(jQuery('#next-action'));	
+			jQuery('#back-action').show();		
+			section.show();	
+			
+			geocoder.geocode( { 'address': address}, function(results, status) {
+				if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
+					jQuery('#edit-geocoded-section').append(jQuery('#back-action'));
+					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-geocoded-section' }, backHandler);
+					jQuery('#edit-geocoded-name-selected').html(selectedPlace.properties.name);
+					jQuery('#edit-geocoded-address-selected').html(results[0].formatted_address);										
+					
+					jQuery('#edit-geocoded-section').append(jQuery('#map_canvas'));	
+											
+					//do the map stuff
+					selectedGeocode = results[0];
+>>>>>>> f64e2d359cb2c22f02fa2051736920be7992b519
+		
+					//set the model
+					selectedPlace.properties.address = 
+						getShortNameForType("street_number", selectedGeocode.address_components)+' '+
+						getShortNameForType("route", selectedGeocode.address_components);
+					
+					selectedPlace.properties.city = 
+						getShortNameForType("locality", selectedGeocode.address_components);
+					
+					selectedPlace.properties.province = 
+						getShortNameForType("administrative_area_level_1", selectedGeocode.address_components);
+			
+<<<<<<< HEAD
 				var myOptions = {
 				  zoom: 15,
 				  mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -668,13 +747,35 @@ function nextHandler(event) {
 				addMarker(map,selectedGeocode.geometry.location);					
 															
 				setStatus('','message', false);		
+=======
+					selectedPlace.properties.postcode = 
+						getShortNameForType("postal_code", selectedGeocode.address_components);
+>>>>>>> f64e2d359cb2c22f02fa2051736920be7992b519
 					
-				jQuery('.resetable', jQuery('#edit-geocoded-section')).show();					
-				jQuery('#edit-geocoded-section').show();	
+					selectedPlace.properties.country = 
+						getShortNameForType("country", selectedGeocode.address_components);
+					
+					selectedPlace.geometry.coordinates = [];
+					selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lng());
+					selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lat());
 				
-				getCategories(null, null);
-										
+					var myOptions = {
+					  zoom: 15,
+					  mapTypeId: google.maps.MapTypeId.ROADMAP
+					};
+					
+					if(map==null){
+						map = new google.maps.Map(document.getElementById("map_canvas"),
+							myOptions);
+					}
+							
+					deleteOverlays();
+					map.setCenter(selectedGeocode.geometry.location);								
+					addMarker(selectedGeocode.geometry.location);					
+																
+					setStatus('','message', false);		
 						
+<<<<<<< HEAD
 			} else {
 				console.log("Geocode was not successful for the following reason: " + status);
 		  	} 
@@ -685,6 +786,30 @@ function nextHandler(event) {
 		jQuery('#'+phase).hide();	
 	}
 	
+=======
+					jQuery('.resetable', jQuery('#edit-geocoded-section')).show();					
+					jQuery('#edit-geocoded-section').show();	
+					
+					getCategories(null, null);
+											
+							
+				} else {
+					setStatus('There was a problem geocoding with the specified location, please make your search more specific and try again.', 'update', false);
+					var section = jQuery('#edit-geocoded-section');	
+					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-geocoded-section' }, backHandler);
+					section.append(jQuery('#back-action'));
+					section.show();
+					console.log("Geocode was not successful for the following reason: " + status);
+			  	} 
+			});
+		}       		
+	}	
+	if (error){
+		setStatus(error, 'error', false);
+	}else{
+		jQuery('#'+phase).hide();
+	}	
+>>>>>>> f64e2d359cb2c22f02fa2051736920be7992b519
 	return false;
 }
 
@@ -742,7 +867,7 @@ function backHandler(event) {
 		jQuery('#categories-section').hide();
 		
 		//reset cat selector type
-		selectedClassifierLevel=''
+		selectedClassifierLevel='';
 		selectedPlace.classifiers[0].type='';
 		selectedPlace.classifiers[0].category='';
 		selectedPlace.classifiers[0].subcategory='';
@@ -789,10 +914,10 @@ jQuery(document).ready(function(jQuery) {
 	jQuery('#next-action' ).bind('click' , { phase: 'associate-place-section' }, nextHandler);
 		
 	jQuery('#welocally_default_search_radius').val('8');
-	
 	//startup phase state
 	jQuery('#associate-place-section').append(jQuery('#associate-input'));
 	jQuery('#associate-place-section').append(jQuery('#next-action'));
+	
 		
 
     jQuery( '#add-place-action' ).click(function() {
@@ -823,10 +948,10 @@ jQuery(document).ready(function(jQuery) {
     	
     	setStatus('Saving Place...', 'message', true);
     	
-    	var options 
+    	var options ;
     	
     	var options = {
-			action: 'save_place',
+			action: 'save_place'
 		};
     
     	var missingRequired = false;
