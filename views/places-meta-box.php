@@ -140,10 +140,8 @@ function searchLocations(location, queryString, radiusKm) {
       },
 	  error : function(jqXHR, textStatus, errorThrown) {	  		
 	  		if(textStatus != 'abort'){
-	  			setStatus('ERROR : '+textStatus+" there may been a network error or a problem with your settings.", 'error', false);
+	  			setStatus('ERROR : '+textStatus, 'error', false);
 	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
-	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
-	  			jQuery('#add-place-section').show();
 	  			
 	  		}	else {
 	  			console.log(textStatus);
@@ -173,15 +171,10 @@ function searchLocations(location, queryString, radiusKm) {
 				jQuery("#results").show();	
 				jQuery('#add-place-section').show();
 				
-			} else if(data != null && data.errors != null) {
+			} else if(data == null && data.errors != null) {
 			
 				buildErrorMessages(data.errors);	
 					
-			} else {
-				setStatus('There was a problem, please check your settings and netowrk.', 'error', false);
-	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
-	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
-	  			jQuery('#add-place-section').show();
 			}
 	  }
 	});
@@ -189,11 +182,9 @@ function searchLocations(location, queryString, radiusKm) {
 }
 
 function buildListItemForPlace(place,i) {
-        var itemLabel = '<b>'+place.properties.name+'</b> - '+place.distance.toFixed(2)+' km';
+        var itemLabel = '<b>'+place.properties.name+'</b>';
         if (place.properties.address) {
-            itemLabel += "<br>" + place.properties.address+" "+
-            	place.properties.city+" "+place.properties.province+" "
-            	+place.properties.postcode;
+            itemLabel += "<br>" + place.properties.address;
         }
 		return '<li class=\"ui-widget-content\" id="f'+i+'" title="select place">'+itemLabel+'</li>';
 }
@@ -233,7 +224,9 @@ function setSelectedPlaceInfo(selectedItem, post) {
 		selectedPlace.properties.postcode);
 	
 	jQuery('#share-meta-tagtext').val(WELOCALLY.places.tag.makePlaceTag(selectedPlace, post));	
-	jQuery('#places-tag-selected').show(); 
+	jQuery('#places-tag-selected').show();
+	var selected_tag = jQuery('#places-tag-selected');
+	
 	
 	var selectedLocation = new google.maps.LatLng(selectedPlace.geometry.coordinates[1], selectedPlace.geometry.coordinates[0]);		
 	var myOptions = {
@@ -247,7 +240,8 @@ function setSelectedPlaceInfo(selectedItem, post) {
 			myOptions);
 	}
 			
-	deleteOverlays();							
+	deleteOverlays();
+	map.setCenter(selectedLocation);								
 	addMarker(selectedLocation);	
 	
 	//hide the selection area
@@ -260,13 +254,13 @@ function setSelectedPlaceInfo(selectedItem, post) {
 	
 	jQuery('#edit-place-name-selected')
 	
-	//show the *selected* area	
-	jQuery("#selected-place-info").html('');
-	jQuery("#selected-place-info").append(jQuery('#places-tag-selected'));
+	//show the *selected* area
+	jQuery("#selected-place-info").html('');	
+	jQuery("#selected-place-info").append(jQuery(selected_tag));
 	jQuery("#selected-place-info").append(jQuery('#edit-place-name-selected'));
-	jQuery("#selected-place-info").append(jQuery('#search-geocoded-address-selected'));	
-	jQuery("#selected-place-info").append(jQuery('#map_canvas'));
-	
+	jQuery("#selected-place-info").append(jQuery('#search-geocoded-address-selected'));
+	jQuery("#selected-place-info").append(jQuery('#map_canvas')); 	
+		
 	jQuery("#results").hide();
 	jQuery("#selected-place").show();		
 	
@@ -353,7 +347,7 @@ function getCategories(type, category) {
 		  		jQuery('#edit-place-categories-selection-list').append('<li style="display:inline-block;">'+base+'</li>');
 		  	}
 		  	
-			if(data != null && data.errors != null) {
+			if(data.errors != null) {
 				buildErrorMessages(data.errors);	
 				jQuery('#edit-place-categories-selection').append(jQuery('#cancel-finder-workflow'));		
 			} else {
