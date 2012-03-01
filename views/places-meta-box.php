@@ -2,7 +2,8 @@
 <script type="text/javascript">
 if (!window.WELOCALLY) {
     window.WELOCALLY = {
-    };
+    	
+    }
 }
 
 //this can go farther
@@ -229,8 +230,7 @@ function setSelectedPlaceInfo(selectedItem, post) {
 		" "+selectedPlace.properties.city+" "+selectedPlace.properties.province+" "+
 		selectedPlace.properties.postcode);
 	
-	jQuery('#share-meta-tagtext').val(WELOCALLY.places.tag.makePlaceTag(selectedPlace, post));
-	var selected_tag = 	jQuery('#places-tag-selected');
+	jQuery('#share-meta-tagtext').val(WELOCALLY.places.tag.makePlaceTag(selectedPlace, post));	
 	jQuery('#places-tag-selected').show(); 
 	
 	var selectedLocation = new google.maps.LatLng(selectedPlace.geometry.coordinates[1], selectedPlace.geometry.coordinates[0]);		
@@ -263,11 +263,11 @@ function setSelectedPlaceInfo(selectedItem, post) {
 	//this is wehere we should build the tag
 	jQuery("#place-selected").val(JSON.stringify(selectedItem));
 	
-	jQuery('#edit-place-name-selected');
+	jQuery('#edit-place-name-selected')
 	
 	//show the *selected* area	
 	jQuery("#selected-place-info").html('');
-	jQuery("#selected-place-info").append(jQuery(selected_tag));
+	jQuery("#selected-place-info").append(jQuery('#places-tag-selected'));
 	jQuery("#selected-place-info").append(jQuery('#edit-place-name-selected'));
 	jQuery("#selected-place-info").append(jQuery('#search-geocoded-address-selected'));	
 	jQuery("#selected-place-info").append(jQuery('#map_canvas'));
@@ -310,7 +310,7 @@ function getCategories(type, category) {
 			    
 	
 	 var options = {
-		action: 'get_classifiers_types'
+		action: 'get_classifiers_types',
 	};
 	
 	var base;
@@ -510,20 +510,6 @@ function nextHandler(event) {
 		}
 					
 	} else if(phase=='search-place-address-section'){
-<<<<<<< HEAD
-				
-		setStatus('Geocoding...','message', true);
-		if(WELOCALLY.util.trim(jQuery('#edit-place-street').val()) == ''){
-			setStatus('Empty. Please enter a location .','error', false);
-			error = true;
-		}else{	
-			var address = jQuery('#edit-place-street').val();
-			
-			geocoder.geocode( { 'address': address}, function(results, status) {
-				if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
-					jQuery('#search-geocoded-section').append(jQuery('#back-action'));
-					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
-=======
 		if (WELOCALLY.util.trim(jQuery('#edit-place-street').val()) == ''){
 			setStatus('Location Empty. Please enter a location to start search from ie Oaklnd CA, 94612.','error', false);
 			error = true;
@@ -540,7 +526,6 @@ function nextHandler(event) {
 							
 			geocoder.geocode( { 'address': address}, function(results, status) {
 				if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
->>>>>>> Bug #138 Finder Flow:Back problems after failed geocoding
 					jQuery('#search-geocoded-name-selected').html(selectedPlace.properties.name);
 					jQuery('#search-geocoded-address-selected').html(results[0].formatted_address);										
 					jQuery('#search-geocoded-section').append(jQuery('#search-geocoded-address-selected'));
@@ -593,20 +578,6 @@ function nextHandler(event) {
 					
 					//ajax call
 					searchLocations(selectedGeocode.geometry.location, selectedPlace.properties.name, 30);
-<<<<<<< HEAD
-						
-			    } else {
-					setStatus('There was a problem geocoding with the specified location, please make your search more specific and try again.', 'update', false);
-					error = 'There was a problem geocoding with the specified location, please make your search more specific and try again.';
-					var section = jQuery('#search-geocoded-section');	
-					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-name-section' }, nextHandler);
-					section.append(jQuery('#back-action'));
-					section.show();
-					console.log("Geocode was not successful for the following reason: " + status);
-		  		} 
-		   });
-		}
-=======
 										
 							
 				} else {
@@ -626,114 +597,97 @@ function nextHandler(event) {
 		}
 				
 		
->>>>>>> Bug #138 Finder Flow:Back problems after failed geocoding
     		
 	} else if(phase=='edit-place-name-section'){
 			
-		if(WELOCALLY.util.trim(jQuery('#edit-place-name').val()) == ''){
-			setStatus('Empty. Please enter a place name .','error', false);
-			error = true;
-		}else{
-			selectedPlace.properties.name = jQuery("#edit-place-name").val();
-			jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
-						
-		    //put the address search in the top
-		    jQuery('#place-street-title').html('Location: Enter full street address where the place is as one line ie. 1714 Franklin Street, Oakland, CA 94612');
 			
-		    var section = jQuery('#edit-place-address-section');
-		    section.append(jQuery('#edit-place-name-selected'));
-			section.append(jQuery('#street-name-input'));
-			section.append(jQuery('#street-address-saved'));			
-			section.append(jQuery('#back-action'));
-			section.append(jQuery('#next-action'));	
-			jQuery('#back-action').show();
-			section.show();	
+		selectedPlace.properties.name = jQuery("#edit-place-name").val();
+		jQuery('#edit-place-name-selected').html(selectedPlace.properties.name);
 					
-			jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, nextHandler);		
-			jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, backHandler);
-		}	
+	    //put the address search in the top
+	    jQuery('#place-street-title').html('Location: Enter full street address where the place is as one line ie. 1714 Franklin Street, Oakland, CA 94612');
+		
+	    var section = jQuery('#edit-place-address-section');
+	    section.append(jQuery('#edit-place-name-selected'));
+		section.append(jQuery('#street-name-input'));
+		section.append(jQuery('#street-address-saved'));			
+		section.append(jQuery('#back-action'));
+		section.append(jQuery('#next-action'));	
+		jQuery('#back-action').show();
+		section.show();	
+				
+		jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, nextHandler);		
+		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, backHandler);
+		
+		
 	} else if(phase=='edit-place-address-section'){
 					
-		if(WELOCALLY.util.trim(jQuery('#edit-place-street').val()) == ''){
-			setStatus('Empty. Please enter a location .','error', false);
-			error = true;
-		}else{			
-			setStatus('Geocoding...','message', true);
-			var address = jQuery('#edit-place-street').val();
-			
-			var section = jQuery('#edit-place-address-section');
-			section.append(jQuery('#back-action'));			
-			section.append(jQuery('#next-action'));	
-			jQuery('#back-action').show();		
-			section.show();	
-			
-			geocoder.geocode( { 'address': address}, function(results, status) {
-				if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
-					jQuery('#edit-geocoded-section').append(jQuery('#back-action'));
-					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-geocoded-section' }, backHandler);
-					jQuery('#edit-geocoded-name-selected').html(selectedPlace.properties.name);
-					jQuery('#edit-geocoded-address-selected').html(results[0].formatted_address);										
-					
-					jQuery('#edit-geocoded-section').append(jQuery('#map_canvas'));	
-											
-					//do the map stuff
-					selectedGeocode = results[0];
+		setStatus('Geocoding...','message', true);
+		var address = jQuery('#edit-place-street').val();
 		
-					//set the model
-					selectedPlace.properties.address = 
-						getShortNameForType("street_number", selectedGeocode.address_components)+' '+
-						getShortNameForType("route", selectedGeocode.address_components);
-					
-					selectedPlace.properties.city = 
-						getShortNameForType("locality", selectedGeocode.address_components);
-					
-					selectedPlace.properties.province = 
-						getShortNameForType("administrative_area_level_1", selectedGeocode.address_components);
-			
-					selectedPlace.properties.postcode = 
-						getShortNameForType("postal_code", selectedGeocode.address_components);
-					
-					selectedPlace.properties.country = 
-						getShortNameForType("country", selectedGeocode.address_components);
-					
-					selectedPlace.geometry.coordinates = [];
-					selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lng());
-					selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lat());
+		var section = jQuery('#edit-place-address-section');
+		section.append(jQuery('#back-action'));			
+		section.append(jQuery('#next-action'));	
+		jQuery('#back-action').show();		
+		section.show();	
+		
+		jQuery('#edit-geocoded-section').append(jQuery('#back-action'));
+		
+		jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-geocoded-section' }, backHandler);
 				
-					var myOptions = {
-					  zoom: 15,
-					  mapTypeId: google.maps.MapTypeId.ROADMAP
-					};
-					
-					if(map==null){
-						map = new google.maps.Map(document.getElementById("map_canvas"),
-							myOptions);
-					}
-							
-					deleteOverlays();
-					map.setCenter(selectedGeocode.geometry.location);								
-					addMarker(map,selectedGeocode.geometry.location);					
-																
-					setStatus('','message', false);		
+		geocoder.geocode( { 'address': address}, function(results, status) {
+			if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
+				jQuery('#edit-geocoded-name-selected').html(selectedPlace.properties.name);
+				jQuery('#edit-geocoded-address-selected').html(results[0].formatted_address);										
+				
+				jQuery('#edit-geocoded-section').append(jQuery('#map_canvas'));	
+										
+				//do the map stuff
+				selectedGeocode = results[0];
+	
+				//set the model
+				selectedPlace.properties.address = 
+					getShortNameForType("street_number", selectedGeocode.address_components)+' '+
+					getShortNameForType("route", selectedGeocode.address_components);
+				
+				selectedPlace.properties.city = 
+					getShortNameForType("locality", selectedGeocode.address_components);
+				
+				selectedPlace.properties.province = 
+					getShortNameForType("administrative_area_level_1", selectedGeocode.address_components);
+		
+				selectedPlace.properties.postcode = 
+					getShortNameForType("postal_code", selectedGeocode.address_components);
+				
+				selectedPlace.properties.country = 
+					getShortNameForType("country", selectedGeocode.address_components);
+				
+				selectedPlace.geometry.coordinates = [];
+				selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lng());
+				selectedPlace.geometry.coordinates.push(selectedGeocode.geometry.location.lat());
+			
+				var myOptions = {
+				  zoom: 15,
+				  mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+				
+				if(map==null){
+					map = new google.maps.Map(document.getElementById("map_canvas"),
+						myOptions);
+				}
 						
-<<<<<<< HEAD
-					jQuery('.resetable', jQuery('#edit-geocoded-section')).show();					
-					jQuery('#edit-geocoded-section').show();	
+				deleteOverlays();
+				map.setCenter(selectedGeocode.geometry.location);								
+				addMarker(map,selectedGeocode.geometry.location);					
+															
+				setStatus('','message', false);		
 					
-					getCategories(null, null);
-											
-							
-				} else {
-					setStatus('There was a problem geocoding with the specified location, please make your search more specific and try again.', 'update', false);
-					var section = jQuery('#edit-geocoded-section');	
-					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-geocoded-section' }, backHandler);
-					section.append(jQuery('#back-action'));
-					section.show();
-					console.log("Geocode was not successful for the following reason: " + status);
-			  	} 
-			});
-		}       		
-=======
+				jQuery('.resetable', jQuery('#edit-geocoded-section')).show();					
+				jQuery('#edit-geocoded-section').show();	
+				
+				getCategories(null, null);
+										
+						
 			} else {
 				setStatus('There was a problem geocoding with the specified location,'+
 					' please make your search more specific and try again. status:'+
@@ -744,10 +698,9 @@ function nextHandler(event) {
 				jQuery('#edit-place-address-section').show();	
 		  	} 
 		});       		
->>>>>>> Bug #138 Finder Flow:Back problems after failed geocoding
 	}	
 	
-	if(!error){
+	if(!error){ 
 		jQuery('#'+phase).hide();	
 	}
 	
@@ -810,7 +763,7 @@ function backHandler(event) {
 		jQuery('#categories-section').hide();
 		
 		//reset cat selector type
-		selectedClassifierLevel='';
+		selectedClassifierLevel=''
 		selectedPlace.classifiers[0].type='';
 		selectedPlace.classifiers[0].category='';
 		selectedPlace.classifiers[0].subcategory='';
@@ -891,10 +844,10 @@ jQuery(document).ready(function(jQuery) {
     	
     	setStatus('Saving Place...', 'message', true);
     	
-    	var options ;
+    	var options 
     	
     	var options = {
-			action: 'save_place'
+			action: 'save_place',
 		};
     
     	var missingRequired = false;
@@ -952,14 +905,14 @@ jQuery(document).ready(function(jQuery) {
 	
 	jQuery( "#selectable-cat" ).selectable({
 		   selected: function(event, ui) {
-			   	if(selectedCategories.indexOf(ui.selected.innerHTML) == -1) {
-			   		selectedCategories = selectedCategories + ui.selected.innerHTML+",";
+			   	if(selectedCategories.indexOf(ui.selected.innerText) == -1) {
+			   		selectedCategories = selectedCategories + ui.selected.innerText+",";
 			   	}
 		   		jQuery( "#place-categories-selected" ).val(selectedCategories);		
 		   },
 		   unselected: function(event, ui) {
-		   		if(selectedCategories.indexOf(ui.unselected.innerHTML) != -1) {
-		   			var replaceText =  ui.unselected.innerHTML+",";
+		   		if(selectedCategories.indexOf(ui.unselected.innerText) != -1) {
+		   			var replaceText =  ui.unselected.innerText+",";
 		   			selectedCategories = selectedCategories.replace(new RegExp(replaceText, 'g'),"");
 		   			jQuery( "#place-categories-selected" ).val(selectedCategories);	
 		   		}		
@@ -970,17 +923,17 @@ jQuery(document).ready(function(jQuery) {
 		   selected: function(event, ui) {
 		   		
 		   		if(selectedClassifierLevel == 'Type'){
-		   			selectedPlace.classifiers[0].type = ui.selected.innerHTML;
+		   			selectedPlace.classifiers[0].type = ui.selected.innerText;
 		   		} else if(selectedClassifierLevel == 'Category'){
-		   			selectedPlace.classifiers[0].category = ui.selected.innerHTML;
+		   			selectedPlace.classifiers[0].category = ui.selected.innerText;
 		   		} else if(selectedClassifierLevel == 'Subcategory'){
-		   			selectedPlace.classifiers[0].subcategory = ui.selected.innerHTML;
+		   			selectedPlace.classifiers[0].subcategory = ui.selected.innerText;
 		   		}
 		   		
 		   		jQuery( "#edit-place-categories-selected-list")
 		   			.append(
 		   			'<li class="categories-selected-list-item">'+
-		   			selectedClassifierLevel+':'+ui.selected.innerHTML+'</li>');
+		   			selectedClassifierLevel+':'+ui.selected.innerText+'</li>');
 		   		
 		   		if(selectedPlace.classifiers[0].type != '' &&
 		   			selectedPlace.classifiers[0].category != '' &&
@@ -991,7 +944,7 @@ jQuery(document).ready(function(jQuery) {
 		   			jQuery( '#save-place-action').show();
 		   			jQuery( '#edit-place-optional-section').show();
 		   			jQuery('#add-place-actions-section').append(jQuery('#back-action' )); 
-		   			jQuery('#back-action' ).unbind('click').bind('click',{ phase: 'edit-place-optional-section' }, backHandler);
+		   			jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-place-optional-section' }, backHandler);
 		   			
 		   			
 		   			
@@ -1039,14 +992,14 @@ jQuery(document).ready(function(jQuery) {
 	
 	jQuery( "#selectable-cat" ).selectable({
 		   selected: function(event, ui) {
-			   	if(selectedCategories.indexOf(ui.selected.innerHTML) == -1) {
-			   		selectedCategories = selectedCategories + ui.selected.innerHTML+",";
+			   	if(selectedCategories.indexOf(ui.selected.innerText) == -1) {
+			   		selectedCategories = selectedCategories + ui.selected.innerText+",";
 			   	}
 		   		jQuery( "#place-categories-selected" ).val(selectedCategories);		
 		   },
 		   unselected: function(event, ui) {
-		   		if(selectedCategories.indexOf(ui.unselected.innerHTML) != -1) {
-		   			var replaceText =  ui.unselected.innerHTML+",";
+		   		if(selectedCategories.indexOf(ui.unselected.innerText) != -1) {
+		   			var replaceText =  ui.unselected.innerText+",";
 		   			selectedCategories = selectedCategories.replace(new RegExp(replaceText, 'g'),"");
 		   			jQuery( "#place-categories-selected" ).val(selectedCategories);	
 		   		}		
