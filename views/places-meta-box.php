@@ -3,7 +3,7 @@
 if (!window.WELOCALLY) {
     window.WELOCALLY = {
     	
-    }
+    };
 }
 
 //this can go farther
@@ -305,12 +305,10 @@ function findCategory(categoryName){
 function getCategories(type, category) {
 	jQuery('#edit-place-categories-selection').hide();
 	
-	
 	setStatus('Loading Categories...','message', true);
 			    
-	
 	 var options = {
-		action: 'get_classifiers_types',
+		action: 'get_classifiers_types'
 	};
 	
 	var base;
@@ -763,7 +761,7 @@ function backHandler(event) {
 		jQuery('#categories-section').hide();
 		
 		//reset cat selector type
-		selectedClassifierLevel=''
+		selectedClassifierLevel='';
 		selectedPlace.classifiers[0].type='';
 		selectedPlace.classifiers[0].category='';
 		selectedPlace.classifiers[0].subcategory='';
@@ -844,10 +842,8 @@ jQuery(document).ready(function(jQuery) {
     	
     	setStatus('Saving Place...', 'message', true);
     	
-    	var options 
-    	
     	var options = {
-			action: 'save_place',
+			action: 'save_place'
 		};
     
     	var missingRequired = false;
@@ -905,8 +901,8 @@ jQuery(document).ready(function(jQuery) {
 	
 	jQuery( "#selectable-cat" ).selectable({
 		   selected: function(event, ui) {
-			   	if(selectedCategories.indexOf(ui.selected.innerText) == -1) {
-			   		selectedCategories = selectedCategories + ui.selected.innerText+",";
+			   	if(selectedCategories.indexOf(ui.selected.innerHTML) == -1) {
+			   		selectedCategories = selectedCategories + ui.selected.innerHTML+",";
 			   	}
 		   		jQuery( "#place-categories-selected" ).val(selectedCategories);		
 		   },
@@ -923,17 +919,17 @@ jQuery(document).ready(function(jQuery) {
 		   selected: function(event, ui) {
 		   		
 		   		if(selectedClassifierLevel == 'Type'){
-		   			selectedPlace.classifiers[0].type = ui.selected.innerText;
+		   			selectedPlace.classifiers[0].type = ui.selected.innerHTML;
 		   		} else if(selectedClassifierLevel == 'Category'){
-		   			selectedPlace.classifiers[0].category = ui.selected.innerText;
+		   			selectedPlace.classifiers[0].category = ui.selected.innerHTML;
 		   		} else if(selectedClassifierLevel == 'Subcategory'){
-		   			selectedPlace.classifiers[0].subcategory = ui.selected.innerText;
+		   			selectedPlace.classifiers[0].subcategory = ui.selected.innerHTML;
 		   		}
 		   		
 		   		jQuery( "#edit-place-categories-selected-list")
 		   			.append(
 		   			'<li class="categories-selected-list-item">'+
-		   			selectedClassifierLevel+':'+ui.selected.innerText+'</li>');
+		   			selectedClassifierLevel+':'+ui.selected.innerHTML+'</li>');
 		   		
 		   		if(selectedPlace.classifiers[0].type != '' &&
 		   			selectedPlace.classifiers[0].category != '' &&
@@ -992,8 +988,8 @@ jQuery(document).ready(function(jQuery) {
 	
 	jQuery( "#selectable-cat" ).selectable({
 		   selected: function(event, ui) {
-			   	if(selectedCategories.indexOf(ui.selected.innerText) == -1) {
-			   		selectedCategories = selectedCategories + ui.selected.innerText+",";
+			   	if(selectedCategories.indexOf(ui.selected.innerHTML) == -1) {
+			   		selectedCategories = selectedCategories + ui.selected.innerHTML+",";
 			   	}
 		   		jQuery( "#place-categories-selected" ).val(selectedCategories);		
 		   },
@@ -1138,10 +1134,10 @@ jQuery(document).ready(function(jQuery) {
 	
 	/* ------ add new place */
 	#edit-place-form { margin-bottom: 10px; width: 100%; display:none; }
-	.edit-field { width: 680px; margin-bottom: 10px; display:inline-block; font-size:1.2em; }
-	.selected-field { width: 680px; height: 15px; margin-bottom: 5px; display:inline-block; font-size:1.4em; }
+	.edit-field { width: 100%; margin-bottom: 10px; display:inline-block; font-size:1.2em; }
+	.selected-field { width: 100%; height: 15px; margin-bottom: 5px; display:inline-block; font-size:1.4em; }
 	
-	.tag-field { width: 680px; height: 15px; margin-bottom: 5px; 
+	.tag-field { width: 100%; height: 15px; margin-bottom: 5px; 
 		display:inline-block; 
 		font-weight:bold;color:#696969;
 		text-align:left;font-family:courier new, courier, monospace;line-height:1;
