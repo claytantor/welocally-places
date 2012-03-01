@@ -346,8 +346,5 @@ if (!WELOCALLY.PlaceComponent) {
  */
 if (!WELOCALLY.PlacesSearchComponent) {
     WELOCALLY.PlacesSearchComponent = function(cfg) {
-    }
+    };
 }
-
-
-
