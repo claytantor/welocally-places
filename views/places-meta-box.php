@@ -1,5 +1,5 @@
 <?php global $post; ?>
-<script>
+<script type="text/javascript">
 if (!window.WELOCALLY) {
     window.WELOCALLY = {
     };
@@ -461,7 +461,7 @@ function nextHandler(event) {
 	var error = false;
 	if(phase=='associate-place-section'){
 		jQuery('.resetable', jQuery('#search-place-name-section')).show();
-		
+		jQuery('#cancel-finder-workflow').hide();
 		var section = jQuery('#search-place-name-section');
 		jQuery('#back-action' ).hide();
 		section.append(jQuery('#edit-place-name-title'));
@@ -482,7 +482,7 @@ function nextHandler(event) {
 							
 	} else if(phase=='search-place-name-section'){
 		if (WELOCALLY.util.trim(jQuery("#edit-place-name").val()) == ''){
-			setStatus('Empty. Please enter a place name.','error', false);
+			setStatus('Search Empty. Please enter a search term or place name.','error', false);
 			error = true;
 
 		} else {
@@ -510,6 +510,7 @@ function nextHandler(event) {
 		}
 					
 	} else if(phase=='search-place-address-section'){
+<<<<<<< HEAD
 				
 		setStatus('Geocoding...','message', true);
 		if(WELOCALLY.util.trim(jQuery('#edit-place-street').val()) == ''){
@@ -522,6 +523,24 @@ function nextHandler(event) {
 				if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
 					jQuery('#search-geocoded-section').append(jQuery('#back-action'));
 					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
+=======
+		if (WELOCALLY.util.trim(jQuery('#edit-place-street').val()) == ''){
+			setStatus('Location Empty. Please enter a location to start search from ie Oaklnd CA, 94612.','error', false);
+			error = true;
+
+		} else {
+			
+			setStatus('Geocoding...','message', true);
+		
+			var address = jQuery('#edit-place-street').val();
+			
+			jQuery('#search-geocoded-section').append(jQuery('#back-action'));	
+			
+			jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
+							
+			geocoder.geocode( { 'address': address}, function(results, status) {
+				if (status == google.maps.GeocoderStatus.OK &&  validGeocodeForSearch(results[0])) {
+>>>>>>> Bug #138 Finder Flow:Back problems after failed geocoding
 					jQuery('#search-geocoded-name-selected').html(selectedPlace.properties.name);
 					jQuery('#search-geocoded-address-selected').html(results[0].formatted_address);										
 					jQuery('#search-geocoded-section').append(jQuery('#search-geocoded-address-selected'));
@@ -574,6 +593,7 @@ function nextHandler(event) {
 					
 					//ajax call
 					searchLocations(selectedGeocode.geometry.location, selectedPlace.properties.name, 30);
+<<<<<<< HEAD
 						
 			    } else {
 					setStatus('There was a problem geocoding with the specified location, please make your search more specific and try again.', 'update', false);
@@ -586,6 +606,27 @@ function nextHandler(event) {
 		  		} 
 		   });
 		}
+=======
+										
+							
+				} else {
+					console.log("Geocode was not successful for the following reason: " + status);
+					setStatus('There was a problem geocoding with the specified location,'+
+						' please make your search more specific and try again. status:'+
+						status, 'update', false);							
+					
+					jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
+					jQuery('#search-place-address-section').append(jQuery('#back-action'));	
+					jQuery('#search-place-address-section').append(jQuery('#cancel-finder-workflow'));
+					jQuery('#search-place-address-section').show();				
+					
+			  	} 
+			});
+			
+		}
+				
+		
+>>>>>>> Bug #138 Finder Flow:Back problems after failed geocoding
     		
 	} else if(phase=='edit-place-name-section'){
 			
@@ -675,6 +716,7 @@ function nextHandler(event) {
 																
 					setStatus('','message', false);		
 						
+<<<<<<< HEAD
 					jQuery('.resetable', jQuery('#edit-geocoded-section')).show();					
 					jQuery('#edit-geocoded-section').show();	
 					
@@ -691,6 +733,18 @@ function nextHandler(event) {
 			  	} 
 			});
 		}       		
+=======
+			} else {
+				setStatus('There was a problem geocoding with the specified location,'+
+					' please make your search more specific and try again. status:'+
+					status, 'update', false);
+				jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'edit-place-address-section' }, backHandler);			
+				jQuery('#edit-place-address-section').append(jQuery('#back-action'));	
+				jQuery('#edit-place-address-section').append(jQuery('#cancel-finder-workflow'));
+				jQuery('#edit-place-address-section').show();	
+		  	} 
+		});       		
+>>>>>>> Bug #138 Finder Flow:Back problems after failed geocoding
 	}	
 	
 	if(!error){
@@ -706,6 +760,7 @@ function backHandler(event) {
 	var phase = event.data.phase;
 	if(phase=='search-place-name-section'){			
 		jQuery('#place-selector-form').hide();
+		jQuery('#cancel-finder-workflow').hide();
 		jQuery('#associate-place-section').append(jQuery('#next-action'));
 			
 		jQuery('#next-action' ).unbind('click').bind('click' , { phase: 'associate-place-section' }, nextHandler);
@@ -730,6 +785,7 @@ function backHandler(event) {
 		jQuery('#search-geocoded-section').hide(); 
 		jQuery('#search-place-address-section').show(); 
 		jQuery("#results").show();  	
+		
     } else if (phase =='edit-place-address-section'){
     	var section = jQuery('#edit-place-name-section');
     	section.append(jQuery('#back-action'));

@@ -135,7 +135,7 @@ jQuery(document).ready(function(jQuery) {
 			map_canvas_widgets[i],
 	        mapOptions);
 	    
-	    setEvents(wl_map_widget[i]);
+	    WELOCALLY.places.map.setMapEvents(wl_map_widget[i]);
 	    
 		
 	}
