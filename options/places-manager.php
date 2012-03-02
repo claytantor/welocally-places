@@ -117,42 +117,52 @@ endif;
 <table class="form-table">
 	<tr valign="top">	
 		<td>			
+		<h1><?php get_places_legacy_count() ?></h1>
 		<?php if(get_places_legacy_count() > 0): ?>	
 		<div><img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_cancel.png" alt="" title=""/></div>
 		<div><strong>You need to relink the places in this section!</strong>&nbsp; You have recenty upgraded Welocally Places. <?php print_r(get_places_legacy_count());  ?> Legacy Posts were found.  
 		We have created a <a href="http://welocally.com/?p=780" target="_new">Release Guide</a>. Finally, if you have problems <a href="http://www.welocally.com/?page_id=139" target="_new">email us</a>. 
 		<p/><strong>ALWAYS BACKUP PRIOR TO UPGRADE</strong></div>
+		
+		<?php
+		$places_found_meta = false;
+		$index = 0;
+		$legacy_posts = get_legacy_posts();
+		foreach( $legacy_posts as $post ) {
+		    $places = get_legacy_place_by_post_id($post->ID);  
+		    echo("<tr class=\"d".($index & 1)."\">");
+		    if(count($places)>0):
+		    $places_found_meta = true;
+		?>
+				<td>
+					<div>
+						<input type="checkbox" name="post_id_meta[]" value="<?php echo($post->ID) ?>" />
+						<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$post->ID.'&action=edit' ?>"><strong><?php print_r($post->post_title)  ?></strong></a> Places Linked: <?php echo(count($places));?>
+						&nbsp; <a href="#" onclick="jQuery('#post_meta_place_<?php echo($post->ID) ?>').toggle(); return false;">show details</a>
+					</div>
+					<div id="post_meta_place_<?php echo($post->ID) ?>" style="display:none">
+				   		<pre><?php print_r($places) ?></pre>
+				   </div>	   
+			   </td>
+			</tr>
+		<?php
+			endif;
+			$index=$index+1;
+		}?>
+		
+		
+		
+		
+		
+		
 		<?php else: ?>
 		<img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_check.png" alt="" title=""/>	Your places are up to date. 	
 		<?php endif; ?>
 		</td>
 	</tr>
-<?php
-$places_found_meta = false;
-$index = 0;
-$legacy_posts = get_legacy_posts();
-foreach( $legacy_posts as $post ) {
-    $places = get_legacy_place_by_post_id($post->ID);  
-    echo("<tr class=\"d".($index & 1)."\">");
-    if(count($places)>0):
-    $places_found_meta = true;
-?>
-		<td>
-			<div>
-				<input type="checkbox" name="post_id_meta[]" value="<?php echo($post->ID) ?>" />
-				<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$post->ID.'&action=edit' ?>"><strong><?php print_r($post->post_title)  ?></strong></a> Places Linked: <?php echo(count($places));?>
-				&nbsp; <a href="#" onclick="jQuery('#post_meta_place_<?php echo($post->ID) ?>').toggle(); return false;">show details</a>
-			</div>
-			<div id="post_meta_place_<?php echo($post->ID) ?>" style="display:none">
-		   		<pre><?php print_r($places) ?></pre>
-		   </div>	   
-	   </td>
-	</tr>
-<?php
-	endif;
-	$index=$index+1;
-}
 
+
+<?php
 if($places_found_meta):
 ?>	
 	<tr valign="top">

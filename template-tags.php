@@ -270,16 +270,29 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	function get_legacy_posts() {
 		global $wpdb;
 		
-		$query = "SELECT $wpdb->posts.*
+		$query = "SELECT $wpdb->posts.*, $wpdb->postmeta.meta_value
 			 	FROM $wpdb->posts,$wpdb->postmeta  
 			WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id  
 			AND $wpdb->postmeta.meta_key='_PlaceSelected'"; 
+			
 		
-		return $wpdb->get_results($query, OBJECT);
+		$metaPlaces = $wpdb->get_results($query, OBJECT);
+		$arr = array();
+		foreach ($metaPlaces as $post)
+		{
+			$placeJson = 
+				json_decode($post->meta_value, true);
+			if(!empty ($placeJson['externalId']) || 
+				!empty ($placeJson['simpleGeoId']) ){
+				array_push($arr, $post);	
+			}
+		}
+		return $arr;		
+		
 	}
 	
 	/**
-	 * this fuction is used to determine the number of legacy places that will need to be
+	 * this function is used to determine the number of legacy places that will need to be
 	 * converted.
 	 * 
 	 */
@@ -290,8 +303,20 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 			 	FROM $wpdb->postmeta 
 			WHERE $wpdb->postmeta.meta_key = '_PlaceSelected'";
 			
-		$return = $wpdb->get_results($query, OBJECT);
-		return count($return);
+		$metaPlaces = $wpdb->get_results($query, OBJECT);
+		$legacyCount = 0;
+		foreach ($metaPlaces as $place)
+		{
+			$placeJson = 
+				json_decode($place->meta_value, true);
+			
+			if(!empty ($placeJson['externalId']) || 
+				!empty ($placeJson['simpleGeoId']) )			
+			{
+				$legacyCount = $legacyCount+1;
+			}
+		}
+		return $legacyCount;
 		
 	}
 	

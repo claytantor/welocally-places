@@ -120,7 +120,9 @@ if (!window.WELOCALLY) {
         		
         		setMapEvents: function(map){
         			google.maps.event.addListener(map, 'tilesloaded', function() {
+        				console.log('tiles loaded');
         				jQuery(map).find('img').css('max-width','none');
+        				jQuery(".map_canvas_post").find('img').css('max-width','none');
         				WELOCALLY.util.preload([
         				         'http://maps.google.com/mapfiles/openhand.cur'
         				]);          				
