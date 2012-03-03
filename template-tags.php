@@ -445,7 +445,12 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 			AND $wpdb->postmeta.meta_key = '_PlaceSelected' LIMIT 1";
 			
 		$return = $wpdb->get_results($query, OBJECT);
-		return $return;
+		
+		$placeJson = 
+				json_decode($return[0]->meta_value, true);
+		
+		
+		return $placeJson;
 	}
 	
 	function delete_place_by_post_id( $postId = null) {

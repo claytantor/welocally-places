@@ -907,8 +907,8 @@ jQuery(document).ready(function(jQuery) {
 		   		jQuery( "#place-categories-selected" ).val(selectedCategories);		
 		   },
 		   unselected: function(event, ui) {
-		   		if(selectedCategories.indexOf(ui.unselected.innerText) != -1) {
-		   			var replaceText =  ui.unselected.innerText+",";
+		   		if(selectedCategories.indexOf(ui.unselected.innerHTML) != -1) {
+		   			var replaceText =  ui.unselected.innerHTML+",";
 		   			selectedCategories = selectedCategories.replace(new RegExp(replaceText, 'g'),"");
 		   			jQuery( "#place-categories-selected" ).val(selectedCategories);	
 		   		}		
@@ -948,11 +948,12 @@ jQuery(document).ready(function(jQuery) {
 		   			var type = null;
 		   			var category = null;
 		   		 	if(selectedPlace.classifiers[0].type != '')
-		   		 		type= selectedPlace.classifiers[0].type;
+		   		 		type= WELOCALLY.util.unescape(selectedPlace.classifiers[0].type);
 		   		 	if(selectedPlace.classifiers[0].category != '')
-		   		 		category= selectedPlace.classifiers[0].category;	
+		   		 		category= WELOCALLY.util.unescape(selectedPlace.classifiers[0].category);	
 		   		 		
 		   			getCategories(type, category);
+		   				
 		   		}
 			   	
 		   },
@@ -994,8 +995,8 @@ jQuery(document).ready(function(jQuery) {
 		   		jQuery( "#place-categories-selected" ).val(selectedCategories);		
 		   },
 		   unselected: function(event, ui) {
-		   		if(selectedCategories.indexOf(ui.unselected.innerText) != -1) {
-		   			var replaceText =  ui.unselected.innerText+",";
+		   		if(selectedCategories.indexOf(ui.unselected.innerHTML) != -1) {
+		   			var replaceText =  ui.unselected.innerHTML+",";
 		   			selectedCategories = selectedCategories.replace(new RegExp(replaceText, 'g'),"");
 		   			jQuery( "#place-categories-selected" ).val(selectedCategories);	
 		   		}		

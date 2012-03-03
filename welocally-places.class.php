@@ -670,7 +670,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					);		  
 		}
 		
-		
+			
 		public function getPostPlaces($postId) {
 		    global $wpdb;
 		    

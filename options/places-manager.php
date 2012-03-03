@@ -44,20 +44,24 @@ if(!is_subscribed()) {
 <form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">
 <fieldset>
 <span class="wl_options_heading"><?php _e( 'Places' ); ?></span>
+<p/>
 <table class="form-table">	
+
 <?php
 $places_found = false;
 $index = 0;
 $pindex = 0;
-$posts = get_posts();
+$args = array( 'numberposts' => 5000, 'orderby' => 'post_date', 'order' => 'ASC'  );
+$posts = get_posts($args);
 foreach( $posts as $post ) {
-    $places = get_post_places($post->ID);  
-    echo("<tr class=\"d".($index & 1)."\">");
+    $places = get_post_places($post->ID);     
     if(count($places)>0):
     $places_found = true;
+    echo("<tr class=\"d".($pindex & 1)."\">");
 ?>
 	<td>
 		<div>
+			<h1><?php echo($pindex+1); ?></h1>
 			<input type="checkbox" name="post_id[]" value="<?php echo($post->ID) ?>" />
 			<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$post->ID.'&action=edit' ?>"><strong><?php print_r($post->post_title)  ?></strong></a> Places Linked: <?php echo(count($places));?>
 		</div>
@@ -79,9 +83,11 @@ foreach( $posts as $post ) {
 		</div>
 			
 
-<?php
-	$pindex=$pindex+1;
+<?php	
 	endforeach;
+	if($places_found){
+		$pindex=$pindex+1;
+	}
 	endif;
 ?>
 	</td>	
@@ -131,13 +137,13 @@ endif;
 		foreach( $legacy_posts as $post ) {
 		    $places = get_legacy_place_by_post_id($post->ID);  
 		    echo("<tr class=\"d".($index & 1)."\">");
-		    if(count($places)>0):
+		    if(!empty($places)):
 		    $places_found_meta = true;
 		?>
 				<td>
 					<div>
 						<input type="checkbox" name="post_id_meta[]" value="<?php echo($post->ID) ?>" />
-						<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$post->ID.'&action=edit' ?>"><strong><?php print_r($post->post_title)  ?></strong></a> Places Linked: <?php echo(count($places));?>
+						<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$post->ID.'&action=edit' ?>"><strong><?php print_r($post->post_title)  ?></strong></a> Meta Place Found
 						&nbsp; <a href="#" onclick="jQuery('#post_meta_place_<?php echo($post->ID) ?>').toggle(); return false;">show details</a>
 					</div>
 					<div id="post_meta_place_<?php echo($post->ID) ?>" style="display:none">
