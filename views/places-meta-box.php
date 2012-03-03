@@ -105,6 +105,8 @@ function deleteOverlays() {
 
 
 function searchLocations(location, queryString, radiusKm) {	
+	jQuery('#results').hide();
+		  		
 	setStatus('Loading Places...', 'message', true);
 	
 	jQuery('#selectable').empty();
@@ -151,24 +153,28 @@ function searchLocations(location, queryString, radiusKm) {
 	  },
 	  success : function(data, textStatus, jqXHR) {
 
-		    setStatus('', 'message', false);
-		    	  		
+
+	  		
+	  		
+	  		setStatus('', 'message', false);
+
+		    jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
+		    jQuery('#cancel-finder-workflow').show();	  		
 	  		if(data != null && data.length == 0) {
 	  			setStatus('Sorry no places were found that match your query.', 'update', false);
-	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
+	  			
 	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
-	  			jQuery('#add-place-section').show();
+	  			
 	  			
 	  		} else if(data != null && data.length > 0) {
 				jQuery.each(data, function(i,item){
 					jsonObjFeatures.push(item);	    		
 					jQuery('#selectable').append(buildListItemForPlace(item,i));				
 				});
-				jQuery('#search-geocoded-section').append(jQuery('#results'));
-				jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));		
+				jQuery('#search-geocoded-section').append(jQuery('#results'));	
 				jQuery('#results').append(jQuery('#add-place-section'));											
 				jQuery("#results").show();	
-				jQuery('#add-place-section').show();
+				
 				
 			} else if(data != null && data.errors != null) {
 			
@@ -176,10 +182,12 @@ function searchLocations(location, queryString, radiusKm) {
 					
 			} else {
 				setStatus('There was a problem, please check your settings and network.', 'error', false);
-	  			jQuery('#add-place-section').append(jQuery('#cancel-finder-workflow'));	
 	  			jQuery('#place-selector').append(jQuery('#add-place-section'));	
-	  			jQuery('#add-place-section').show();
+	  			
 			}
+			jQuery('#add-place-section').show();
+	  		
+	  		
 	  }
 	});
    
@@ -519,6 +527,7 @@ function nextHandler(event) {
 			var address = jQuery('#edit-place-street').val();
 			
 			jQuery('#search-geocoded-section').append(jQuery('#back-action'));	
+			jQuery('#search-geocoded-section').hide();
 			
 			jQuery('#back-action' ).unbind('click').bind('click' , { phase: 'search-place-address-section' }, backHandler);
 							
@@ -528,6 +537,7 @@ function nextHandler(event) {
 					jQuery('#search-geocoded-address-selected').html(results[0].formatted_address);										
 					jQuery('#search-geocoded-section').append(jQuery('#search-geocoded-address-selected'));
 					jQuery('#search-geocoded-section').append(jQuery('#map_canvas'));	
+					jQuery('#search-geocoded-section').show();
 											
 					//do the map stuff
 					selectedGeocode = results[0];
@@ -1184,21 +1194,22 @@ jQuery(document).ready(function(jQuery) {
 		display:inline-block;
 	 }
 	 	
+	.input-section{ width:100%;} 	
+	
 </style>
 <body>
 	<div style="display:none">
 		
-		<div id="associate-input" class="action" style="display:inline-block" >
+		<div id="associate-input" class="input-section action" style="display:inline-block" >
 			<div style="display:inline-block" class="selected-field">Associate a place with this post?&nbsp;</div>			
 		</div>
 	
-		<div id="place-name-input" class="action" style="display:inline-block">
+		<div id="place-name-input" class="input-section action" style="display:inline-block">
 			<div id="place-name-title"  class="field-title">*Place Name: <em>Required</em></div>
 			<input type="text" id="edit-place-name" name="edit-place-name" class="edit-field">
-			<button id="save-place-name-action" href="#" style="display:none">Save</button>
 		</div>							
 
-		<div id="street-name-input" class="action" style="display:inline-block">			
+		<div id="street-name-input" class="input-section action" style="display:inline-block">			
 			<div id="place-street-title"  class="field-title">*Full Address: <em>Required</em></div>
 			<input type="text" id="edit-place-street" name="edit-place-street" class="edit-field">
 		</div>
