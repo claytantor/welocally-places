@@ -159,12 +159,12 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 			//app stuff, for right now we will embed this key but this should be coming from a web service
 			wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true&language=en' , false , '3');
-			wp_enqueue_script('sp-places-script', $placesURL.'places.js', array('jquery') );
+			wp_enqueue_script('wl-places-script', $placesURL.'places.js', array('jquery'), WelocallyPlaces::VERSION  );
 			if( locate_template( array('places/places.css') ) ) {
 				$templateArray = explode( '/', TEMPLATEPATH );
 				$themeName = $templateArray[count($templateArray)-1];
-				wp_enqueue_style('sp-places-style', WP_CONTENT_URL.'/themes/'.$themeName.'/places/places.css', array(), WelocallyPlaces::VERSION, 'screen' );
-			} else wp_enqueue_style('sp-places-style', $placesURL.'places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+				wp_enqueue_style('wl-places-style', WP_CONTENT_URL.'/themes/'.$themeName.'/places/places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+			} else wp_enqueue_style('wl-places-style', $placesURL.'places.css', array(), WelocallyPlaces::VERSION, 'screen' );
 			
 			wp_enqueue_style( 'tinymce_button', WP_PLUGIN_URL . '/welocally-places/resources/tinymce-button.css' );
 			
@@ -177,7 +177,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_enqueue_style( 'wl_font_list', 'https://fonts.googleapis.com/css?family='.$fontList );
 						
 			//admin stuff
-			wp_enqueue_style( 'welocally_places', WP_PLUGIN_URL . '/welocally-places/resources/places.css' );
 			wp_enqueue_style('thickbox');
 			
 			wp_enqueue_script('media-upload');
@@ -185,7 +184,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			//color picker
 			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));
 			
-			wp_enqueue_script('wlplaces', WP_PLUGIN_URL . '/welocally-places/resources/wlplaces.js', array('jquery'));
+			wp_enqueue_script('wlplaces', WP_PLUGIN_URL . '/welocally-places/resources/wlplaces.js', array('jquery'), WelocallyPlaces::VERSION);
 		}
 		
 
