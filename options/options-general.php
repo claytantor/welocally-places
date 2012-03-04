@@ -259,7 +259,7 @@ jQuery(document).ready(function() {
 	<tr>
 	<th scope="row"><?php _e( 'Custom Map Style' ); ?></th>
 		<td>
-			<textarea rows="4" cols="60" name="welocally_map_custom_style"><?php printf(base64_decode($options[ 'map_custom_style' ])); ?></textarea><br/>
+			<textarea rows="4" cols="60" name="welocally_map_custom_style"><?php printf($options[ 'map_custom_style' ]); ?></textarea><br/>
 			<span class="description"><?php _e( 'This is the custom styling for your maps. Leave blank to use default style. To style your map use the <a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html">Maps Style Wizard</a>' ); ?></span>
 		</td>
 	</tr>	
