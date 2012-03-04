@@ -33,7 +33,7 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	$options[ 'map_infobox_close' ] = trim($_POST[ 'welocally_map_infobox_close' ])? trim($_POST[ 'welocally_map_infobox_close' ]):plugins_url() . "/welocally-places/resources/images/infobox_close_16.png";
 	$options[ 'map_icon_web' ] = trim($_POST[ 'welocally_map_icon_web' ])?trim($_POST[ 'welocally_map_icon_web' ]):plugins_url() . "/welocally-places/resources/images/mapicons_web.png";
 	$options[ 'map_icon_directions' ] = trim($_POST[ 'welocally_map_icon_directions' ])? trim($_POST[ 'welocally_map_icon_directions' ]):plugins_url() . "/welocally-places/resources/images/mapicons_car.png";
-	$options[ 'map_custom_style' ] = base64_encode(str_replace( '\"', '"', $_POST[ 'welocally_map_custom_style' ] ) );
+	$options[ 'map_custom_style' ] = str_replace( '\"', '"', $_POST[ 'welocally_map_custom_style' ] ) ;
 
 	$options[ 'font_place_name' ] = $_POST[ 'welocally_font_place_name' ];
 	$options[ 'color_place_name' ] = $_POST[ 'welocally_color_place_name' ];
