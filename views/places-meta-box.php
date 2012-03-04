@@ -767,7 +767,8 @@ function backHandler(event) {
     	section.append(jQuery('#back-action'));
 		section.append(jQuery('#next-action'));
 		
-		jQuery('#edit-geocoded-section').hide();
+		jQuery('#edit-geocoded-section').hide();		
+		jQuery('#save-place-action').hide();
 		jQuery('#categories-section').hide();
 		
 		//reset cat selector type
