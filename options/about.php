@@ -91,7 +91,7 @@ if(!is_subscribed()) {
 		<?php if(get_places_legacy_count() > 0): ?>	
 		<div><img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_cancel.png" alt="" title=""/></div>
 		<div>You have recenty upgraded Welocally Places. <?php echo(get_places_legacy_count());  ?> Legacy Posts were found. You can use the <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">Place Manager</a> 
-		to track your migration, we have also created a <a href="http://welocally.com/?p=780" target="_new">Release Guide</a>. Finally, if you have problems <a href="http://www.welocally.com/?page_id=139" target="_new">email us</a>. 
+		to track your migration. Please read the <a href="http://www.welocally.com/?page_id=104" target="_blank">help documentation</a> when upgrading. If you have problems <a href="http://www.welocally.com/?page_id=139" target="_new">email us</a>. 
 		<p/><strong>ALWAYS BACKUP PRIOR TO UPGRADE</strong></div>
 		<?php else: ?>
 		<img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_check.png" alt="" title=""/>	Your places are up to date. 	

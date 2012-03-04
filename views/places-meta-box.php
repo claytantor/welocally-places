@@ -240,6 +240,8 @@ function setSelectedPlaceInfo(selectedItem, post) {
 	
 	jQuery('#share-meta-tagtext').val(WELOCALLY.places.tag.makePlaceTag(selectedPlace, post));	
 	jQuery('#places-tag-selected').show(); 
+
+	
 	
 	var selectedLocation = new google.maps.LatLng(selectedPlace.geometry.coordinates[1], selectedPlace.geometry.coordinates[0]);		
 	var myOptions = {
@@ -274,7 +276,6 @@ function setSelectedPlaceInfo(selectedItem, post) {
 	jQuery('#edit-place-name-selected')
 	
 	//show the *selected* area	
-	jQuery("#selected-place-info").html('');
 	jQuery("#selected-place-info").append(jQuery('#places-tag-selected'));
 	jQuery("#selected-place-info").append(jQuery('#edit-place-name-selected'));
 	jQuery("#selected-place-info").append(jQuery('#search-geocoded-address-selected'));	
