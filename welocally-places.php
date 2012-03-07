@@ -28,6 +28,7 @@ add_action('wp_ajax_get_classifiers_subcategories', 'welocally_get_classifiers_s
 
 
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
+//github keys issue
 //add_filter('the_excerpt', 'wl_get_excerpt_basic');  
 
 // add filter's for plugin templates
