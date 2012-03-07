@@ -66,6 +66,9 @@ A: NO our places are in the US only. This will change soon but right now we only
 
 
 == Changelog ==
+1.1.17
+147 "Excerpts not working"
+
 1.1.16
 99	"Places DB Tool In Options"
 94	"Place Finder for Pages"
