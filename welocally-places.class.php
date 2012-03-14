@@ -66,19 +66,15 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			add_action( 'pre_get_posts',	array( $this, 'setOptions' ) );
 			add_action( 'admin_enqueue_scripts', 		array( $this, 'loadAdminDomainStylesScripts' ) );
 			add_action( 'admin_menu', 		array( $this, 'addPlaceBox' ) );
-			add_action( 'save_post',		array( $this, 'addPlaceMetaSave' ), 15 );
+			// add_action( 'save_post',		array( $this, 'addPlaceMetaSave' ), 15 );
 			add_action( 'save_post',        array( $this, 'tagHandling'));
-			add_action( 'publish_post',		array( $this, 'addPlaceMetaPublish' ), 15 );
+			// add_action( 'publish_post',		array( $this, 'addPlaceMetaPublish' ), 15 );
 			add_action( 'template_redirect',array($this, 'templateChooser' ), 1 );
 			
 			add_action( 'sp_places_post_errors', array( 'WLPLACES_Post_Exception', 'displayMessage' ) );
 			add_action( 'sp_places_options_top', array( 'WLPLACES_Options_Exception', 'displayMessage') );
 
-            add_filter( 'the_content', array( $this, 'wl_content_tag_search') );
-		}
-
-		public function wl_content_tag_search($content) {
-            return WelocallyPlaces_Tag::searchAndReplace($content, array($this, 'addPostPlaceTagMarkup'));
+            add_filter( 'the_content', array( $this, 'replaceTagsInContent') );
 		}
 		
 		public function templateChooser() {
@@ -325,7 +321,26 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			include( dirname( __FILE__ ) . '/views/places-meta-box.php' );
 		}
 
-		public function addPostPlaceTagMarkup($tag, $str) {
+		public function replaceTagsInContent($content) {
+            return WelocallyPlaces_Tag::searchAndReplace($content, array($this, 'addTagMarkup'));
+		}
+
+		public function addTagMarkup($tag, $str) {
+			switch ($tag->type) {
+				case 'post':
+				default:
+					return $this->getPlaceTagMarkup($tag, $str);
+					break;
+				case 'category':
+					return $this->getCategoryTagMarkup($tag, $str);
+					break;
+			}
+		}
+
+		/*
+		 * handles [welocally type="post"] and [welocally type="page"] tags
+		 */
+		private function getPlaceTagMarkup($tag, $str) {
 		    global $post;
 		    global $wpdb;
 		    static $placecount = 0;
@@ -392,79 +407,44 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
             
             return $str;
             // $ShowPlaceAddress = get_post_meta( $postId, '_ShowPlaceAddress', true );
+		}
 
-		}	
-		
-		/* Callback for adding to the post itself
-		 * @return void
+		/* 
+		 * handles [welocally type="category"] tags
 		 */
-		public function addPostPlaceInfoMarkup( $postId ) {
-			$resultContent = '';
-			$PlaceSelected = get_post_meta( $postId, '_PlaceSelected', true );
-			$ShowPlaceAddress = get_post_meta( $postId, '_ShowPlaceAddress', true );
-			
-			$showmap='true';
-			$cat_ID = get_query_var( 'cat' );
-			if(is_single()){
-				$showmap='true';
-			} else if(is_home() || isset($cat_ID)){
-				$showmap='false';
+		private function getCategoryTagMarkup($tag, $str) {
+			$categoryIds = array();
+
+			if (!$tag->categories)
+				$categoryIds = array(get_query_var('cat')); // fetch category from request
+			else
+				$categoryIds = array_map('get_cat_ID', $tag->categories);
+
+			$html = '';
+			foreach ($categoryIds as $cid) {
+				$posts = $this->getPlacePostsInCategory($cid);
+
+				$t = new StdClass();
+				$t->category = get_category($cid);
+				$t->posts = $posts;
+                
+                ob_start();
+                include(dirname(__FILE__) . '/views/category-map-content-template.php');
+                $resultContent = ob_get_contents();
+                ob_end_clean();
+                
+                $t = null;
+
+// $places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
+// include($places_list_include);
+
+// $infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
+// include($infobox_include);
+                
+                $html .= $resultContent;
 			}
-			
-			$isCustom = 'false';
-			$customMapJson = '[  ]';
-			if(wl_get_option('map_custom_style') != ''){
-				$isCustom = 'true';
-				$customMapJson = base64_decode(wl_get_option("map_custom_style"));
-			}
-			
-			$whereImage=$this->pluginUrl.'/resources/images/here.png';
-			
-			
-			$template = file_get_contents(dirname( __FILE__ ) . '/views/place-content-template.php');
-			
-			
-			
-			$map_post_div= '<div id="map_canvas_post"></div>';
-			
-			
-			/*
-			%1$d - $postId
-			%2$s - $PlaceSelected
-			%3$s - $showmap
-			%4$s - $isCustom
-			%5$s - $option["map_custom_style"]
-			%6$s - $option["map_icon_web"]
-			%7$s - $option["map_icon_directions"]
-			%8$s - $option["font_place_name"]
-			%9$s - $option["color_place_name"]
-			%10$s - $option["size_place_name"]
-			%11$s - $option["font_place_address"]
-			%12$s - $option["color_place_address"]
-			%13$s - $option["size_place_address"]
-			%14$s - where image file
-							
-			*/
-			
-			$resultContent = sprintf ( 
-				$template, 
-				$postId, 
-				str_replace("'", "\'", $PlaceSelected),  
-				$showmap, 
-				$isCustom, 
-				$customMapJson,
-				wl_get_option("map_icon_web"),
-				wl_get_option("map_icon_directions"),
-				wl_get_option("font_place_name"),
-				wl_get_option("color_place_name"),
-				wl_get_option("size_place_name"),
-				wl_get_option("font_place_address"),
-				wl_get_option("color_place_address"),
-				wl_get_option("size_place_address"),
-				$whereImage			
-				);		
-					
-			return $resultContent;
+
+			return $html;
 		}
 		
 		/* Callback for adding to the post itself

@@ -27,7 +27,7 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
             global $wpdb;
             global $wlPlaces;
             
-            if (!$tag->id)
+            if (!$tag->id || $tag->type != 'post')
                 return false;
                 
             $postId = intval($postId);

@@ -4,7 +4,7 @@ if (!class_exists('WelocallyPlaces_Tag')) {
     class WelocallyPlaces_Tag {
         
         const TAG_PATTERN = "/\[\s?\bwelocally\b.*?\/{0,1}\]/uis";
-        const TAG_ARGS_PATTERN = '/\b(id|type|postId|categories)\b\s?=\s?"{1}(.*?)\s?"{1}/uis';
+        const TAG_ARGS_PATTERN = '/\b(id|type|postId|categories|category)\b\s?=\s?"{1}(.*?)\s?"{1}/uis';
 
 
 		/**
@@ -20,7 +20,7 @@ if (!class_exists('WelocallyPlaces_Tag')) {
 		    
             if (preg_match_all(self::TAG_ARGS_PATTERN, $str, $matches, PREG_SET_ORDER)) {
                 foreach ($matches as $m) {
-                    if ($m[1] == "categories") {
+                    if ($m[1] == "categories" || $m[1] == "category") {
                         $args[$m[1]] = preg_split('/,+/', $m[2], -1, PREG_SPLIT_NO_EMPTY);
                     } else {
                         $args[$m[1]] = trim($m[2]);
@@ -78,11 +78,18 @@ if (!class_exists('WelocallyPlaces_Tag')) {
          * @return object a WelocallyPlaces_Tag instance
          */
 		function __construct($args_or_id, $type='post', $postId=0, $categories=array()) {
+			// FIXME: simplify this class for 1.1.18 removing these unnecessary arguments.
 
             if (is_array($args_or_id)) {
-                $type = isset($args_or_id['type']) ? $args_or_id['type'] : $type;
+                $type = strtolower(isset($args_or_id['type']) ? $args_or_id['type'] : $type);
                 $postId = isset($args_or_id['postId']) ? $args_or_id['postId'] : $postId;
                 $categories = isset($args_or_id['categories']) ? $args_or_id['categories'] : $categories;
+
+                if ($type == 'category') {
+                	$categories = isset($args_or_id['category']) ? $args_or_id['category'] : array();
+                } else {
+                	$type = 'post';
+                }
             }
             
 		    $this->id = is_array($args_or_id) ? $args_or_id['id'] : $args_or_id;
