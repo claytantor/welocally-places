@@ -1,8 +1,3 @@
-<script type="text/javascript">
-jQuery(document).ready(function() {
-
-});
-</script>
 <style type="text/css">
 
 </style>

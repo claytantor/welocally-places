@@ -3,12 +3,11 @@
 /*
 Plugin Name: Welocally Places
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
-Description: The Welocally Places plugin lets easily associate places from our 21M POI database without manual geocoding. The map widget makes it easy for your users to find the places your are writing about on a map.
-Version: 1.1.16
-Author: Welocally Inc. 
+Description: The Welocally Places plugin lets easily associate places from our 16 million US POI database without manual geocoding. The map widget makes it easy for your users to find the places your are writing about on a map.
+Version: 1.1.17
+Author: Welocally 
 Author URI: http://welocally.com
 License: GPL2 
-Notes: test hook 6
 */
 
 register_activation_hook(__FILE__, 'welocally_activate');
@@ -28,7 +27,8 @@ add_action('wp_ajax_get_classifiers_subcategories', 'welocally_get_classifiers_s
 
 
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
-add_filter('the_excerpt', 'wl_get_excerpt_basic'); 
+//github keys issue
+//add_filter('the_excerpt', 'wl_get_excerpt_basic');  
 
 // add filter's for plugin templates
 add_filter('map_widget_template', 'wl_places_get_template_map_widget',10);
@@ -76,7 +76,13 @@ function welocally_register($selectedPostJson) {
 
 function welocally_save_place() {
 
-	$selectedPostJson = json_encode($_POST['place']);
+	$placeToSave = $_POST['place'];
+	$placeToSave['properties']['name'] = stripslashes($_POST['place']['properties']['name']);
+	$placeToSave['properties']['address'] = stripslashes($_POST['place']['properties']['address']);
+	
+	$selectedPostJson = json_encode($placeToSave);
+	error_log("place 1:".print_r($placeToSave, true),0);
+	error_log("place 2:".strval($selectedPostJson),0);
 
 	//set POST variables 
 	$url = wl_server_base() . '/geodb/place/1_0/';

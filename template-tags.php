@@ -49,7 +49,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$default_font = 'Sorts Mill Goudy'; 
 		$default_font_color = '000000'; 
 		$default_font_size = '1.2'; 
-		$default_cat_map_layout = 'center'; 
+		$default_cat_map_layout = 'none'; 
 		$default_cat_map_select_width = '160'; 
 		$default_cat_map_select_height = '160'; 
 		$default_api_endpoint = 'https://api.welocally.com'; 
@@ -141,8 +141,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	function wl_save_options($options) {
-		//error_log("A", 0);
-		
 		
 		$options_r = print_r($options, true);
 		//error_log("saving options:".$options_r, 0);
@@ -153,6 +151,18 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		if ( array_key_exists( 'update_places', $options )) {
 			update_places();
 		}
+	}
+	
+	function delete_post_places($post_id=0) {
+	    global $wlPlaces;	    
+	    if (!$post_id) $post_id = get_the_ID();	    
+	    $wlPlaces->deletePostPlaces($post_id);
+	}
+	
+	function delete_post_places_meta($post_id=0) {
+	    global $wlPlaces;	    
+	    if (!$post_id) $post_id = get_the_ID();	    
+	    $wlPlaces->deletePostPlacesMeta($post_id);
 	}
 	
 	
@@ -225,55 +235,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	/**
-	 * 	{
-		    "externalId": "SG_4v40yDHN9oDVgf2bjFMtIa_37.779701_-122.218002@1303263339",
-		    "type": "SG",
-		    "name": "Joe's Meat",
-		    "latitude": 37.779701,
-		    "longitude": -122.218002,
-		    "address": "1600 12th",
-		    "city": "Oakland",
-		    "state": "CA",
-		    "postalCode": "94601",
-		    "phone": "+1 510 763 3154",
-		    "website": "",
-		    "categories": [
-		        "Food & Beverages"
-		    ]
-		}
-		
-		{
-		    "_id": "%1$s",
-		    "properties": {
-		        "name": "%2$s",    
-		        "address": "%3$s",
-		        "city": "%4$s",
-		        "province": "%5$s",
-		        "postcode": "%6$s",
-		        "country": "US",
-		        "phone": "%7$s",
-		        "website": "%8$s",
-		        "owner": "welocally",
-		        "classifiers": [
-		            {
-		                "category": "%9$s",
-		                "subcategory": "%10$s",
-		                "type": "%11$s"
-		            }
-		        ]        
-		    },
-		    "type": "Place",
-		    "geometry": {
-		        "type": "Point",
-		        "coordinates": [
-		            %13$s,
-		            %12$s
-		        ]
-		    }
-		}
-		
-		
-		
+	 * 	
 	 * takes a legacy json string in and returns a json string out
 	 */
 	function convert_legacy_place($legacyPlaceJsonRaw){
@@ -281,7 +243,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 				json_decode($legacyPlaceJsonRaw, true);
 		
 		$legacyCategories = $legacyPlaceJson{'categories'};
-		//error_log("category:".$legacyCategories[1], 0);
 		
 		$template = file_get_contents(dirname( __FILE__ ) . '/templates/newplace-template.json');
 		
@@ -305,40 +266,57 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		return trim($resultJson );
 	}
 	
+	//select post_id from wp_postmeta where meta_key='_PlaceSelected';
+	function get_legacy_posts() {
+		global $wpdb;
+		
+		$query = "SELECT $wpdb->posts.*, $wpdb->postmeta.meta_value
+			 	FROM $wpdb->posts,$wpdb->postmeta  
+			WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id  
+			AND $wpdb->postmeta.meta_key='_PlaceSelected'"; 
+			
+		
+		$metaPlaces = $wpdb->get_results($query, OBJECT);
+		$arr = array();
+		foreach ($metaPlaces as $post)
+		{
+			$placeJson = 
+				json_decode($post->meta_value, true);
+			if(!empty ($placeJson['externalId']) || 
+				!empty ($placeJson['simpleGeoId']) ){
+				array_push($arr, $post);	
+			}
+		}
+		return $arr;		
+		
+	}
+	
 	/**
-	 * this fuction is used to determine the number of legacy places that will need to be
+	 * this function is used to determine the number of legacy places that will need to be
 	 * converted.
 	 * 
 	 */
 	function get_places_legacy_count() {
-		global $wlPlaces;
-		$cat_ID = $wlPlaces->placeCategory();
-		
-		$places_in_category_posts = get_places_posts_for_category($cat_ID);			
+		global $wpdb;
 			
-		//error_log("got place count:".count($places_in_category_posts), 0);
-	
-		
-		$index = 0;
-		foreach( $places_in_category_posts as $post ) {	
+		$query = "SELECT $wpdb->postmeta.*
+			 	FROM $wpdb->postmeta 
+			WHERE $wpdb->postmeta.meta_key = '_PlaceSelected'";
 			
-			$placeJsonRaw = str_replace(
-						"\'", "", 
-						get_post_meta( $post->ID, '_PlaceSelected', true ));		
-						
-			//error_log("place json:".$placeJsonRaw, 0);
-					
+		$metaPlaces = $wpdb->get_results($query, OBJECT);
+		$legacyCount = 0;
+		foreach ($metaPlaces as $place)
+		{
 			$placeJson = 
-				json_decode($placeJsonRaw, true); 
+				json_decode($place->meta_value, true);
 			
-			$pname = str_replace("\\'", "'", $placeJson{'name'});
-			
-			//error_log("place json name:".$pname, 0);
-			if($pname != null)
-				$index = $index+1; 
-			
+			if(!empty ($placeJson['externalId']) || 
+				!empty ($placeJson['simpleGeoId']) )			
+			{
+				$legacyCount = $legacyCount+1;
+			}
 		}
-		return $index;
+		return $legacyCount;
 		
 	}
 	
@@ -382,6 +360,10 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		return $wlPlaces->getPlacePostsInCategory($categoryId, 'post');
 	}
 	
+	
+	/**
+	 * is this obsolete?
+	 */
 	function get_place_post_ids_by_category( $orderBy = null, $orderDir = null, $categoryId = null ) {
 
 		global $wpdb, $wlPlaces;
@@ -405,15 +387,12 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		//iterate through those, we could probably come up with a query here 
 		//because we are effectively creating a join, but this is already a pretty
-		//complex query, this should probably be improved later
-			
-			
-			
+		//complex query, this should probably be improved later			
 		$return = $wpdb->get_results($placesQuery, OBJECT);
 		return $return;
 	}
 	
-	function get_place_by_post_id( $postId = null) {
+	function get_legacy_place_by_post_id( $postId = null) {
 		global $wpdb;
 			
 		$query = "SELECT $wpdb->postmeta.*
@@ -422,12 +401,16 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 			AND $wpdb->postmeta.meta_key = '_PlaceSelected' LIMIT 1";
 			
 		$return = $wpdb->get_results($query, OBJECT);
-		return $return;
+		
+		$placeJson = 
+				json_decode($return[0]->meta_value, true);
+		
+		
+		return $placeJson;
 	}
 	
 	function delete_place_by_post_id( $postId = null) {
 		
-		delete_post_meta($postId, '_PlaceSelected');
 		delete_post_meta($postId, '_PlaceSelected');
 		
 	}
@@ -456,15 +439,16 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 			
 		$queryResult = $wpdb->get_results($query, OBJECT);
 		
-		$excerpt = trim_excerpt($queryResult[0]->post_content, $queryResult[0]->post_excerpt);
+		$excerpt = wl_trim_excerpt($queryResult[0]->post_content, $queryResult[0]->post_excerpt);	
 		$excerpt = WelocallyPlaces_Tag::searchAndReplace($excerpt, create_function('$tag,$tag_str', 'return "";'));
 		$excerpt = str_replace( '\'', '', $excerpt );
 		$excerpt = trim( preg_replace( '/\s+/', ' ', $excerpt ) );
+		$excerpt = "";
 		
 		return $excerpt;
 	}
 	
-	function trim_excerpt($text, $excerpt)
+	function wl_trim_excerpt($text, $excerpt)
 	{
 		if ($excerpt) return $excerpt;
 	
@@ -503,18 +487,36 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	    return $wlPlaces->getPostPlaces($post_id);
 	}
 	
-// functions for get tamlate
+	function get_post_places_meta($post_id=0) {
+	    global $wlPlaces;
+	    
+	    if (!$post_id) $post_id = get_the_ID();
+	    
+	    return $wlPlaces->getPostPlacesMeta($post_id);
+	}
+	
+// functions for get template
 	function wl_places_get_template_map_widget(){
 		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
 		$theme_dir = get_theme_view_dir();	
 		return $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-map-widget-display.php';
 	}
+	
 	function wl_places_get_template_list_widget(){
 		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
 		$theme_dir = get_theme_view_dir();	
 		return  $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-list-widget-display.php';
 	}
+	
 	function wl_places_get_template_category(){
+		global $wlPlaces;
+		$cat_map_layout_type = $wlPlaces->getSingleOption('cat_map_layout');
+					
+		if($cat_map_layout_type == 'none' 
+			|| is_Feed()) {
+			return;
+		}
+			
 		$theme_dir = get_theme_view_dir();	
 		return dirname( __FILE__ ) . '/views/themes/'.$theme_dir.'/category-places-map.php';
 	}

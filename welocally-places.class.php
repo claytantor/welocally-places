@@ -8,7 +8,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	 */
 	class WelocallyPlaces {
 		
-		const VERSION 				= '1.1.16';
+		const VERSION 				= '1.1.18';
 		const DB_VERSION			= '2.0';
 		const WLERROROPT			= '_welocally_errors';
 		const CATEGORYNAME	 		= 'Place';
@@ -157,12 +157,12 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 			//app stuff, for right now we will embed this key but this should be coming from a web service
 			wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true&language=en' , false , '3');
-			wp_enqueue_script('sp-places-script', $placesURL.'places.js', array('jquery') );
+			wp_enqueue_script('wl-places-script', $placesURL.'places.js', array('jquery'), WelocallyPlaces::VERSION  );
 			if( locate_template( array('places/places.css') ) ) {
 				$templateArray = explode( '/', TEMPLATEPATH );
 				$themeName = $templateArray[count($templateArray)-1];
-				wp_enqueue_style('sp-places-style', WP_CONTENT_URL.'/themes/'.$themeName.'/places/places.css', array(), WelocallyPlaces::VERSION, 'screen' );
-			} else wp_enqueue_style('sp-places-style', $placesURL.'places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+				wp_enqueue_style('wl-places-style', WP_CONTENT_URL.'/themes/'.$themeName.'/places/places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+			} else wp_enqueue_style('wl-places-style', $placesURL.'places.css', array(), WelocallyPlaces::VERSION, 'screen' );
 			
 			wp_enqueue_style( 'tinymce_button', WP_PLUGIN_URL . '/welocally-places/resources/tinymce-button.css' );
 			
@@ -186,7 +186,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			//color picker
 			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));
 			
-			wp_enqueue_script('wlplaces', WP_PLUGIN_URL . '/welocally-places/resources/wlplaces.js', array('jquery'));
+			wp_enqueue_script('wlplaces', WP_PLUGIN_URL . '/welocally-places/resources/wlplaces.js', array('jquery'), WelocallyPlaces::VERSION);
 		}
 		
 
@@ -202,7 +202,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				 	
 			wp_enqueue_style('thickbox');
 			
-			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/south-street/jquery-ui.css' );
+			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
 			wp_enqueue_style( 'jquery-ui-style' );		
 		}
 		
@@ -293,9 +293,12 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * @return void
 		 */
 		public function addPlaceBox( ) {
-				add_meta_box( 'Place Details', __( 'Welocally Places', 'Place_textdomain' ), 
-		                array( $this, 'placeMetaBox' ), 'post', 'normal', 'high' );
-		}
+			foreach (array('post','page') as $type)
+		    {
+		        add_meta_box( 'wl-place-finder-meta-1', __( 'Welocally Places', 'Place_textdomain' ), 
+				                array( $this, 'placeMetaBox' ), $type, 'normal', 'high' );
+		    }
+ 		}
 		
 		public function placeMetaBox() {
 			global $post;
@@ -367,7 +370,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
                 $customMapJson = '[  ]';
                 if(wl_get_option('map_custom_style') != ''){
                  $isCustom = true;
-                 $customMapJson = base64_decode(wl_get_option("map_custom_style"));
+                 $customMapJson = wl_get_option("map_custom_style");
                 }
                 
                 $whereImage=$this->pluginUrl.'/resources/images/here.png';
@@ -596,6 +599,67 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 			return $text;
 		}
+
+		/*
+		 * just remove legacy meta
+		 */
+		public function deletePostPlacesMeta($postId) {
+			
+		    global $wpdb;
+			    
+			//will recurse to elements    		    		   	    
+		    if (is_array($postId)) {  	        
+		        foreach ($postId as $p) {		            
+		            $this->deletePostPlacesMeta($p);
+		        }
+		    }		    
+	    
+		    $wpdb->query(
+					"
+					DELETE FROM {$wpdb->prefix}postmeta 
+					WHERE post_id = '$postId' AND meta_key='_PlaceSelected';
+					"
+					);
+		    	    		   
+		}
+		
+		/*
+		 * this is probably inefficient and could be done better with
+		 * some sort of join
+		 */
+		public function deletePostPlaces($postId) {
+			
+		    global $wpdb;
+			    
+			//will recurse to elements    		    		   	    
+		    if (is_array($postId)) {  	        
+		        foreach ($postId as $p) {		            
+		            $this->deletePostPlaces($p);
+		        }
+		    }		    
+		    	    
+		    $postId = is_array($postId) ? $postId['ID'] : (is_object($postId) ? $postId->ID : intval($postId));
+		    
+		    //remove it from places table
+		    $post_places = $this->getPostPlaces($postId) ;
+		    foreach ($post_places as $place) {
+
+		    	$wpdb->query(
+					"
+					DELETE FROM {$wpdb->prefix}wl_places 
+					WHERE wl_id = '$place->_id';
+					"
+					);		    	
+		    }		    	
+		    
+		    //remove it from posts
+		    $wpdb->query(
+					"
+					DELETE FROM {$wpdb->prefix}wl_places_posts 
+					WHERE post_id = $postId;
+					"
+					);		  
+		}
 		
 		public function getPostPlaces($postId) {
 		    global $wpdb;
@@ -624,6 +688,35 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		        
 		    return array();
 		}
+
+		public function getPostPlacesMeta($postId) {
+		    global $wpdb;
+		    
+		    if (is_array($postId)) {
+                $places = array();
+		        
+		        foreach ($postId as $p) {
+		            if (is_object($p) || is_array($p)) {
+		                $p_ = (array) $p;
+		                $places = $places + $this->getPostPlacesMeta($p_['ID']);
+		            } else if (is_int($p)) {
+		                $places = $places + $this->getPostPlacesMeta($p);
+		            }
+		        }
+		        
+                return $places;
+		    }
+		    
+		    $postId = is_array($postId) ? $postId['ID'] : (is_object($postId) ? $postId->ID : intval($postId));
+		    
+		    $places = $wpdb->get_col($wpdb->prepare("SELECT meta_value FROM {$wpdb->prefix}postmeta WHERE post_id = %d and meta_key='_PlaceSelected'", $postId));
+		    
+		    if ($places) 
+		        //return array_map('json_decode', $places);
+		        return json_decode($places[0]);
+		        
+		    return array();
+		}	
 
 		/**
 		 * Return the posts with places associated inside a category.

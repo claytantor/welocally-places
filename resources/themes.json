@@ -27,10 +27,6 @@
         "themeName": "Delicate",
         "themeDirectory": "delicate"
     },
-    {
-        "themeName": "ColorWay",
-        "themeDirectory": "colorway"
-    },
 	{
         "themeName": "zBench",
         "themeDirectory": "zbench"

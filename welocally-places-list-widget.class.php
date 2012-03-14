@@ -28,7 +28,9 @@ if( !class_exists( 'WelocallyPlaces_Widget' ) ) {
 				/* User-selected settings. */
 				$style = $instance['style'];
 				$title = apply_filters('widget_title', $instance['title'] );
-				$limit = $instance['limit'];
+				
+				$limit = 1000;
+				$limit_places = $instance['limit'];
 				$order_by = $instance['order_by'];
 				$order_dir = $instance['order_dir'];
 				$exclude_cats = $instance['exclude_cats'];

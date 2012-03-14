@@ -73,7 +73,7 @@ $options = wl_set_general_defaults();
 
 //display error if not subscribed
 if(!is_subscribed()) {
-	echo '<div class="error fade"><p><strong>' . __( 'Please Subscribe To Activate Welocally Places' ) . "</strong></p></div>\n";
+	echo '<div class="error fade"><p><strong>' . __( 'Please Register To Activate Welocally Places' ) . "</strong></p></div>\n";
 } 
 
 ?>
@@ -90,7 +90,9 @@ if(!is_subscribed()) {
 		<td>			
 		<?php if(get_places_legacy_count() > 0): ?>	
 		<div><img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_cancel.png" alt="" title=""/></div>
-		<div><input type="checkbox" id="wl_update_places" name="wl_update_places"/> You have recenty upgraded Welocally Places. Check To Upgrade <?php echo get_places_legacy_count();  ?> Legacy Posts. <strong>BACKUP PRIOR TO UPGRADE</strong></div>
+		<div>You have recenty upgraded Welocally Places. <?php echo(get_places_legacy_count());  ?> Legacy Posts were found. You can use the <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">Place Manager</a> 
+		to track your migration. Please read the <a href="http://www.welocally.com/?page_id=104" target="_blank">help documentation</a> when upgrading. If you have problems <a href="http://www.welocally.com/?page_id=139" target="_new">email us</a>. 
+		<p/><strong>ALWAYS BACKUP PRIOR TO UPGRADE</strong></div>
 		<?php else: ?>
 		<img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_check.png" alt="" title=""/>	Your places are up to date. 	
 		<?php endif; ?>
@@ -103,7 +105,7 @@ if(!is_subscribed()) {
 			<img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_check.png" alt="" title=""/>
 		<?php else: ?>
 			<div><img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_cancel.png" alt="" title=""/></div>
-			<div><em>Just because your theme is not supported does not mean that Welocally Places will not work. Give it a try, we have a default theme that will work with most themes. We really want to support your theme so <a href="http://www.welocally.com/wordpress/?page_id=139" target="_new">contact us</a> and we will do our best to support you. <strong>Below is a list of currently supported themes.</strong></em></div>	
+			<div><em>Just because your theme is not supported does not mean that Welocally Places will not work. Give it a try, we have default settings that will work with most themes. We really want to support your theme so <a href="http://www.welocally.com/wordpress/?page_id=139" target="_new">contact us</a> and we will do our best to support you. <strong>Below is a list of currently supported themes.</strong></em></div>	
 			<div style="display:inline-block">
 			<?php 
 			$theme_lookup = get_supported_themes();

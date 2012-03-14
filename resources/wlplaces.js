@@ -1,4 +1,4 @@
-//making sure this is committed
+//making sure this is committed, rel 1_1_16
 if (!window.WELOCALLY) {
     window.WELOCALLY = {
     	env: {
@@ -27,6 +27,22 @@ if (!window.WELOCALLY) {
     		}
     	},
         util: {
+	    		trim: function (str) { 
+	    			return WELOCALLY.util.ltrim(WELOCALLY.util.rtrim(str), ' '); 
+	    		}, 
+	    		ltrim: function (str) { 
+	    			return str.replace(new RegExp("^[" + ' ' + "]+", "g"), ""); 
+	    		},    		 
+	    		rtrim: function (str) { 
+	    			return str.replace(new RegExp("[" + ' ' + "]+$", "g"), ""); 
+	    		},
+    			preload: function(arrayOfImages) {
+    			    jQuery(arrayOfImages).each(function(){
+    			    	jQuery('<img/>')[0].src = this;
+    			        // Alternatively you could use:
+    			        // (new Image()).src = this;
+    			    });
+    			},
                 update: function() {
                         var obj = arguments[0], i = 1, len=arguments.length, attr;
                         for (; i<len; i++) {
@@ -49,6 +65,14 @@ if (!window.WELOCALLY) {
                                                 default: return s;
                                         }
                                 });
+                },
+                unescape: function (unsafe) {
+                	  return unsafe
+                	      .replace(/&amp;/g, "&")
+                	      .replace(/&lt;/g, "<")
+                	      .replace(/&gt;/g, ">")
+                	      .replace(/&quot;/g, '"')
+                	      .replace(/&#039;/g, "'");
                 },
                 notundef: function(a, b) {
                         return typeof(a) == 'undefined' ? b : a;
@@ -76,12 +100,64 @@ if (!window.WELOCALLY) {
         	    }
         },
         places: {
+        	
         	//PLACES SEARCH META
-        	search: {
-        		
+        	search: {       		
         	},
         	//MAP SECTION=========
         	map: {
+        		infobox: {
+        			baseOffsetX: 0,
+        			baseOffsetY: -5,
+        			baseWidth: 150,
+        	        thumbMaxSize: '150px',
+        	        setOffset: function(contentsBox,infobox){
+						var width = 
+							eval(jQuery(contentsBox)
+									.find('#info-contents-box')
+									.css('width')
+									.replace('px',''));
+						
+						var offsetX = ((width/2)+10)*-1;
+						infobox.pixelOffset_ = 
+							new google.maps.Size(
+									offsetX+WELOCALLY.places.map.infobox.baseOffsetX, 
+									WELOCALLY.places.map.infobox.baseOffsetY);
+        			}
+        		},
+        		
+        		setMapEvents: function(map){
+        			google.maps.event.addListener(map, 'tilesloaded', function() {
+        				console.log('tiles loaded');
+        				jQuery(map).find('img').css('max-width','none');
+        				jQuery(".map_canvas_post").find('img').css('max-width','none');
+        				WELOCALLY.util.preload([
+        				         'http://maps.google.com/mapfiles/openhand.cur'
+        				]);          				
+        			});    
+        			
+        			//we need this to override what themes sometimes do to images
+        			google.maps.event.addListener(map, 'idle', function() {
+        				map.setOptions({ draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur), move' });
+        				jQuery('#info-contents-box').css('line-height','15px');
+        			});
+        			
+        			//we need this to override what themes sometimes do to images
+        			google.maps.event.addListener(map, 'mouseover', function() {
+        				map.setOptions({ draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur), move' });
+        				jQuery('#info-contents-box').css('line-height','15px');
+        				jQuery('#info-contents-box ul').css('margin','0px');
+        			});
+        			
+        			//we need this to override what themes sometimes do to images
+        			google.maps.event.addListener(map, 'mousemove', function() {
+        				map.setOptions({ draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur), move' });
+        				jQuery('#info-contents-box').css('line-height','15px');
+        				jQuery('#info-contents-box ul').css('margin','0px');
+        			});      			
+
+        		},
+        	
         		/**
         		 * make the item for the search results list
         		 */
@@ -130,6 +206,7 @@ if (!window.WELOCALLY) {
         	
         	//TAGS SECTION=========
             tag: {
+        		postMaps: new Array(),
             	init: function() {
                     // themes can screw up google maps
                     jQuery('.map_canvas_post img').css('max-width' ,'1030px');
@@ -186,67 +263,74 @@ if (!window.WELOCALLY) {
                 	 }
 
             		 if(showMap && customStyle ){		 	
+            		 	console.log("using custom style");
             		 	
             		 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
             		
-            			var welocallyMapStyle = options.map_custom_style;
-            			
-            			
-            			// Create a new StyledMapType object, passing it the array of styles,
-            			// as well as the name to be displayed on the map type control.
-            			var styledMapType = new google.maps.StyledMapType(welocallyMapStyle,
-            				{name: "Custom"});
-            			
-            			
+            			var welocallyMapStyle = eval(options.map_custom_style);
+            			            			
             			var mapOptions = {
-            			  zoom: 16,
-            			  center: latlng,
-            			  mapTypeControlOptions: {
-            				mapTypeIds: ['welocally_style']
-            			  }
-            			};
+							zoom : 16,
+							center : latlng,
+							mapTypeId: google.maps.MapTypeId.ROADMAP,
+							styles: welocallyMapStyle
+						};
             			
-            			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
+            			var map_canvas_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
             				mapOptions);
-            				
-            			//Associate the styled map with the MapTypeId and set it to display.
-            			map_post.mapTypes.set('welocally_style', styledMapType);
-            			map_post.setMapTypeId('welocally_style');
             			
+            			//make this a function
+            			WELOCALLY.places.map.setMapEvents(map_canvas_post);
             			
             			//home location
             			var mMarker = new google.maps.Marker({
             				position: latlng,
-            				map: map_post,
+            				map: map_canvas_post,
             				icon: options.where_image
             			});
             			
             			jQuery('.map_canvas_post', $sel).show();
+            			
+            			WELOCALLY.places.tag.postMaps.push(map_canvas_post);
+            			          			
             		 
             		 } else if(showMap && !customStyle ){
-            			 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
+        			 	var latlng = new google.maps.LatLng(place.geometry.coordinates[1], place.geometry.coordinates[0]);
+        			
+        				var mapOptions = {
+        				  zoom: 16,
+        				  center: latlng,
+        				  mapTypeId: google.maps.MapTypeId.ROADMAP
+        				};
             			
-            				var mapOptions = {
-            				  zoom: 12,
-            				  center: latlng,
-            				  mapTypeId: google.maps.MapTypeId.ROADMAP
-            				};
+            			var map_canvas_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
+                				mapOptions);
             			
-            			map_post = new google.maps.Map(jQuery('.map_canvas_post', $sel)[0],
-            				mapOptions);
+            			WELOCALLY.places.map.setMapEvents(map_canvas_post);
             		
+            			
             			//home location
             			var mMarker = new google.maps.Marker({
             				position: latlng,
-            				map: map_post,
+            				map: map_canvas_post,
             				icon: options.where_image
             			});
             			
             			jQuery('.map_canvas_post', $sel).show();
+            			jQuery('.map_canvas_post img', $sel).css('max-width','none');
+            			
+            			WELOCALLY.places.tag.postMaps.push(map_canvas_post);
+            			
             		 }
                 },                 
-                makePlaceTag: function(place) {
-                	return '[welocally id="'+place._id+'"/]';
+                makePlaceTag: function(place, post) {
+                	var tag = '';
+        			if(post == null){
+        				tag = '[welocally id="'+place._id+'" /]';
+        			} else {
+        				tag = '[welocally id="'+place._id+'" postId="'+post.id+'" type="'+post.type+'" /]';
+        			}
+        			return tag;
                 }               			                	
             }
         }
@@ -272,6 +356,5 @@ if (!WELOCALLY.PlaceComponent) {
  */
 if (!WELOCALLY.PlacesSearchComponent) {
     WELOCALLY.PlacesSearchComponent = function(cfg) {
-    }
+    };
 }
-

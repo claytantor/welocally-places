@@ -2,9 +2,9 @@
 global $wlPlaces;
 $index = 0;
 echo '<aside class="widget sidebar-item"><h3 class="widget-title">'.$title.'</h3><div><ul class="wl-places-list">';
-
 foreach ($posts as $post):
-    foreach (get_post_places($post) as $place):
+	$places = get_post_places($post->ID);
+    foreach ($places  as $place):
 ?>
 
 <?php /**

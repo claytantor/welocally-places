@@ -44,16 +44,15 @@ color: #<?php echo wl_get_option("color_place_name", "000000"); ?>;
 	color: #<?php echo wl_get_option("color_place_address", "000000"); ?>; 
 }
 .wl-place-widget-address{ }
-
-
-
 </style>
 
 
 <script type="text/javascript" charset="utf-8">
 var wl_map_widget;
 
+
 jQuery(document).ready(function(jQuery) {
+	
 	
 	 if (typeof(jQuery.fn.parseJSON) == "undefined" 
 	 	|| typeof(jQuery.parseJSON) != "function") { 
@@ -77,7 +76,15 @@ jQuery(document).ready(function(jQuery) {
 			}
 		});
 	}	
-
+	
+	jQuery('#map_widget_container ul').css('list-style-type','none');
+	jQuery('#map_widget_container ul').find('*')
+		.css('padding','0x')
+		.css('margin','0x');
+	jQuery('#info-contents-box').css('line-height','15px');
+	
+	//#sidebar .widget ul li a {background:url(images/ico-meta.gif) no-repeat 0 8px; padding:4px 0 4px 15px; line-height:16px;}
+	
 	
 	//setup the bounds
 	var bounds = new google.maps.LatLngBounds();
@@ -92,43 +99,48 @@ jQuery(document).ready(function(jQuery) {
 	
 
 <?php if(wl_get_option('map_custom_style') != '') : ?>	
+	//make the style map
+	var welocallyMapStyle = <?php printf(wl_get_option("map_custom_style"))  ?>;
 
-	var welocallyMapStyle = <?php printf(base64_decode(wl_get_option("map_custom_style")))  ?>;
-
-	// Create a new StyledMapType object, passing it the array of styles,
-  	// as well as the name to be displayed on the map type control.
-  	var styledMapType = new google.maps.StyledMapType(welocallyMapStyle, {name: "Custom"});
-  	
   	var mapOptions = {
-      mapTypeControlOptions: {
-      	mapTypeIds: ['welocally_style']
-      }
+  		mapTypeId: google.maps.MapTypeId.ROADMAP,
+		styles: welocallyMapStyle,
+		draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur)'
     };
     
-    wl_map_widget = new google.maps.Map(document.getElementById("map_canvas_widget"),
-        mapOptions);
-        
-    //Associate the styled map with the MapTypeId and set it to display.
-  	wl_map_widget.mapTypes.set('welocally_style', styledMapType);
-  	wl_map_widget.setMapTypeId('welocally_style');  
+    var wl_map_widget = new Array();
+	
+	for (var i=0; i<map_canvas_widgets.length; i++) {
+		wl_map_widget[i] = new google.maps.Map(
+			map_canvas_widgets[i],
+	        mapOptions);
+	        
+		WELOCALLY.places.map.setMapEvents(wl_map_widget[i]);
+		
+	}
+    
 
 <?php else:?>  	
   	
 	var mapOptions = {
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      draggableCursor: 'url(http://maps.google.com/mapfiles/openhand.cur), move'
     };
 
 	var wl_map_widget = new Array();
 	
 	for (var i=0; i<map_canvas_widgets.length; i++) {
-		wl_map_widget[i] = new google.maps.Map(map_canvas_widgets[i],
+	
+		wl_map_widget[i] = new google.maps.Map(
+			map_canvas_widgets[i],
 	        mapOptions);
+	    
+	    WELOCALLY.places.map.setMapEvents(wl_map_widget[i]);
+	    
+		
 	}
 
-
 <?php  endif; ?>
-
-    
 
 	var places = new Array();
 
@@ -168,7 +180,6 @@ foreach( $posts as $post ) {
 			'<?php echo wl_get_option("map_icon_web"); ?>',
 			'<?php echo wl_get_option("map_icon_directions"); ?>',
 			false,
-			'',
 			false,
 			''		
 			);

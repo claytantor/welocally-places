@@ -17,7 +17,7 @@ include($infobox_include);
 ?>
 
 
-<li class="widget sidebar-item">
+<aside class="widget sidebar-item">
 <h3 class="widget-title"><?php echo $title; ?></h3>
 <div id="map_widget_container">
 	<div id="map_canvas_widget"></div>
@@ -28,11 +28,7 @@ include($infobox_include);
 			<div class="wl-place-excerpt" id="details-place-excerpt"></div>				
 		</div>				
 	</div>
-			<div class="wl-place-widget-website text-align-right">
-			<a href="<?php echo places_get_mapview_link(); ?>">
-				<?php _e('view larger', $wlPlaces->pluginDomain)?>
-			</a>
-			</div>
+
 </div>
-</li>
+</aside>
 
