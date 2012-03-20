@@ -443,7 +443,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$excerpt = WelocallyPlaces_Tag::searchAndReplace($excerpt, create_function('$tag,$tag_str', 'return "";'));
 		$excerpt = str_replace( '\'', '', $excerpt );
 		$excerpt = trim( preg_replace( '/\s+/', ' ', $excerpt ) );
-		$excerpt = "";
 		
 		return $excerpt;
 	}
@@ -519,5 +518,10 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 			
 		$theme_dir = get_theme_view_dir();	
 		return dirname( __FILE__ ) . '/views/themes/'.$theme_dir.'/category-places-map.php';
+	}
+
+	function the_category_map($category=null) {
+		global $wlPlaces;
+		echo $wlPlaces->getCategoryMapMarkup($category);
 	}
 }
