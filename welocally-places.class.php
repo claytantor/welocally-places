@@ -156,21 +156,29 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$placesURL = trailingslashit( WP_PLUGIN_URL ) . trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
 			
 			//app stuff, for right now we will embed this key but this should be coming from a web service
+			wp_enqueue_script('jquery' , 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');			
+			wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
+						
 			wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true&language=en' , false , '3');
 			wp_enqueue_script('wl-places-script', $placesURL.'places.js', array('jquery'), WelocallyPlaces::VERSION  );
-			if( locate_template( array('places/places.css') ) ) {
-				$templateArray = explode( '/', TEMPLATEPATH );
-				$themeName = $templateArray[count($templateArray)-1];
-				wp_enqueue_style('wl-places-style', WP_CONTENT_URL.'/themes/'.$themeName.'/places/places.css', array(), WelocallyPlaces::VERSION, 'screen' );
-			} else wp_enqueue_style('wl-places-style', $placesURL.'places.css', array(), WelocallyPlaces::VERSION, 'screen' );
-						wp_enqueue_script('media-upload');
+							
+			wp_enqueue_script('media-upload');
 			wp_enqueue_script('thickbox');
+			
 			//welocally
 			wp_enqueue_script('wl_base_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_base.js', array('jquery'));
 			wp_enqueue_script('wl_place_widget_script',  WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_place_widget.js', array('jquery'));
 			
 			
-			/*  styles  */			
+			/*  styles  */		
+			if( locate_template( array('places/places.css') ) ) {
+				$templateArray = explode( '/', TEMPLATEPATH );
+				$themeName = $templateArray[count($templateArray)-1];
+				wp_enqueue_style('wl-places-style', WP_CONTENT_URL.'/themes/'.$themeName.'/places/places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+			} else {
+				wp_enqueue_style('wl-places-style', $placesURL.'places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+			}
+				
 			wp_enqueue_style( 'tinymce_button', WP_PLUGIN_URL . '/welocally-places/resources/tinymce-button.css' );
 			
 			//font names
@@ -203,7 +211,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				. trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
 			
 			//app stuff
-			wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
+			
 			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));									
 			wp_enqueue_script('media-upload');
 			//welocally
@@ -336,7 +344,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$isNotPlaceChecked		= ( $isWLPlace == 'false' || $isWLPlace == '' || is_null(  $isWLPlace ) ) ? 'checked' : '';
 			$PlaceSelected = get_post_meta( $postId, '_PlaceSelected', true );
 						
-			include( dirname( __FILE__ ) . '/views/places-meta-box.php' );
+			include( dirname( __FILE__ ) . '/views/finder-meta-box.php' );
 		}
 		
 		public function addPlaceMetaBox() {

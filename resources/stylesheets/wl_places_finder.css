@@ -1,5 +1,5 @@
 .wl_finder_search_button_area{ width:100%; margin-bottom:5px; text-align:center; } 
- 
+.wl_finder_map_canvas{ width:100%; height:350px; }
 #wl_finder_search_button {
    border-top: 1px solid #96d1f8;
    background: #65a9d7;
@@ -31,7 +31,21 @@
    border-top-color: #1b435e;
    background: #1b435e;
    } 
-   
+#wl_placefinder_selectable .ui-selecting { background: #FEFEFE; }
+#wl_placefinder_selectable .ui-selected { background: #468EAB; color: white; }
+#wl_placefinder_selectable { list-style-type: none; margin: 0; padding: 0; width: 200px; display: inline; }
+#wl_placefinder_selectable ol {  display: inline; }
+#wl_placefinder_selectable li { margin: 3px; padding: 0.4em; font-size: 0.8em; 
+	border: 1px solid #aaaaaa; 
+	display: inline-block; 	
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px; 
+   	background: #FEFEFE;
+   	cursor: hand;
+   	}
+ 
+ 
 .wl_selected {  
 	padding: 10px;
 	margin-bottom:10px; border: 1px solid #aaaaaa; 
@@ -66,5 +80,7 @@
 .wl_selected_web_link { display: inline-block; width:100px; }
 .wl_selected_driving_link { display: inline-block; width:100px; }
 .wl_selected_embed_link { display: inline-block; width:100px; }
+
+.wl_placefinder_search_field{ text-align: center; }
 
 

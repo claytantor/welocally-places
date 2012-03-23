@@ -61,7 +61,6 @@ foreach( $posts as $post ) {
 ?>
 	<td>
 		<div>
-			<h1><?php echo($pindex+1); ?></h1>
 			<input type="checkbox" name="post_id[]" value="<?php echo($post->ID) ?>" />
 			<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$post->ID.'&action=edit' ?>"><strong><?php print_r($post->post_title)  ?></strong></a> Places Linked: <?php echo(count($places));?>
 		</div>

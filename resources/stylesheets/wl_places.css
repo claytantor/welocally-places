@@ -5,6 +5,9 @@
 .ui-dialog { font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif; background: #F0E1B1; }
 .ui-dialog-titlebar{ font-family:  'Lucida Grande', Helvetica, Arial, Sans-Serif; }
 
+/* jqueryui overrides */
+#feedback { font-size: 1.0em; }
+
 /* status */
 .wl_update { 
 	text-align:center; 
@@ -49,33 +52,17 @@
 }
 
 .wl_clear {
+	clear:both;
 }
 
 .wl_ajax_loading { width: 32px; height:32px; }
 
-
 .wl_widget_field {  width:100%; margin-bottom:10px;  }
 
-
-
 /* ids */
-#main {  margin-top: 10px; }
-#map_canvas { height: 400px; }
+/*#main {  margin-top: 10px; }
+#map_canvas { height: 400px; }*/
 
-/* jqueryui overrides */
-#feedback { font-size: 1.0em; }
-#selectable .ui-selecting { background: #FEFEFE; }
-#selectable .ui-selected { background: #468EAB; color: white; }
-#selectable { list-style-type: none; margin: 0; padding: 0; width: 200px; display: inline; }
-#selectable ol {  display: inline; }
-#selectable li { margin: 3px; padding: 0.4em; font-size: 0.8em; 
-	border: 1px solid #aaaaaa; 
-	display: inline-block; 	
-	-webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px; 
-   	background: #FEFEFE;
-   	}
 
 
 #welocally_deals_widget {
@@ -87,8 +74,7 @@
    	-moz-border-radius: 4px;
    	border-radius: 4px; 
    	background: #F0E8CE;
-   	border:1px solid #9C744C;
-   	
+   	border:1px solid #9C744C;   	
 }
 
 .wl_deal_location { font-size: 0.8em; }

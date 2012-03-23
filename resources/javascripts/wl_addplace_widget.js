@@ -1,4 +1,7 @@
-//http://localhost:8082/geodb/place/1_0/WL_3Wnkj5RxX8iKzTR5qek2Fs_37.826065_-122.209171@1293134755.json
+/*
+	copyright 2012 welocally. NO WARRANTIES PROVIDED
+*/
+
 function WELOCALLY_AddPlaceWidget (cfg) {		
 	this.selectedSection;
 	this.cfg;
@@ -64,16 +67,7 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 		if (!cfg.siteKey || !cfg.siteToken) {
 			error = "Please include your site key and token in the configuration to add a places.";
 		}
-		
-		//look in query string
-		if (!cfg.id) {
-			cfg.id = WELOCALLY.util.getParameter(
-					window.top.location.search.substring(1),
-					'id');
-			console.log(cfg.id);
-		}
-		
-			
+					
 		this.cfg = cfg;
 		
 		// Get current script object

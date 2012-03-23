@@ -1,4 +1,7 @@
-//http://localhost:8082/geodb/place/1_0/WL_3Wnkj5RxX8iKzTR5qek2Fs_37.826065_-122.209171@1293134755.json
+/*
+	copyright 2012 welocally. NO WARRANTIES PROVIDED
+*/
+
 function WELOCALLY_PlaceWidget (cfg) {	
 	
 	this.selectedSection;
@@ -228,8 +231,8 @@ WELOCALLY_PlaceWidget.prototype.show = function(selectedPlace) {
 		jQuery(embed).hide();
 	}
 	
-	//embed link
-	var shareToggle = jQuery('<div class="wl_places_place_embed_link"></div>');
+	//share link
+	var shareToggle = jQuery('<div class="wl_places_place_share_link"></div>');
 	var shareLink = jQuery('<a href="#" target="_new">Share</a>');
 	jQuery(shareLink).click(function() {
 		jQuery(embed).toggle();

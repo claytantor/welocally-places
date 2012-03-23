@@ -61,9 +61,50 @@ wl_places_place {
 	font-weight:bold;
 	color: #444444; }
 	
-.wl_places_place_web_link { display: inline-block; width:100px; }
-.wl_places_place_driving_link { display: inline-block; width:100px; }
-.wl_places_place_embed_link { display: inline-block; width:100px; }
+.wl_places_place_web_link { 
+	background: url(../images/link_web_bg.png);
+	text-align: left;  
+	display: inline-block; 
+	width:120px; 
+	height:32px; 
+	margin-right: 20px; }
+	
+.wl_places_place_web_link a { 
+	margin-left: 35px; }
+	
+.wl_places_place_driving_link { 
+	background: url(../images/link_driving_bg.png);
+	text-align: left; 
+	display: inline-block; 
+	width:120px; height:32px; 
+	margin-right: 15px; }
+
+.wl_places_place_driving_link a { 
+	margin-left: 35px; }
+
+	
+.wl_places_place_embed_link { 
+	background: url(../images/link_bg.png);
+	text-align: left; 
+	display: inline-block; 
+	width:120px; height:32px; 
+	margin-right: 15px; }	
+	
+.wl_places_place_embed_link a { 
+	margin-left: 35px; }
+
+.wl_places_place_share_link { 
+	background: url(../images/link_share_bg.png);
+	text-align: left; 
+	display: inline-block; 
+	width:120px; height:32px; 
+	margin-right: 15px; }	
+	
+.wl_places_place_share_link a { 
+	margin-left: 35px; }
+
+
+
 
 .wl_places_place_map_canvas {height: 350px; width: 100%}
 .wl_places_place_field { 
