@@ -66,9 +66,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			add_action( 'pre_get_posts',	array( $this, 'setOptions' ) );
 			add_action( 'admin_enqueue_scripts', 		array( $this, 'loadAdminDomainStylesScripts' ) );
 			add_action( 'admin_menu', 		array( $this, 'addPlaceBox' ) );
-			// add_action( 'save_post',		array( $this, 'addPlaceMetaSave' ), 15 );
 			add_action( 'save_post',        array( $this, 'tagHandling'));
-			// add_action( 'publish_post',		array( $this, 'addPlaceMetaPublish' ), 15 );
 			add_action( 'template_redirect',array($this, 'templateChooser' ), 1 );
 			
 			add_action( 'sp_places_post_errors', array( 'WLPLACES_Post_Exception', 'displayMessage' ) );
@@ -332,24 +330,42 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			switch ($tag->type) {
 				case 'post':
 				default:
-					return $this->getPlaceTagMarkup($tag, $str);
+					/* handle [welocally id="..." /] tags */
+					if (!$tag->id) return $str;
+
+					return $this->getPlaceMapMarkup($tag);
 					break;
 				case 'category':
-					return $this->getCategoryTagMarkup($tag, $str);
+					/* handle [welocally categories="..." /] tag */
+					$categoryIds = array();
+
+					if (!$tag->categories):
+						$categoryIds = array(get_query_var('cat')); // fetch category from request
+					else:
+						$categoryIds = array_map('get_cat_ID', $tag->categories);
+					endif;
+
+					if (!$categoryIds) return $str;
+
+					$html = '';
+					foreach ($categoryIds as $cat)
+						$html .= $this->getCategoryMapMarkup($cat);
+
+					return $html;
+
 					break;
 			}
 		}
 
-		/*
-		 * handles [welocally type="post"] and [welocally type="page"] tags
+		/**
+		 * Builds a place map for a given tag.
+		 * @param object $tag the welocally place tag.
+		 * @return string the place map HTML (javascript, etc.) ready to be embedded in the website.
 		 */
-		private function getPlaceTagMarkup($tag, $str) {
+		public function getPlaceMapMarkup($tag) {
 		    global $post;
 		    global $wpdb;
 		    static $placecount = 0;
-		    
-            if (!$tag->id)
-                return $str;
 
             if ($place = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id))) {
                 $place_json = $place->place;
@@ -408,44 +424,52 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 
             }
             
-            return $str;
-            // $ShowPlaceAddress = get_post_meta( $postId, '_ShowPlaceAddress', true );
+            return null;
 		}
 
-		/* 
-		 * handles [welocally type="category"] tags
+		/**
+		 * Builds a category map for a given category.
+		 * @param int|object $cat the category object or category ID (optional). defaults to the query category (if any).
+		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website.
 		 */
-		private function getCategoryTagMarkup($tag, $str) {
-			$categoryIds = array();
+		public function getCategoryMapMarkup($cat=null) {
+			static $uid = 0;
 
-			if (!$tag->categories)
-				$categoryIds = array(get_query_var('cat')); // fetch category from request
-			else
-				$categoryIds = array_map('get_cat_ID', $tag->categories);
+			if (!$cat)
+				$cat = get_query_var('cat');
+			elseif (is_object($cat))
+				$cat = $cat->cat_ID;
 
-			$html = '';
-			foreach ($categoryIds as $cid) {
-				$posts = $this->getPlacePostsInCategory($cid);
+			$posts = $this->getPlacePostsInCategory($cat);
 
-				$t = new StdClass();
-				$t->category = get_category($cid);
-				$t->posts = $posts;
-                
-                ob_start();
-                include(dirname(__FILE__) . '/views/category-map-content-template.php');
-                $resultContent = ob_get_contents();
-                ob_end_clean();
-                
-                $t = null;
+			$t = new StdClass();
+			$t->uid = ++$uid;
+			$t->category = get_category($cat);
+			$t->posts = $posts;
+			$t->places = array();
 
-// $places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
-// include($places_list_include);
+			foreach ($t->posts as $post) {
+				$post_places = $this->getPostPlaces($post->ID);
 
-// $infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
-// include($infobox_include);
-                
-                $html .= $resultContent;
+				foreach ($post_places as $place) {
+					if (isset($t->places[$place->_id])) {
+						$t->places[$place->_id]->posts[] = $post;
+					} else {
+						$t->places[$place->_id] = new StdClass();
+						$t->places[$place->_id]->place = $place;
+						$t->places[$place->_id]->posts = array($post);
+					}
+				}
 			}
+            
+            ob_start();
+            include(dirname(__FILE__) . '/views/includes/infobox-map-include.php');
+            include(dirname(__FILE__) . '/views/includes/category-map-include.php');
+            include(dirname(__FILE__) . '/views/category-map-content-template.php');
+            $html = ob_get_contents();
+            ob_end_clean();
+            
+            $t = null;
 
 			return $html;
 		}
@@ -459,7 +483,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 
 		
 
-				/**
+		/**
 		 * Creates the places category
 		 * @return int cat_ID
 		 */
@@ -470,69 +494,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			} else {
 				return $this->placeCategory();
 			}
-		}
-		
-		public function addPlaceMetaSave( $postId ) {
-			$this->addPlaceMeta( $postId, 'save_post' );	
-		}	
-		
-		public function addPlaceMetaPublish( $postId ) {
-			$this->addPlaceMeta( $postId, 'publish_post' );	
-		}	
-			
-		public function addPlaceMeta( $postId, $action ) {
-			error_log("addPlaceMeta: [".$_POST['PlaceSelected']."]", 0);
-			//check to delete existing place info
-			
-			
-			if(!empty( $_POST['deletePlaceInfo'] )){
-				delete_post_meta($postId, '_PlaceSelected');
-				delete_post_meta($postId, '_isWLPlace');
-				update_post_meta( $postId, '_isWLPlace', 'false' );
-			} else if( !empty( $_POST['PlaceSelected']) ) {
-
-				//error_log("save case 1: [".$_POST['PlaceSelected']."]", 0);
-
-				$category_id = $this->create_category_if_not_exists();				
-							
-				update_post_meta( $postId, '_PlaceSelected',  $_POST['PlaceSelected']);
-				update_post_meta( $postId, '_isWLPlace', 'true' );
-				
-						
-				//do custom categories
-				if(isset( $_POST['PlaceCategoriesSelected'] )){
-					
-					$custom_categories = preg_split('/[,]+/', $_POST['PlaceCategoriesSelected'],-1, PREG_SPLIT_NO_EMPTY);
-					
-					$cat_index = 0;
-					$custom_cat_ids = array();
-					foreach ( $custom_categories as $custom_cat ) {
-						$custom_cat_ids[$cat_index] = $this->create_custom_category_if_not_exists($custom_cat);	
-						$cat_index = $cat_index+1;	 					
-					}
-					
-					// merge place category into this post
-					$cats = wp_get_object_terms($postId, 'category', array('fields' => 'ids'));
-					$new_cats1 = array_merge( array( $category_id ), $cats ); 
-					$new_cats2 = array_merge( $new_cats1, $custom_cat_ids );
-					wp_set_post_categories( $postId, $new_cats2 );
-									
-				} 
-							
-			} 			
-			/*else if($_POST['isWLPlace'] == 'true') {
-				update_post_meta( $postId, '_isWLPlace', 'true' );
-			}*/
-			else if($_POST['isWLPlace'] == 'true' && empty( $_POST['PlaceSelected'] )) {
-				error_log("save case 2", 0);
-				update_post_meta( $postId, '_isWLPlace', 'false' );
-			} 
-			else if($_POST['isWLPlace'] == 'false' || !isset( $_POST['isWLPlace']) ) {
-				error_log("save case 3", 0);
-				update_post_meta( $postId, '_isWLPlace', 'false' );
-			}
-			
-	
 		}
 		
         public function tagHandling($post_id) {
