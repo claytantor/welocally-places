@@ -27,8 +27,6 @@ add_action('wp_ajax_get_classifiers_subcategories', 'welocally_get_classifiers_s
 
 
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
-//github keys issue
-//add_filter('the_excerpt', 'wl_get_excerpt_basic');  
 
 // add filter's for plugin templates
 add_filter('map_widget_template', 'wl_places_get_template_map_widget',10);
@@ -357,7 +355,6 @@ function wl_do_curl_post_https($https_url, $selectedPostJson, $headers, $returnx
 }
 
 
-
 //----- end of neworking section ----------//
 
 function wl_debug() {
@@ -452,12 +449,7 @@ function welocally_activate() {
 		require_once (dirname(__FILE__) . "/template-tags.php");
 		require_once (dirname(__FILE__) . "/mcebutton.php");
 		require_once (dirname(__FILE__) . "/menu.php");
-		
-		/*if(get_theme_view_dir() == 'default') {
-			echo "<div class='updated fade'>The theme ".get_current_theme()." is not tested with Welocally Places. Goto the ".
-				"<a href='admin.php?page=welocally-places-about'>" . __( 'About Settings' ) . "</a> for more information.</div>";
-		}*/
-		
+				
 		syslog(LOG_WARNING, "activate");
 		global $wlPlaces;
 		$wlPlaces->on_activate();
@@ -473,10 +465,6 @@ if (version_compare(phpversion(), "5.1", ">=") && welocally_is_curl_installed())
 	require_once (dirname(__FILE__) . "/mcebutton.php");
 	require_once (dirname(__FILE__) . "/menu.php");
 	
-	/*if(get_theme_view_dir() == 'default') {
-			echo "<div class='updated fade'>The theme ".get_current_theme()." is not tested with Welocally Places. Goto the ".
-				"<a href='admin.php?page=welocally-places-about'>" . __( 'About Settings' ) . "</a> for more information.</div>";
-	}*/
 }
 
 ?>
