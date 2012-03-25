@@ -361,6 +361,22 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	
+	function get_places_for_category($categoryId){
+		global $wlPlaces;
+		$result = array();
+		$places_in_category_posts = $wlPlaces->getPlacePostsInCategory($categoryId, 'post');
+		foreach( $places_in_category_posts as $post ){
+			$places = get_post_places($post->ID);  
+    		foreach ($places as $place){
+    			array_push($result, $place);
+    		}
+		}		
+		return json_encode($result);		
+	}
+	
+	
+	
+	
 	/**
 	 * is this obsolete?
 	 */

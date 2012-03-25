@@ -283,8 +283,13 @@ WELOCALLY_PlacesMultiWidget.prototype.makeItemContents = function (item, i, show
 	
 	jQuery(wrapper)
 		.append(jQuery('<div class="selectable_address">'+
-			item.properties.address+'</div>'))
-		.append(jQuery('<div class="selectable_distance">'+item.distance.toFixed(2)+'km </div>'));
+			item.properties.address+'</div>'));
+	if(item.distance){
+		jQuery(wrapper)
+		.append(jQuery('<div class="selectable_distance">'+
+				item.distance.toFixed(2)+'km </div>'));
+	}
+
 	
 	wrapper.item = item;
 			
