@@ -68,8 +68,8 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
                 update_post_meta($this->postId, '_isWLPlace', true);
                 
                 // delete post metadata from previous versions of the plugin
-                delete_post_meta($post_id, '_PlaceSelected');
-                delete_post_meta($post_id, '_WLPlaces');
+                delete_post_meta($postId, '_PlaceSelected');
+                delete_post_meta($postId, '_WLPlaces');
             }
             
             return $place;
