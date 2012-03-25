@@ -2,8 +2,8 @@
 
 
 /* jquery overrides  */
-.ui-dialog { font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif; background: #F0E1B1; }
-.ui-dialog-titlebar{ font-family:  'Lucida Grande', Helvetica, Arial, Sans-Serif; }
+.ui-dialog {  }
+.ui-dialog-titlebar{  }
 
 /* jqueryui overrides */
 #feedback { font-size: 1.0em; }

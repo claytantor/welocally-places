@@ -56,7 +56,6 @@
 	font-family: Fixed, monospace;  }
 
 .wl_places_place_name { 
-	font-family:  'Lucida Grande', Helvetica, Arial, Sans-Serif; 
 	font-size: 1.4em;
 	font-weight:bold;
 	color: #444444; }
@@ -117,7 +116,8 @@
 
 .wl_places_place_map_canvas {height: 350px; width: 100%}
 .wl_places_place_field { 
-	font-size: 1.0em; font-family: Fixed, monospace; font-weight:bold; text-align:center;
+	font-size: 1.0em; 
+	font-family: Fixed, monospace; font-weight:bold; text-align:center;
 	margin-top:5px;
 	border: 1px #aaaaaa; 
 	-webkit-border-radius: 4px;

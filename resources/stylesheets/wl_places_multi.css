@@ -7,7 +7,6 @@
 
 .wl_places_multi_selected {
 	padding:5px;
-	font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif;
 	border: 1px solid #aaaaaa; 
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
@@ -27,7 +26,6 @@
 }
 
 #wl_places_mutli_selectable { 
-	font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif;
 	list-style-type: none; margin: 0; padding: 0; width: 200px; display: inline; 
 }
 #wl_places_mutli_selectable .ui-selecting { background: #FEFEFE; }
@@ -94,7 +92,6 @@
 	font-family: Fixed, monospace;  }
 
 .wl_places_multi_name { 
-	font-family:  'Lucida Grande', Helvetica, Arial, Sans-Serif; 
 	font-size: 1.4em;
 	font-weight:bold;
 	color: #444444; }
@@ -158,7 +155,6 @@
 	width: 200px; 
 	height: 60px;
 	background: #f2f2f2; padding:5px;
-	font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif;
 	border: 1px solid #aaaaaa; 
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;

@@ -512,9 +512,9 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	
 // functions for get template
 	function wl_places_get_template_map_widget(){
-		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
-		$theme_dir = get_theme_view_dir();	
-		return $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-map-widget-display.php';
+		return dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php';
+		//$theme_dir = get_theme_view_dir();	
+		//return $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-map-widget-display.php';
 	}
 	
 	function wl_places_get_template_list_widget(){
