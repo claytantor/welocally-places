@@ -17,16 +17,6 @@ $wlecCatObject = get_category( $wp_query->query_vars['cat']);
 $suffusion->set_content_layout($suf_category_excerpt);
 get_header();
 
-/* include  */
-
-$places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
-include($places_list_include);
-
-$infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
-include($infobox_include);
-
-
-
 suffusion_query_posts();
 ?>
 
@@ -40,16 +30,7 @@ suffusion_before_begin_content();
 
       <div id="content" class="hfeed">
 <!-- the map selector -->
-				<div id="map_content" class="post">
-					<!-- FOUND theme: suffusion -->
-					<div><h2 class="entry-title"><?php echo $wlecCatObject->name; ?></h2></div>
-					<div id="map_all"></div>
-					<div id="map_canvas"></div>
-					<div id="items">
-						<ol id="selectable"></ol>
-					</div>
-				</div>      
-      
+<?php the_category_map(); ?>
       
 <?php
 if ($suf_category_excerpt == 'list') {

@@ -4,7 +4,7 @@ if (!class_exists('WelocallyPlaces_Tag')) {
     class WelocallyPlaces_Tag {
         
         const TAG_PATTERN = "/\[\s?\bwelocally\b.*?\/{0,1}\]/uis";
-        const TAG_ARGS_PATTERN = '/\b(id|type|postId|categories|category)\b\s?=\s?"{1}(.*?)\s?"{1}/uis';
+        const TAG_ARGS_PATTERN = '/\b(id|postId|categories|category)\b\s?=\s?"{1}(.*?)\s?"{1}/uis';
 
 
 		/**
@@ -72,30 +72,28 @@ if (!class_exists('WelocallyPlaces_Tag')) {
         /**
          * Creates a new object representing a [welocally] tag.
          * @param array|string $args_or_id an array of arguments or the tag id
-         * @param string $type
-         * @param int $postId
-         * @param array $categories an array of names of categories
          * @return object a WelocallyPlaces_Tag instance
          */
-		function __construct($args_or_id, $type='post', $postId=0, $categories=array()) {
-			// FIXME: simplify this class for 1.1.18 removing these unnecessary arguments.
+		function __construct($args_or_id) {
+			$id = null;
+			$categories = null;
 
-            if (is_array($args_or_id)) {
-                $type = strtolower(isset($args_or_id['type']) ? $args_or_id['type'] : $type);
-                $postId = isset($args_or_id['postId']) ? $args_or_id['postId'] : $postId;
-                $categories = isset($args_or_id['categories']) ? $args_or_id['categories'] : $categories;
+			if (is_array($args_or_id)) {
+				$id = isset($args_or_id['id']) ? $args_or_id['id'] : null;
+				$categories = isset($args_or_id['categories']) ? $args_or_id['categories'] : null;
 
-                if ($type == 'category') {
-                	$categories = isset($args_or_id['category']) ? $args_or_id['category'] : array();
-                } else {
-                	$type = 'post';
-                }
-            }
-            
-		    $this->id = is_array($args_or_id) ? $args_or_id['id'] : $args_or_id;
-		    $this->categories = $categories;
-		    $this->type = $type;
-		    $this->postId = $postId;
+				// for backwards compat we also support the "category" argument
+				if (!$categories && isset($args_or_id['category']))
+					$categories = $args_or_id['category'];
+			} else if (is_string($args_or_id)) {
+				$id = $args_or_id;
+			} else {
+				throw new Exception('Invalid tag arguments.');
+			}
+
+			$this->id = $id;
+			$this->categories = $categories;
+			$this->type = is_null($id) && is_array($categories) ? 'category': 'post';
 		}
 		
 		/**
@@ -104,15 +102,15 @@ if (!class_exists('WelocallyPlaces_Tag')) {
 		 * @return string
 		 */
 		function getTagString() {
-		    return sprintf('[welocally id="%s" type="%s" postId="%d" categories="%s"/]',
-		                $this->id,
-		                $this->type,
-		                $this->postId,
-		                join(',', $this->categories)
-		    );
+			switch ($this->type) {
+				case 'category':
+					return sprintf('[welocally categories="%s" /]', join(',', $this->categories));				
+				case 'post':
+				default:
+					return spritnf('[welocally id="%s" /]', $this->id);
+			}
 		}
         
     }
-
 
 }

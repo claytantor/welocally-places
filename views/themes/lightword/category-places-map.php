@@ -8,28 +8,9 @@ $wlecCatObject = get_category( $wp_query->query_vars['cat']);
 
 <?php get_header(); ?>
 
-<!-- include2 -->
-<?php 
-$places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
-include($places_list_include);
-
-$infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
-include($infobox_include);
-
-
-?>
-
 <div id="content-body">
-<!-- the map selector -->
-				<div id="map_content">
-					<!-- FOUND theme: lightword -->
-					<div><h1 class="entry-title"><?php echo $wlecCatObject->name ?></h1></div>
-					<div id="map_all"></div>
-					<div id="map_canvas"></div>
-					<div id="items">
-						<ol id="selectable"></ol>
-					</div>
-				</div>
+	<!-- the map selector -->
+	<?php the_category_map(); ?>
 
 <?php if (function_exists('wp_snap')) { echo wp_snap(); } ?>
 

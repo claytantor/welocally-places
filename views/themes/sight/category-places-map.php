@@ -6,15 +6,6 @@ $wlecCatObject = get_category( $wp_query->query_vars['cat'])
 ?>
 
 <?php get_header(); ?>
-<!-- include -->
-<?php 
-$places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
-include($places_list_include);
-
-$infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
-include($infobox_include);
-
-?>
 
 <div class="content-title">
     <?php $post = $posts[0]; // Hack. Set $post so that the_date() works. ?>
@@ -40,13 +31,11 @@ include($infobox_include);
 		<div id="container" style="margin-bottom:20px; border-bottom: 1px; solid #a1a1a1;">
 			<div id="content" role="main">
 <!-- the map selector -->
-				<div id="map_content" style="margin-bottom:20px; border-bottom: 1px; solid #a1a1a1;">
-					<div id="map_all"></div>
-					<div id="map_canvas" style="margin-left:30px; width:610px;></div>
-					<div id="items">
-						<ol id="selectable"></ol>
-					</div>
-				</div>
+<style type="text/css">
+.wl-category-map.in-archive { margin-bottom:20px !important; border-bottom: 1px solid #a1a1a1 !important; }
+.wl-category-map.in-archive .map-canvas { margin-left:30px !important; width:610px !important; }
+</style>
+<?php the_category_map(); ?>
 			</div>	
 	  </div>		
 <?php get_template_part('loop'); ?> 

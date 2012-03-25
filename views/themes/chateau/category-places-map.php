@@ -8,30 +8,11 @@ $wlecCatObject = get_category( $wp_query->query_vars['cat']);
 
 <?php get_header(); ?>
 
-<!-- include2 -->
-<?php 
-$places_list_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/category-map-include.php';
-include($places_list_include);
-
-$infobox_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/views/includes/infobox-map-include.php';
-include($infobox_include);
-
-?>
-
-
 <div id="main">
 <div id="content">
 
 <!-- the map selector -->
-				<div id="map_content">
-					<!-- FOUND theme: chateau -->
-					<div><h1 class="entry-title"><?php echo $wlecCatObject->name ?></h1></div>
-					<div id="map_all"></div>
-					<div id="map_canvas"></div>
-					<div id="items">
-						<ol id="selectable"></ol>
-					</div>
-				</div>
+<?php the_category_map(); ?>
 
 	<div class="morePosts">
 		

@@ -332,6 +332,7 @@ h4.wl-place-day + .post .entry-title {margin-top:6px;}
 
 
 .map_canvas_post {display:none; height:250px}
+.wl-map .map-canvas img { max-width: none !important; } /* fix map tiles bug */
 
 .wl-place-content { list-style-type: none; margin: 0; padding: 3px; width: 100%; }
 .wl-place-content ul {margin: 0; padding: 0;}

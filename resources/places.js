@@ -164,37 +164,6 @@ function addItemMarker(
 	
 }
 
-function buildListItemForPlace(position, place, marker, excerpt, link, showExcerpt) {
-	if (place != null) {
-		var content = 
-		'<li id=\"item'+position+'\" class=\"ui-widget-content morePosts\">'+	
-			buildContentForSelector(place,excerpt,position, marker.link, showExcerpt)+
-		'</li>';
-				
-		var item = new Item(
-			place,	
-			content,
-			marker,
-			link);
-
-		return item;
-	} else {
-		return '';
-	}
-}
-
-function buildContentForSelector(place,excerpt,position,link, showExcerpt) {
-	
-		var content= '<div class="wl-infobox-text_scale wl-place-name title-selectable-place wl-infobox-text_scale">'+'<a href="'+
-				link+'" >'+place.properties.name+'</a>'+'</div>';
-		
-		if(showExcerpt){ 
-			content=  content+
-				'<div class="wl-infobox-text_scale wl-place-excerpt">'+excerpt+'</div>';
-		}
-		return content;
-}
-
 function buildContentForInfoWindow(
 		baseWidth,
 		place, 
@@ -212,7 +181,7 @@ function buildContentForInfoWindow(
 	
 	var contentsBox = jQuery(document.createElement('div'))
 		.attr('id','info-contents-box');
-	
+
 	if(showThumb){	
 		var size = eval(thumbMax.replace('px',''))+baseWidth;
 		jQuery(contentsBox)
@@ -1032,6 +1001,12 @@ InfoBox.prototype.close = function () {
   this.setMap(null);
 };
 
-
+/* category map */
+function Item (place, content, marker, link) {
+    this.place = place;
+   	this.content = content;
+   	this.marker = marker;
+   	this.link = link;
+}
 
 
