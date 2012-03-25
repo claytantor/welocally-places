@@ -2,7 +2,7 @@
     <div id="main">
       <script type="text/javascript">
 //<![CDATA[
-		var catId = <?php echo($cid); ?>;
+		var catId = <?php echo($cat); ?>;
 		
       	var placeSelected = new WELOCALLY_PlaceWidget({}).init();
 	    var cfg = { 
@@ -12,7 +12,7 @@
 		    	endpoint:'http://stage.welocally.com',
 		    	showSelection: true,
 		    	observers:[placeSelected],
-				places: <?php echo(get_places_for_category($cid));  ?>
+				places: <?php echo(get_places_for_category($cat));  ?>
 	    };
 	    var placesMulti = 
 			  new WELOCALLY_PlacesMultiWidget(cfg)

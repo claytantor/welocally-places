@@ -514,19 +514,17 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
             
             ob_start();
-            include(dirname(__FILE__) . '/views/includes/infobox-map-include.php');
-            include(dirname(__FILE__) . '/views/includes/category-map-include.php');
+            //include(dirname(__FILE__) . '/views/includes/infobox-map-include.php');
+            //include(dirname(__FILE__) . '/views/includes/category-map-include.php');
             include(dirname(__FILE__) . '/views/category-map-content-template.php');
             $html = ob_get_contents();
             ob_end_clean();
             
+            
             $t = null;
 
-                
-                $html .= $resultContent;
-			}
-
 			return $html;
+
 		}
 		
 		/* Callback for adding to the post itself
