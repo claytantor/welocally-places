@@ -15,6 +15,7 @@ jQuery(document).ready(function() {
 		var placeWidget<?php echo $t->uid; ?> = 
 			  new WELOCALLY_PlaceWidget(cfg)
 		  		.init();
+		
 		placeWidget<?php echo $t->uid; ?>.loadLocal(place<?php echo $t->uid; ?>); 	 
 		
 		</script>

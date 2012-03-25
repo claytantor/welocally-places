@@ -13,18 +13,26 @@ jQuery(document).ready(function(jQuery) {
 	<div>
 		<div id="wl-place-finder" class="input-section action" style="display:inline-block" >
 			<script type="text/javascript">
-		      	var finder =
-		      		new WELOCALLY_PlaceFinderWidget({ 	
-		      			showSelection:'true', 
-		      			imagePath:'<?php echo(WP_PLUGIN_URL.'/welocally-places/resources/'); ?>/images' }).init(); 
-		      	
-		      	jQuery('#wl-place-finder-meta-1').find('.handlediv').click(function(){
-					console.log('finder toggle clicked');
-					if(jQuery('#wl-place-finder-meta-1').is(':visible')){
-						jQuery(finder._map).hide();
-						setTimeout('finder.refreshMap()', 100);
-					}																							
-				});				
+			
+				var placeSelected = new WELOCALLY_PlaceWidget({}).init();
+			    var cfg = { 
+						id:'finder_1',
+						showLetters: true,
+						zoom:4, 
+						imagePath: 'http://gaudi-vb/placehound/images',
+				    	endpoint:'http://stage.welocally.com',
+				    	showSelection: true,
+				    	observers:[placeSelected],				
+			    };
+			    
+			    var placesFinder = 
+					  new WELOCALLY_PlaceFinderWidget(cfg)
+				  		.init();
+		  		
+		  		//now register the display for the place
+			    placeSelected.setWrapper(cfg, jQuery(placesFinder.getSelectedSection()));	
+			
+	
 		     </script>		
 		</div>		
 	</div>
