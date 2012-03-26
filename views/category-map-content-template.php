@@ -2,17 +2,17 @@
     <div id="main">
       <script type="text/javascript">
 //<![CDATA[
-		var catId = <?php echo($cat); ?>;
+		var catId = <?php echo $t->catId; ?>;
 		
       	var placeSelected = new WELOCALLY_PlaceWidget({}).init();
 	    var cfg = { 
-				id:'multi_1',
+				id:'multi_<?php echo $t->uid; ?>',
 				showLetters: true,
 				imagePath:'<?php echo(WP_PLUGIN_URL.'/welocally-places/resources'); ?>/images',
 		    	endpoint:'http://stage.welocally.com',
 		    	showSelection: true,
 		    	observers:[placeSelected],
-				places: <?php echo(get_places_for_category($cat));  ?>
+				places: <?php echo json_encode($t->places); ?>
 	    };
 	    var placesMulti = 
 			  new WELOCALLY_PlacesMultiWidget(cfg)

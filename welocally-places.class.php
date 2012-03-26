@@ -496,6 +496,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$t = new StdClass();
 			$t->uid = ++$uid;
 			$t->category = get_category($cat);
+			$t->catId = $t->category->cat_ID;
 			$t->posts = $posts;
 			$t->places = array();
 
@@ -503,28 +504,18 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				$post_places = $this->getPostPlaces($post->ID);
 
 				foreach ($post_places as $place) {
-					if (isset($t->places[$place->_id])) {
-						$t->places[$place->_id]->posts[] = $post;
-					} else {
-						$t->places[$place->_id] = new StdClass();
-						$t->places[$place->_id]->place = $place;
-						$t->places[$place->_id]->posts = array($post);
-					}
+					array_push($t->places, $place);
 				}
 			}
             
             ob_start();
-            //include(dirname(__FILE__) . '/views/includes/infobox-map-include.php');
-            //include(dirname(__FILE__) . '/views/includes/category-map-include.php');
             include(dirname(__FILE__) . '/views/category-map-content-template.php');
             $html = ob_get_contents();
             ob_end_clean();
-            
-            
+
             $t = null;
 
 			return $html;
-
 		}
 		
 		/* Callback for adding to the post itself
