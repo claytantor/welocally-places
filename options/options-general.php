@@ -66,39 +66,7 @@ jQuery(document).ready(function() {
 	jQuery("#welocally_size_place_address").val('<?php echo $options[ 'size_place_address' ]; ?>');
 	
 	
-	jQuery('#upload_image_button_1').click(function() {
-	 wl_options_imgfield = jQuery('#welocally_map_default_marker').attr('name');
-	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
-	 return false;
-	});
-	
-	jQuery('#upload_image_button_2').click(function() {
-
-	 wl_options_imgfield = jQuery('#welocally_map_infobox_marker').attr('name');
-	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
-	 return false;
-	});
-	
-	jQuery('#upload_image_button_3').click(function() {
-
-	 wl_options_imgfield = jQuery('#welocally_map_infobox_close').attr('name');
-	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
-	 return false;
-	});
-	
-	jQuery('#upload_image_button_4').click(function() {
-	 
-	 wl_options_imgfield = jQuery('#welocally_map_icon_web').attr('name');
-	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
-	 return false;
-	});
-	
-	jQuery('#upload_image_button_5').click(function() {
-	 wl_options_imgfield = jQuery('#welocally_map_icon_directions').attr('name');
-	 tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
-	 return false;
-	});
-	
+	/*
 	jQuery("#slider").slider(
 		{ 
 			min: 0, 
@@ -113,6 +81,8 @@ jQuery(document).ready(function() {
 	);
 	
 	jQuery("#slider").slider( "option", "value", <?php echo $options[ 'cat_map_infobox_text_scale' ]; ?> );
+	
+	*/
 	
 	window.send_to_editor = function(html) {
 	 imgurl = jQuery('img',html).attr('src');

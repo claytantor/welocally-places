@@ -202,26 +202,12 @@ function WELOCALLY_InfoBox (cfg) {
 
 	  var img = "";
 
-	  /*if (this.closeBoxURL_ !== "") {
-
-	    img  = "<img";
-	    img += " src='" + this.closeBoxURL_ + "'";
-	    img += " align=right"; // Do this because Opera chokes on style='float: right;'
-	    img += " style='";
-	    img += " position: relative;"; // Required by MSIE
-	    img += " cursor: pointer;";
-	    img += " margin: " + this.closeBoxMargin_ + ";";
-	    img += "'>";
-	  }*/
 	  
 	  if (this.closeBoxURL_ !== "") {
-
-		    img  = "<img";
-		    img += " src='" + this.closeBoxURL_ + "'";
-		    img += " style='";
-		    img += " float: right; cursor: pointer;";
-		    img += " margin: " + this.closeBoxMargin_ + ";";
-		    img += "'>";
+		  var offset = 64;
+		  img='<span style=" float: right; cursor: pointer; display:block; width: 16px; height: 16px;'+
+			' background:url(' + this.closeBoxURL_ + ') -'+
+			offset+'px 0px; background-repeat:no-repeat; margin: 3px;" />';
 	  }
 
 	  return img;
@@ -691,9 +677,7 @@ function WELOCALLY_InfoBox (cfg) {
 		var base_cfg = 
 		{
 			baseOffsetX: 0,
-			baseOffsetY: 0,
-			baseWidth: 200,
-	        thumbMaxSize: '150px'
+			baseOffsetY: 0
 	    };
 		
 		
@@ -722,7 +706,6 @@ function WELOCALLY_InfoBox (cfg) {
 	  var me = this;
 
 	  if (anchor) {
-
 	    this.position_ = anchor.getPosition();
 	    this.moveListener_ = google.maps.event.addListener(anchor, "position_changed", function () {
 	      me.setPosition(this.getPosition());
@@ -731,10 +714,10 @@ function WELOCALLY_InfoBox (cfg) {
 
 	  this.setMap(map);
 
-	  if (this.div_) {
+	  /*if (this.div_) {
 
 	    this.panBox_();
-	  }
+	  }*/
 	};
 
 	/**

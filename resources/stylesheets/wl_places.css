@@ -40,8 +40,11 @@
    	padding: 4px; 
    	color: #A68F2B;
  }
+ 
 .wl_message {
-	text-align:center;   
+	text-align:center; 
+	margin: 5px auto;  
+	width:98%;
 	background-color: #DBDBDB;
 	margin-bottom:10px; border: 1px solid #aaaaaa; 
 	-webkit-border-radius: 4px;
