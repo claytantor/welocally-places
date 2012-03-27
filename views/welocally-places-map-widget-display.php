@@ -6,7 +6,7 @@
 $options = $wlPlaces->getOptions();
 $custom_style=null;
 if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
-	$custom_style = $options[ 'map_custom_style' ];
+	$custom_style = stripslashes($options[ 'map_custom_style' ]);
 }
  
 ?> 
