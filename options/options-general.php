@@ -21,7 +21,6 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	$options = wl_get_options();
 	
 	$options[ 'default_search_addr' ] = $_POST[ 'welocally_default_search_addr' ];
-	$options[ 'default_search_radius' ] = $_POST[ 'welocally_default_search_radius' ];
 	
 	$options[ 'infobox_title_link' ] = $_POST[ 'welocally_infobox_title_link' ];
 	$options[ 'infobox_thumbnail' ] = $_POST[ 'welocally_infobox_thumbnail' ];
@@ -35,13 +34,6 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	$options[ 'map_icon_directions' ] = trim($_POST[ 'welocally_map_icon_directions' ])? trim($_POST[ 'welocally_map_icon_directions' ]):plugins_url() . "/welocally-places/resources/images/mapicons_car.png";
 	$options[ 'map_custom_style' ] = str_replace( '\"', '"', $_POST[ 'welocally_map_custom_style' ] ) ;
 
-	$options[ 'font_place_name' ] = $_POST[ 'welocally_font_place_name' ];
-	$options[ 'color_place_name' ] = $_POST[ 'welocally_color_place_name' ];
-	$options[ 'size_place_name' ] = $_POST[ 'welocally_size_place_name' ];
-	
-	$options[ 'font_place_address' ] = $_POST[ 'welocally_font_place_address' ];
-	$options[ 'color_place_address' ] = $_POST[ 'welocally_color_place_address' ];
-	$options[ 'size_place_address' ] = $_POST[ 'welocally_size_place_address' ];
 	
 	
 	$options[ 'cat_map_select_show' ] = $_POST[ 'welocally_cat_map_select_show' ];
@@ -51,7 +43,6 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	
 	$options[ 'cat_map_select_width' ] = $_POST[ 'welocally_cat_map_select_width' ];
 	$options[ 'cat_map_select_height' ] = $_POST[ 'welocally_cat_map_select_height' ];
-	$options[ 'cat_map_layout' ] = $_POST[ 'welocally_cat_map_layout' ];
 	$options[ 'cat_map_infobox_text_scale' ] = $_POST[ 'welocally_cat_map_infobox_text_scale' ];
 	
 	
@@ -67,41 +58,13 @@ $options = wl_set_general_defaults();
 ?>
 
 <?php if(is_subscribed()):?>
-<style>
-	#selectable { list-style-type: none; margin: 0; padding: 0; width: 100%; }
-	#selectable li { 
-			margin: 3px; 
-			width: 53px; height:44px;
-			display:inline-block; 
-			vertical-align:top; 
-    }	
-    
-    #items ul, #items ul, { margin: 0px;  }
-    
-    #content-body ul, #content-body ol { margin: 0px;  }
 
-
-	#selectable .ui-selecting {  }
-	#selectable .ui-selected { border: 3px solid #777777; margin: 0px; }
-	
-	#slider_amount {margin:5px; color: #888888; font-variant: small-caps; font:1.2em Verdana, Arial, Helvetica, sans-serif; text-transform:uppercase}
-
-</style>
 <script type="text/javascript" charset="utf-8">
 var wl_options_imgfield = '';
 jQuery(document).ready(function() {
 	jQuery("#welocally_size_place_name").val('<?php echo $options[ 'size_place_name' ]; ?>');
 	jQuery("#welocally_size_place_address").val('<?php echo $options[ 'size_place_address' ]; ?>');
-	jQuery("#welocally_cat_map_layout").val('<?php echo $options[ 'cat_map_layout' ]; ?>');
-	jQuery("#welocally_cat_map_<?php echo $options[ 'cat_map_layout' ]; ?>").addClass('ui-selected');
-	jQuery("#welocally_default_search_radius").val('<?php echo wl_get_option('default_search_radius',null) ?>');
 	
-	jQuery( "#selectable" ).selectable({
-		   selected: function(event, ui) { 
-		   		var type = ui.selected.id.replace("welocally_cat_map_","");
-		   		jQuery( "#welocally_cat_map_layout" ).val(type);
-		   }
-	});
 	
 	jQuery('#upload_image_button_1').click(function() {
 	 wl_options_imgfield = jQuery('#welocally_map_default_marker').attr('name');
@@ -165,7 +128,7 @@ jQuery(document).ready(function() {
 
 <form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-general' ?>">
 
-<span class="wl_options_heading"><?php _e( 'Places Search Options' ); ?></span>
+<span class="wl_options_heading"><?php _e( 'General Settings' ); ?></span>
 <table class="form-table">
 	<tr valign="top">
 		<th scope="row"><?php _e( 'Default Search City, State' ); ?></th>
@@ -175,29 +138,8 @@ jQuery(document).ready(function() {
 		<span class="description"><?php _e( 'This is the base address you want searches to center from, you can enter a full address or just put the City and State (ie. Oakland, CA)' ); ?></span>
 		</td>
 	</tr>
-   <tr>
-	<th scope="row"><?php _e( 'Default Search Radius (km)' ); ?></th>
-		<td>
-			<select id="welocally_default_search_radius" name="welocally_default_search_radius" >
-				<option value="2">2 km</option>
-				<option value="4">4 km</option>
-				<option value="8">8 km</option>
-				<option value="12">12 km</option>
-				<option value="16">16 km</option>
-				<option value="25">25 km</option>
-				<option value="50">50 km</option>
-			</select>
-			<br/>
-			<span class="description"><?php _e( 'This is the radius from which the searches will start, maximum results are 25 places' ); ?></span>
-		</td>			
-	</tr>	
-</table>
-
-<span class="wl_options_heading"><?php _e( 'Map Options' ); ?></span>
-
-<table class="form-table">
 	<tr valign="top">
-		<th scope="row"><?php _e('Toggel Options' ); ?></th>
+		<th scope="row"><?php _e('Map Options' ); ?></th>
 		<td>
 			<ul>
 				<li><input type="checkbox" id="welocally_infobox_title_link" name="welocally_infobox_title_link" <?php if($options[ 'infobox_title_link' ]=='on') { echo 'checked';  }  ?>>Infobox Link Place Name To Post</li>
@@ -205,6 +147,7 @@ jQuery(document).ready(function() {
 			</ul>
 		</td>
 	</tr>
+<?php/* disabled for now
     <th scope="row"><?php _e( 'Infobox Thumbnail Box Size' ); ?></th>
 		<td>
 			<input id="welocally_infobox_thumb_width" name="welocally_infobox_thumb_width"  type="text" size="4" 
@@ -221,8 +164,6 @@ jQuery(document).ready(function() {
 		<span class="description"><?php _e( 'This is the marker maps will use for places' ); ?></span>
 		</td>
 	</tr>	
-	<?php 
-	/* disabled for now
 	<tr valign="top">
 		<th scope="row"><?php _e( 'Infobox Marker Image' ); ?></th>
 		<td>
@@ -230,8 +171,8 @@ jQuery(document).ready(function() {
 		<input id="upload_image_button_2" type="button" value="Upload Image" /><br/>
 		<span class="description"><?php _e( 'This is the image that maps infoboxes use to show the location.' ); ?></span>
 		</td>
-	</tr> */
-	?>
+	</tr> 
+	
     <tr valign="top">
 		<th scope="row"><?php _e( 'Infobox Close Icon' ); ?></th>
 		<td>
@@ -262,55 +203,9 @@ jQuery(document).ready(function() {
 			<textarea rows="4" cols="60" name="welocally_map_custom_style"><?php printf($options[ 'map_custom_style' ]); ?></textarea><br/>
 			<span class="description"><?php _e( 'This is the custom styling for your maps. Leave blank to use default style. To style your map use the <a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html">Maps Style Wizard</a>' ); ?></span>
 		</td>
-	</tr>	
-</table>
-
-
-<span class="wl_options_heading"><?php _e( 'Fonts' ); ?></span>
-
-<table class="form-table">
-	<tr>
-	<th scope="row"><?php _e( 'Place Name' ); ?></th>
-		<td>
-			<input id="welocally_font_place_name" name="welocally_font_place_name"  type="text" size="30"  value="<?php echo $options[ 'font_place_name' ]; ?>" />
-			<input id="welocally_color_place_name" name="welocally_color_place_name" class="color" type="text" size="9" value="<?php echo $options[ 'color_place_name' ]; ?>"/>
-			<select id="welocally_size_place_name" name="welocally_size_place_name" >
-				<option value="0.8">0.8em</option>
-				<option value="1.0">1.0em</option>
-				<option value="1.2">1.2em</option>
-				<option value="1.4">1.4em</option>
-				<option value="1.6">1.6em</option>
-				<option value="1.8">1.8em</option>
-			</select>
-			<br/>
-			<span class="description"><?php _e( 'This is the custom font for the place name. See all fonts at <a href="http://www.google.com/webfonts#ChoosePlace:select">Google Web Fonts</a>' ); ?></span>
-		</td>			
-	</tr>	
-	<tr>
-	<th scope="row"><?php _e( 'Place Address' ); ?></th>
-		<td>
-			<input id="welocally_font_place_address" name="welocally_font_place_address"  type="text" size="30" value="<?php echo $options[ 'font_place_address' ]; ?>" />
-			<input id="welocally_color_place_address" name="welocally_color_place_address" class="color" type="text" size="9" value="<?php echo $options[ 'color_place_address' ]; ?>"/>
-			<select id="welocally_size_place_address" name="welocally_size_place_address" >
-				<option value="0.8">0.8em</option>
-				<option value="1.0">1.0em</option>
-				<option value="1.2">1.2em</option>
-				<option value="1.4">1.4em</option>
-				<option value="1.6">1.6em</option>
-				<option value="1.8">1.8em</option>
-			</select>
-			<br/>
-			<span class="description"><?php _e( 'This is the custom font for the place address. See all fonts at <a href="http://www.google.com/webfonts#ChoosePlace:select">Google Web Fonts</a>' ); ?></span>
-		</td>			
-	</tr>		
-	
-</table>
-
-<span class="wl_options_heading"><?php _e( 'Category Map' ); ?></span>
-
-<table class="form-table">
+	</tr>*/	?>
 	<tr valign="top">
-		<th scope="row"><?php _e('Toggel Options' ); ?></th>
+		<th scope="row"><?php _e('Category Options' ); ?></th>
 		<td>
 			<ul>
 				<li><input type="checkbox" id="welocally_cat_map_select_show" name="welocally_cat_map_select_show" <?php if($options[ 'cat_map_select_show' ]=='on') { echo 'checked';  } ?>> Show Select Boxes</li>
@@ -318,8 +213,7 @@ jQuery(document).ready(function() {
 			</ul>
 		</td>
 	</tr>
-
-	<tr>
+	<?php /*<tr>
 	<th scope="row"><?php _e( 'Select Box Size' ); ?></th>
 		<td>
 			<input id="welocally_cat_map_select_width" name="welocally_cat_map_select_width"  type="text" size="4" 
@@ -336,23 +230,8 @@ jQuery(document).ready(function() {
 			<div id="slider_amount" style="width:300px; text-align:center;"><?php echo $options[ 'cat_map_infobox_text_scale' ]; ?>%</div>
 			<div id="slider" style="width: 300px;"></div>
 		</td>			
-	</tr>
+	</tr>*/?>
 	
-	<tr>
-	<th scope="row"><?php _e( 'Category Map' ); ?></th>
-		<td>
-			<input id="welocally_cat_map_layout" name="welocally_cat_map_layout"  type="hidden"  
-				value="<?php echo $options[ 'cat_map_layout' ]; ?>" />
-			<div id="layout_items">
-					<ol id="selectable">
-						<li id="welocally_cat_map_none" class="ui-widget-content">&nbsp;</li>
-						<li id="welocally_cat_map_center" class="ui-widget-content">&nbsp;</li>
-					</ol>
-			</div>
-
-		</td>			
-	</tr>
-		
 	
 </table>
 

@@ -168,7 +168,6 @@ WELOCALLY_PlaceWidget.prototype.setMapEvents = function(map){
 	var idleHandle = google.maps.event.addListener(map, 'idle', function() {
 		console.log('idle');
 		jQuery(map).find('img').css('max-width','none');
-		//google.maps.event.removeListener(idleHandle);
 		WELOCALLY.util.preload([
 				 'http://maps.google.com/mapfiles/openhand.cur'
 		]);          				

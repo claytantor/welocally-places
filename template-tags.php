@@ -39,7 +39,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$changed = false;
 		
 		$default_search_address = 'Oakland, CA'; 
-		$default_search_radius = '8'; 	
 		$default_marker_icon = plugins_url() . "/welocally-places/resources/images/marker_generic_32.png";
 		$default_infobox_marker = plugins_url() . "/welocally-places/resources/images/tipbox_180.png";
 		$default_infobox_close = plugins_url() . "/welocally-places/resources/images/infobox_close_16.png";
@@ -49,7 +48,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$default_font = 'Sorts Mill Goudy'; 
 		$default_font_color = '000000'; 
 		$default_font_size = '1.2'; 
-		$default_cat_map_layout = 'none'; 
 		$default_cat_map_select_width = '160'; 
 		$default_cat_map_select_height = '160'; 
 		$default_api_endpoint = 'https://api.welocally.com'; 
@@ -80,7 +78,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		// always check each option - if not set, apply default
 		if ( !array_key_exists( 'default_search_addr', $options ) ) { $options[ 'default_search_addr' ] = $default_search_address; $changed = true; }
-		if ( !array_key_exists( 'default_search_radius', $options ) ) { $options[ 'default_search_radius' ] = $default_search_radius; $changed = true; }		
 		
 
 		if ( !array_key_exists( 'infobox_title_link', $options ) ) { $options[ 'infobox_title_link' ] = $default_infobox_title_link; $changed = true; }
@@ -103,19 +100,18 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		if ( !array_key_exists( 'siteEmail', $options ) ) { $options[ 'siteEmail' ] = $default_email; $changed = true; }
 	    
 		
-		if ( !array_key_exists( 'font_place_name', $options ) ) { $options[ 'font_place_name' ] = $default_font; $changed = true; }
-		if ( !array_key_exists( 'color_place_name', $options ) ) { $options[ 'color_place_name' ] = $default_font_color; $changed = true; }
-		if ( !array_key_exists( 'size_place_name', $options ) ) { $options[ 'size_place_name' ] = $default_font_size; $changed = true; }
-		if ( !array_key_exists( 'font_place_address', $options ) ) { $options[ 'font_place_address' ] = $default_font; $changed = true; }
-		if ( !array_key_exists( 'color_place_address', $options ) ) { $options[ 'color_place_address' ] = $default_font_color; $changed = true; }
-		if ( !array_key_exists( 'size_place_address', $options ) ) { $options[ 'size_place_address' ] = $default_font_size; $changed = true; }
+//		if ( !array_key_exists( 'font_place_name', $options ) ) { $options[ 'font_place_name' ] = $default_font; $changed = true; }
+//		if ( !array_key_exists( 'color_place_name', $options ) ) { $options[ 'color_place_name' ] = $default_font_color; $changed = true; }
+//		if ( !array_key_exists( 'size_place_name', $options ) ) { $options[ 'size_place_name' ] = $default_font_size; $changed = true; }
+//		if ( !array_key_exists( 'font_place_address', $options ) ) { $options[ 'font_place_address' ] = $default_font; $changed = true; }
+//		if ( !array_key_exists( 'color_place_address', $options ) ) { $options[ 'color_place_address' ] = $default_font_color; $changed = true; }
+//		if ( !array_key_exists( 'size_place_address', $options ) ) { $options[ 'size_place_address' ] = $default_font_size; $changed = true; }
 		
 
 		if ( !array_key_exists( 'cat_map_select_show', $options ) ) { $options[ 'cat_map_select_show' ] = $default_cat_map_select_show; $changed = true; }
 		if ( !array_key_exists( 'cat_map_select_excerpt', $options ) ) { $options[ 'cat_map_select_excerpt' ] = $default_cat_map_select_excerpt; $changed = true; }
 		
 		
-		if ( !array_key_exists( 'cat_map_layout', $options ) ) { $options[ 'cat_map_layout' ] = $default_cat_map_layout; $changed = true; }
 		if ( !array_key_exists( 'cat_map_select_width', $options ) ) { $options[ 'cat_map_select_width' ] = $default_cat_map_select_width; $changed = true; }
 		if ( !array_key_exists( 'cat_map_select_height', $options ) ) { $options[ 'cat_map_select_height' ] = $default_cat_map_select_height; $changed = true; }
 		//welocally_cat_map_infobox_text_scale
@@ -363,12 +359,16 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	
 	function get_places_for_category($categoryId){
 		global $wlPlaces;
+		$options = $wlPlaces->getOptions();
 		$result = array();
 		$places_in_category_posts = $wlPlaces->getPlacePostsInCategory($categoryId, 'post');
 		foreach( $places_in_category_posts as $post ){
 			$places = get_post_places($post->ID);  
     		foreach ($places as $place){
-    			array_push($result, $place);
+   				if($options['infobox_title_link']=='on'){
+   					$place->properties->titlelink=get_permalink( $post->ID ) ;	
+   				}   						
+	   			array_push($result, $place);
     		}
 		}		
 		return json_encode($result);		
@@ -510,20 +510,24 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	    return $wlPlaces->getPostPlacesMeta($post_id);
 	}
 	
-// functions for get template
 	function wl_places_get_template_map_widget(){
+//		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
+//		$theme_dir = get_theme_view_dir();	
+//		return  $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-list-widget-display.php';
+		
+		
 		return dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php';
-		//$theme_dir = get_theme_view_dir();	
-		//return $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-map-widget-display.php';
 	}
 	
 	function wl_places_get_template_list_widget(){
-		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
-		$theme_dir = get_theme_view_dir();	
-		return  $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-list-widget-display.php';
+//		$templateOverride = locate_template( array( 'places/places-map-widget-display.php' ) );
+//		$theme_dir = get_theme_view_dir();	
+//		return  $templateOverride ? $templateOverride : dirname( __FILE__ ).'/views/themes/'.$theme_dir.'/welocally-places-list-widget-display.php';
+	
+		return dirname( __FILE__ ).'/views/welocally-places-list-widget-display.ph';
 	}
 	
-	function wl_places_get_template_category(){
+	/*function wl_places_get_template_category(){
 		global $wlPlaces;
 		$cat_map_layout_type = $wlPlaces->getSingleOption('cat_map_layout');
 					
@@ -534,7 +538,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 			
 		$theme_dir = get_theme_view_dir();	
 		return dirname( __FILE__ ) . '/views/themes/'.$theme_dir.'/category-places-map.php';
-	}
+	}*/
 
 	function the_category_map($category=null) {
 		global $wlPlaces;

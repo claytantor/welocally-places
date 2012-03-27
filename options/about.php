@@ -99,29 +99,6 @@ if(!is_subscribed()) {
 		</td>
 	</tr>	
 	<tr valign="top">
-		<th scope="row"><?php _e( 'Theme Support' ); ?></th>
-		<td>
-		<?php if(get_theme_view_dir() != 'default'): ?>
-			<img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_check.png" alt="" title=""/>
-		<?php else: ?>
-			<div><img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_cancel.png" alt="" title=""/></div>
-			<div><em>Just because your theme is not supported does not mean that Welocally Places will not work. Give it a try, we have default settings that will work with most themes. We really want to support your theme so <a href="http://www.welocally.com/wordpress/?page_id=139" target="_new">contact us</a> and we will do our best to support you. <strong>Below is a list of currently supported themes.</strong></em></div>	
-			<div style="display:inline-block">
-			<?php 
-			$theme_lookup = get_supported_themes();
-			foreach ($theme_lookup as $theme) { 
-			?>
-				<div class="supported-theme">	
-				<?php echo $theme["themeName"]; ?>
-				</div>
-			<?php
-			}
-			?>
-			</div>		
-		<?php endif; ?>
-		</td>
-	</tr>		
-	<tr valign="top">
 		<th scope="row"><?php _e( 'CURL Installed' ); ?></th>
 		<td>
 		<?php if(welocally_is_curl_installed()): ?>
@@ -140,15 +117,15 @@ if(!is_subscribed()) {
 			</div>	
 		</td>
 	</tr>
-	<tr valign="top">
-		<td colspan="2">
-			<?php wp_nonce_field( 'welocally-places-about','welocally_places_about_nonce', true, true ); ?>
-			<p class="submit"><input type="submit" name="Submit" class="button-primary" value="<?php _e( 'Save Settings' ); ?>"/></p>		
-		</td>
-	</tr>
-	
 	
 </table>
+
+<div>
+	<?php wp_nonce_field( 'welocally-places-about','welocally_places_about_nonce', true, true ); ?>
+	<p class="submit"><input type="submit" name="Submit" class="button-primary" value="<?php _e( 'Save Settings' ); ?>"/></p>		
+</div>
+
+
 </form>
 				
 </div> <!--wrap end-->

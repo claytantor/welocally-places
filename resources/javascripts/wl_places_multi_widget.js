@@ -308,8 +308,7 @@ WELOCALLY_PlacesMultiWidget.prototype.setMapEvents = function(map, markers){
 	
 	var tilesHandle = google.maps.event.addListener(map, 'tilesloaded', function() {
 		console.log('tilesloaded2');
-		jQuery('.wl_places_places_map_canvas').find('img').css('max-width','none');
-		
+		jQuery('.wl_places_multi_map_canvas').find('img').css('max-width','none');
 		
 		google.maps.event.removeListener(tilesHandle);
 		WELOCALLY.util.preload([

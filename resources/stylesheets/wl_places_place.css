@@ -55,10 +55,17 @@
 	font-size: 0.8em;
 	font-family: Fixed, monospace;  }
 
+/*==== all the place info fields ======*/
 .wl_places_place_name { 
 	font-size: 1.4em;
 	font-weight:bold;
 	color: #444444; }
+	
+.wl_places_place_adress {
+	font-size: 1.0em;
+	font-weight:bold;
+	color: #444444;
+}
 	
 .wl_places_place_web_link { 
 	background: url(../images/link_web_bg.png);

@@ -1,7 +1,17 @@
- <?php
+<?php
  global $wlPlaces;
  $cat = $wlPlaces->placeCategory();
- ?>
+
+		
+$options = $wlPlaces->getOptions();
+$custom_style=null;
+if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
+	$custom_style = $options[ 'map_custom_style' ];
+}
+ 
+?> 
+ 
+ 
  <div class="wl_category_container">  
     <div id="main">
       <script type="text/javascript">
@@ -16,6 +26,7 @@
 		    	endpoint:'http://stage.welocally.com',
 		    	showSelection: true,
 		    	observers:[placeSelected],
+		    	<?php if(isset($custom_style)):?> styles:<?php echo($custom_style); endif;?>,
 				places: <?php echo(get_places_for_category($cat));  ?>
 	    };
 	    var placesMulti = 

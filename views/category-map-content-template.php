@@ -1,5 +1,16 @@
- <div class="wl_category_container">  
-    <div id="main">
+<?php
+global $wlPlaces;
+		
+$options = $wlPlaces->getOptions();
+$custom_style=null;
+if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
+	$custom_style = stripslashes($options[ 'map_custom_style' ]);
+}
+ 
+?>
+ 
+ <div class="wl_category_container"> 
+    <div id="wl_category_map">
       <script type="text/javascript">
 //<![CDATA[
 		var catId = <?php echo $t->catId; ?>;
@@ -12,6 +23,7 @@
 		    	endpoint:'http://stage.welocally.com',
 		    	showSelection: true,
 		    	observers:[placeSelected],
+			<?php if(isset($custom_style)):?> styles:<?php echo($custom_style); endif;?>,
 				places: <?php echo json_encode($t->places); ?>
 	    };
 	    var placesMulti = 

@@ -75,8 +75,7 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 		script = script[script.length - 1];
 
 		// Build Widget
-		this.wrapper = jQuery('<div></div>');
-		//jQuery(this.wrapper).css('display','none');			
+		this.wrapper = jQuery('<div></div>');	
 		jQuery(this.wrapper).attr('class','welocally_addplace_widget');
 		jQuery(this.wrapper).attr('id','welocally_addplace_widget');
 		

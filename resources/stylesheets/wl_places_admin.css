@@ -375,12 +375,18 @@ h4.wl-place-day + .post .entry-title {margin-top:6px;}
 
 .form-table {  
 	border-collapse: separate;
-	width:98%; margin-bottom:10px;  border: 1px solid #888888; background: #f2f2f2; padding: 5px; } 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px;
+	width:98%; margin-bottom:10px;  
+	border: 1px solid #888888; 
+	background: #f2f2f2; padding: 5px; } 
 
-#welocally_cat_map_none{ display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('images/layout_selector_none_up.png') no-repeat 0 bottom;}
-#welocally_cat_map_center{display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('images/layout_selector_center_up.png') no-repeat 0 bottom;}
-#welocally_cat_map_left{display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('images/layout_selector_left_up.png') no-repeat 0 bottom;}
-#welocally_cat_map_right{display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('images/layout_selector_right_up.png') no-repeat 0 bottom;}
+#welocally_cat_map_none{ display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('../images/layout_selector_none_up.png') no-repeat 0 bottom;}
+#welocally_cat_map_center{display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('../images/layout_selector_center_up.png') no-repeat 0 bottom;}
+#welocally_cat_map_left{display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('../images/layout_selector_left_up.png') no-repeat 0 bottom;}
+#welocally_cat_map_right{display:inline-block; width: 53px; height:44px; border: 0px solid #888888; background:url('../images/layout_selector_right_up.png') no-repeat 0 bottom;}
 
 #welocally-post-error {
 	padding: 5px;
@@ -555,5 +561,26 @@ ul.wl-place-links li{ display:inline-block; margin: 0px 0px 0px 0px; padding: 0p
 
 div.gmap img {max-width:100000px; max-width: none}
 
+#wl_layout_selectable { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+#wl_layout_selectable li { 
+		margin: 3px; 
+		width: 53px; height:44px;
+		display:inline-block; 
+		vertical-align:top; 
+   }	
+   
+   #items ul, #items ul, { margin: 0px;  }
+   
+   #content-body ul, #content-body ol { margin: 0px;  }
 
+
+#wl_layout_selectable .ui-selecting {  }
+#wl_layout_selectable .ui-selected { border: 3px solid #777777; margin: 0px; }
+	
+#slider_amount {margin:5px; color: #888888; font-variant: small-caps; font:1.2em Verdana, Arial, Helvetica, sans-serif; text-transform:uppercase}
+
+/* need to organize better, basic styles to be used by all plugin admin screens */
+
+.wl_admin_codetext {   font-size: 0.8em; font-family: Fixed, monospace; font-weight:bold;  }
+.wl_admin_wide100 {   width:100%;  }
 
