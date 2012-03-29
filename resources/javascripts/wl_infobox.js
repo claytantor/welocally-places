@@ -685,6 +685,11 @@ function WELOCALLY_InfoBox (cfg) {
 			eval(jQuery(contentsBox)
 					.css('width')
 					.replace('px',''));
+		if(width==0){
+			width = eval(jQuery(contentsBox)
+					.css('min-width')
+					.replace('px',''));
+		}
 		
 		var offsetX = ((width/2)+10)*-1;
 		infobox.pixelOffset_ = 

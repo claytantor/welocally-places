@@ -51,7 +51,7 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 						}
 					
 						
-				} else if( !$noUpcomingEvents ) _e('There are no places.', $this->pluginDomain);
+				} else if( !$posts ) _e('There are no places.', $this->pluginDomain);
 
 				
 			}	

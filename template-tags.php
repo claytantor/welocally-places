@@ -17,34 +17,12 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		$default_search_address = 'Oakland, CA'; 
 		$default_marker_icon = plugins_url() . "/welocally-places/resources/images/marker_all_base.png";
-//		$default_infobox_marker = plugins_url() . "/welocally-places/resources/images/tipbox_180.png";
-//		$default_infobox_close = plugins_url() . "/welocally-places/resources/images/infobox_close_16.png";
-//		$default_icon_directions = plugins_url() . "/welocally-places/resources/images/mapicons_car.png";
-//		$default_icon_web = plugins_url() . "/welocally-places/resources/images/mapicons_web.png";
-//		$default_map_style = ''; 
-//		$default_font = 'Sorts Mill Goudy'; 
-//		$default_font_color = '000000'; 
-//		$default_font_size = '1.2'; 
-//		$default_cat_map_select_width = '160'; 
-//		$default_cat_map_select_height = '160'; 
 		$default_api_endpoint = 'https://api.welocally.com'; 
-//		$default_slider_amount = '100' ; 
 		$default_update_places = 'off';
-		
-//		$default_infobox_title_link = 'off';
-//		$default_infobox_thumbnail = 'on';
-//		$default_infobox_thumb_width = '64';
-//		$default_infobox_thumb_height = '64';
-		
-//		$default_cat_map_select_show = 'off';
-//		$default_cat_map_select_title= 'on';
-//		$default_cat_map_select_excerpt= 'on';
 		
 		$default_site_name= get_bloginfo('name');
 		$default_site_home= get_bloginfo('home');
 		$default_email=  get_bloginfo('admin_email');
-		
-
 			
 		// Set current version level. Because this can be used to detect version changes (and to what extent), this
 		// information may be useful in future upgrades
@@ -55,35 +33,15 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		// always check each option - if not set, apply default
 		if ( !array_key_exists( 'default_search_addr', $options ) ) { $options[ 'default_search_addr' ] = $default_search_address; $changed = true; }
-		
-
-//		if ( !array_key_exists( 'infobox_title_link', $options ) ) { $options[ 'infobox_title_link' ] = $default_infobox_title_link; $changed = true; }
-//		if ( !array_key_exists( 'infobox_thumbnail', $options ) ) { $options[ 'infobox_thumbnail' ] = $default_infobox_thumbnail; $changed = true; }
-//		if ( !array_key_exists( 'infobox_thumb_width', $options ) ) { $options[ 'infobox_thumb_width' ] = $default_infobox_thumb_width; $changed = true; }
-//		if ( !array_key_exists( 'infobox_thumb_height', $options ) ) { $options[ 'infobox_thumb_height' ] = $default_infobox_thumb_height; $changed = true; }		
-		
+				
 		if ( !array_key_exists( 'map_default_marker', $options ) ) { $options[ 'map_default_marker' ] = $default_marker_icon; $changed = true; }
-//		if ( !array_key_exists( 'map_infobox_marker', $options ) ) { $options[ 'map_infobox_marker' ] = $default_infobox_marker; $changed = true; }
-//		if ( !array_key_exists( 'map_infobox_close', $options ) ) { $options[ 'map_infobox_close' ] = $default_infobox_close; $changed = true; }
-//		if ( !array_key_exists( 'map_icon_directions', $options ) ) { $options[ 'map_icon_directions' ] = $default_icon_directions; $changed = true; }
-//		if ( !array_key_exists( 'map_icon_web', $options ) ) { $options[ 'map_icon_web' ] = $default_icon_web; $changed = true; }
-//		if ( !array_key_exists( 'map_custom_style', $options ) ) { $options[ 'map_custom_style' ] = $default_map_style; $changed = true; }
 	    
 	    //site
-	    if ( !array_key_exists( 'siteKey', $options ) ) { $options[ 'siteKey' ] = $default_map_style; $changed = true; }
-	    if ( !array_key_exists( 'siteToken', $options ) ) { $options[ 'siteToken' ] = $default_map_style; $changed = true; }
+	    if ( !array_key_exists( 'siteKey', $options ) ) { $options[ 'siteKey' ] = null; $changed = true; }
+	    if ( !array_key_exists( 'siteToken', $options ) ) { $options[ 'siteToken' ] = null; $changed = true; }
 		if ( !array_key_exists( 'siteName', $options ) ) { $options[ 'siteName' ] = $default_site_name; $changed = true; }
 	    if ( !array_key_exists( 'siteHome', $options ) ) { $options[ 'siteHome' ] = $default_site_home; $changed = true; }
 		if ( !array_key_exists( 'siteEmail', $options ) ) { $options[ 'siteEmail' ] = $default_email; $changed = true; }
-//
-//		if ( !array_key_exists( 'cat_map_select_show', $options ) ) { $options[ 'cat_map_select_show' ] = $default_cat_map_select_show; $changed = true; }
-//		if ( !array_key_exists( 'cat_map_select_excerpt', $options ) ) { $options[ 'cat_map_select_excerpt' ] = $default_cat_map_select_excerpt; $changed = true; }
-//		
-//		
-//		if ( !array_key_exists( 'cat_map_select_width', $options ) ) { $options[ 'cat_map_select_width' ] = $default_cat_map_select_width; $changed = true; }
-//		if ( !array_key_exists( 'cat_map_select_height', $options ) ) { $options[ 'cat_map_select_height' ] = $default_cat_map_select_height; $changed = true; }
-//		//welocally_cat_map_infobox_text_scale
-//		if ( !array_key_exists( 'cat_map_infobox_text_scale', $options ) ) { $options[ 'cat_map_infobox_text_scale' ] = $default_slider_amount; $changed = true; }
 		
 		//about options
 		if ( !array_key_exists( 'api_endpoint', $options ) ) { $options[ 'api_endpoint' ] = $default_api_endpoint; $changed = true; }
@@ -321,7 +279,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	
-	function get_places_for_category($categoryId){
+	/*function get_places_for_category($categoryId){
 		global $wlPlaces;
 		$options = $wlPlaces->getOptions();
 		$result = array();
@@ -336,42 +294,9 @@ if( class_exists( 'WelocallyPlaces' ) ) {
     		}
 		}		
 		return json_encode($result);		
-	}
+	}*/
 	
-	
-	
-	
-	/**
-	 * is this obsolete?
-	 */
-	function get_place_post_ids_by_category( $orderBy = null, $orderDir = null, $categoryId = null ) {
-
-		global $wpdb, $wlPlaces;
-		$wlPlaces->setOptions();
 		
-		$categoryPlacesId = $wlPlaces->placeCategory();
-		
-		//error_log("cat id:".$categoryId, 0);
-
-		//get the posts of s specific category
-		$categoryQuery = "
-			SELECT $wpdb->posts.ID
-			 	FROM $wpdb->posts 
-			LEFT JOIN $wpdb->postmeta as d1 ON($wpdb->posts.ID = d1.post_id)
-			LEFT JOIN $wpdb->term_relationships ON($wpdb->posts.ID = $wpdb->term_relationships.object_id)
-			LEFT JOIN $wpdb->term_taxonomy ON($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)
-			WHERE $wpdb->term_taxonomy.term_id = $categoryId
-			AND $wpdb->term_taxonomy.taxonomy = 'category'
-			AND $wpdb->posts.post_status = 'publish' " .
-			"GROUP BY $wpdb->posts.ID";
-		
-		//iterate through those, we could probably come up with a query here 
-		//because we are effectively creating a join, but this is already a pretty
-		//complex query, this should probably be improved later			
-		$return = $wpdb->get_results($placesQuery, OBJECT);
-		return $return;
-	}
-	
 	function get_legacy_place_by_post_id( $postId = null) {
 		global $wpdb;
 			
@@ -475,7 +400,16 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	function wl_places_get_template_map_widget(){		
-		return dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php';
+		global $wlPlaces;
+		$currentCat = get_query_var( 'cat' );
+		
+		if(!$currentCat){
+			$currentCat = $wlPlaces->placeCategory();
+		}
+		echo($wlPlaces->getCategoryMapMarkup(
+			$currentCat, 
+			dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php',
+			true));
 	}
 
 	function the_category_map($category=null) {

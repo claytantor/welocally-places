@@ -1,43 +1,24 @@
 <?php
 global $wlPlaces;
-$cat = $wlPlaces->placeCategory();
 $options = $wlPlaces->getOptions();
-$custom_style=null;
-if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
-	$custom_style = stripslashes($options[ 'map_custom_style' ]);
-}
- 
-$marker_image_path = WP_PLUGIN_URL.'/welocally-places/resources/images/marker_all_base.png' ;
-if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_default_marker' ])  && $options[ 'map_default_marker' ]!=''){
-	$marker_image_path = $options[ 'map_default_marker' ];
-}
-
-$endpoint = 'https://api.welocally.com';
-if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
-	$endpoint = $options[ 'api_endpoint' ];
-}
-
- 
 ?> 
- 
- 
- <div class="wl_category_container">  
+<div class="widget-title"><?php echo $title; ?></div>
+ <div class="wl_category_container_widget">  
     <div id="main">
       <script type="text/javascript">
 //<![CDATA[
-		var catId = <?php echo($cat); ?>;
-		
+				
       	var placeSelected = new WELOCALLY_PlaceWidget({}).init();
 	    var cfg = { 
-				id:'multi_1',
+				id:'multi_<?php echo $t->uid; ?>',
 				showLetters: true,
-				overrideSelectableStyle: 'width: 98%',
+				<?php if(isset($options['widget_selector_override'])):?> overrideSelectableStyle:<?php echo('\''.$options['widget_selector_override'].'\''.','); endif;?>
 				imagePath:'<?php echo($marker_image_path); ?>',
 		    	endpoint:'<?php echo($endpoint); ?>',
 		    	showSelection: true,
 		    	observers:[placeSelected],
 		    	<?php if(isset($custom_style)):?> styles:<?php echo($custom_style.','); endif;?>
-				places: <?php echo(get_places_for_category($cat));  ?>
+				places: <?php echo json_encode($t->places); ?>
 	    };
 	    var placesMulti = 
 			  new WELOCALLY_PlacesMultiWidget(cfg)

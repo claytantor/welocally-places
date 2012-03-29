@@ -18,7 +18,6 @@ if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
 	$endpoint = $options[ 'api_endpoint' ];
 }
 
-
 ?>
 
 <script type="text/javascript">

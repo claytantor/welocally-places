@@ -33,7 +33,7 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 		}
 		
 		if(!cfg.imagePath){
-			cfg.imagePath='http://placehound.com/images';
+			cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
 		}
 		
 		if(!cfg.loc){
@@ -73,7 +73,13 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 			jQuery('<input type="text" name="location"/>');
 	    jQuery(wrapper).append('<div>Enter a location to search such as "New York NY". You can even provide a full address for more refined searches.</div>');
 	    jQuery(this._locationField).attr('class','wl_widget_field wl_placefinder_search_field');
-	    jQuery(this._locationField).bind('change' , {instance: this}, this.locationFieldInputHandler);       	
+	    jQuery(this._locationField).bind('change' , {instance: this}, this.locationFieldInputHandler);   
+	    
+		if(this._cfg.defaultLocation){
+			jQuery(this._locationField).val(this._cfg.defaultLocation);
+			jQuery(this._locationField).trigger('change' , {instance: this}, this.locationFieldInputHandler);  
+		}
+	    
 	    jQuery(wrapper).append(this._locationField);
 		
 		//search field
@@ -82,6 +88,7 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 		jQuery(wrapper).append('<div>Enter what you are searching for, this can be a type of place like "Restaurant", what they sell like "Pizza", or the name of the place like "Seward Park".</div>');       
 		jQuery(this._searchField).attr('class','wl_widget_field wl_placefinder_search_field');
 		jQuery(this._searchField).bind('change' , {instance: this}, this.searchHandler);  
+		
 		jQuery(wrapper).append(this._searchField);
 		
 		var buttonDiv = jQuery('<div></div>').attr('class','wl_finder_search_button_area'); 	
@@ -224,28 +231,26 @@ WELOCALLY_PlaceFinderWidget.prototype.searchHandler = function(event) {
 		console.log(surl);
 		
 		_instance.setStatus(_instance._ajaxStatus, 'Finding places','wl_update',true);
-		jQuery(_instance._results).hide();
+		jQuery(_instance._multiPlacesWidget._results).hide();
 		
 		_instance._multiPlacesWidget.resetOverlays(
 					_instance._searchLocation,
-					_instance._placeMarkers);
+					_instance._multiPlacesWidget._placeMarkers);
 			
 		jQuery.ajax({
 				  url: surl,
 				  dataType: "json",
 				  success: function(data) {
-					//setup the bounds
-					//var bounds = new google.maps.LatLngBounds();
-					//bounds.extend(_instance._searchLocation);
-					
 					//set to result bounds if enough results
 					if(data != null && data.length>0){						
 						_instance.setStatus(_instance._ajaxStatus, '','wl_message',false);
-						_instance._multiPlacesWidget.setPlaces(data);
-						
+						_instance._multiPlacesWidget.setPlaces(data);						
 					} else {
+						
 						bounds = _instance._multiPlacesWidget._map.getBounds();
 						_instance.setStatus(_instance._ajaxStatus, 'No results were found matching your search.','wl_warning',false);
+						
+						_instance._multiPlacesWidget.refreshMap(_instance._searchLocation);
 					}
 					
 					

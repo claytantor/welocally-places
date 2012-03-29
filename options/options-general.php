@@ -23,28 +23,6 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	$options[ 'default_search_addr' ] = $_POST[ 'welocally_default_search_addr' ];
 	
 	$options[ 'infobox_title_link' ] = $_POST[ 'welocally_infobox_title_link' ];
-	$options[ 'infobox_thumbnail' ] = $_POST[ 'welocally_infobox_thumbnail' ];
-	$options[ 'infobox_thumb_width' ] = $_POST[ 'welocally_infobox_thumb_width' ];
-	$options[ 'infobox_thumb_height' ] = $_POST[ 'welocally_infobox_thumb_height' ];
-	
-	$options[ 'map_default_marker' ] = trim($_POST[ 'welocally_map_default_marker' ])? trim($_POST[ 'welocally_map_default_marker' ]):plugins_url() . "/welocally-places/resources/images/marker_generic_32.png";
-	$options[ 'map_infobox_marker' ] = trim($_POST[ 'welocally_map_infobox_marker' ])? trim($_POST[ 'welocally_map_infobox_marker' ]):plugins_url() . "/welocally-places/resources/images/tipbox_180.png";
-	$options[ 'map_infobox_close' ] = trim($_POST[ 'welocally_map_infobox_close' ])? trim($_POST[ 'welocally_map_infobox_close' ]):plugins_url() . "/welocally-places/resources/images/infobox_close_16.png";
-	$options[ 'map_icon_web' ] = trim($_POST[ 'welocally_map_icon_web' ])?trim($_POST[ 'welocally_map_icon_web' ]):plugins_url() . "/welocally-places/resources/images/mapicons_web.png";
-	$options[ 'map_icon_directions' ] = trim($_POST[ 'welocally_map_icon_directions' ])? trim($_POST[ 'welocally_map_icon_directions' ]):plugins_url() . "/welocally-places/resources/images/mapicons_car.png";
-	$options[ 'map_custom_style' ] = str_replace( '\"', '"', $_POST[ 'welocally_map_custom_style' ] ) ;
-
-	
-	
-	$options[ 'cat_map_select_show' ] = $_POST[ 'welocally_cat_map_select_show' ];
-	$options[ 'cat_map_select_title' ] = $_POST[ 'welocally_cat_map_select_title' ];
-	$options[ 'cat_map_select_excerpt' ] = $_POST[ 'welocally_cat_map_select_excerpt' ];
-	$options[ 'cat_map_infobox_marker' ] = $_POST[ 'welocally_cat_map_infobox_marker' ];
-	
-	$options[ 'cat_map_select_width' ] = $_POST[ 'welocally_cat_map_select_width' ];
-	$options[ 'cat_map_select_height' ] = $_POST[ 'welocally_cat_map_select_height' ];
-	$options[ 'cat_map_infobox_text_scale' ] = $_POST[ 'welocally_cat_map_infobox_text_scale' ];
-	
 	
 	
 	wl_save_options($options);
@@ -113,95 +91,12 @@ jQuery(document).ready(function() {
 		<td>
 			<ul>
 				<li><input type="checkbox" id="welocally_infobox_title_link" name="welocally_infobox_title_link" <?php if($options[ 'infobox_title_link' ]=='on') { echo 'checked';  }  ?>>Infobox Link Place Name To Post</li>
-				<li><input type="checkbox" id="welocally_infobox_thumbnail" name="welocally_infobox_thumbnail" <?php if($options[ 'infobox_thumbnail' ]=='on') { echo 'checked';  }  ?>>Show Thumbnail In Infobox</li>
+				<li><input type="checkbox" id="welocally_show_letters" name="welocally_show_letters" <?php if($options[ 'welocally_show_letters' ]=='on') { echo 'checked';  }  ?>>Show Indexed Markers</li>
+
 			</ul>
 		</td>
 	</tr>
-<?php/* disabled for now
-    <th scope="row"><?php _e( 'Infobox Thumbnail Box Size' ); ?></th>
-		<td>
-			<input id="welocally_infobox_thumb_width" name="welocally_infobox_thumb_width"  type="text" size="4" 
-				value="<?php echo $options[ 'infobox_thumb_width' ]; ?>" /> <span class="description"><?php _e( 'width in pixels' ); ?></span>&nbsp;
-			<input id="welocally_infobox_thumb_height" name="welocally_infobox_thumb_height"  type="text" size="4" 
-				value="<?php echo $options[ 'infobox_thumb_height' ]; ?>" /> <span class="description"><?php _e( 'height in pixels' ); ?></span>
-		</td>			
-	</tr>
-	<tr valign="top">
-		<th scope="row"><?php _e( 'Default Marker Image' ); ?></th>
-		<td>
-		<input id="welocally_map_default_marker" name="welocally_map_default_marker"  type="text" size="36" value="<?php echo $options[ 'map_default_marker' ]; ?>" />
-		<input id="upload_image_button_1" type="button" value="Upload Image" /><br/>
-		<span class="description"><?php _e( 'This is the marker maps will use for places' ); ?></span>
-		</td>
-	</tr>	
-	<tr valign="top">
-		<th scope="row"><?php _e( 'Infobox Marker Image' ); ?></th>
-		<td>
-		<input id="welocally_map_infobox_marker" name="welocally_map_infobox_marker"  type="text" size="36" value="<?php echo $options[ 'map_infobox_marker' ]; ?>" />
-		<input id="upload_image_button_2" type="button" value="Upload Image" /><br/>
-		<span class="description"><?php _e( 'This is the image that maps infoboxes use to show the location.' ); ?></span>
-		</td>
-	</tr> 
-	
-    <tr valign="top">
-		<th scope="row"><?php _e( 'Infobox Close Icon' ); ?></th>
-		<td>
-		<input id="welocally_map_infobox_close" name="welocally_map_infobox_close"  type="text" size="36" value="<?php echo $options[ 'map_infobox_close' ]; ?>" />
-		<input id="upload_image_button_3" type="button" value="Upload Image" /><br/>
-		<span class="description"><?php _e( 'This is the image that maps infoboxes use to close.' ); ?></span>
-		</td>
-	</tr>	
-	<tr valign="top">
-		<th scope="row"><?php _e( 'Web Link Icon' ); ?></th>
-		<td>
-		<input id="welocally_map_icon_web" name="welocally_map_icon_web"  type="text" size="36" value="<?php echo $options[ 'map_icon_web' ]; ?>" />
-		<input id="upload_image_button_4" type="button" value="Upload Image" /><br/>
-		<span class="description"><?php _e( 'Icon image for the place website address link.' ); ?></span>
-		</td>
-	</tr>
-    <tr valign="top">
-		<th scope="row"><?php _e( 'Driving Directions Icon' ); ?></th>
-		<td>
-		<input id="welocally_map_icon_directions" name="welocally_map_icon_directions"  type="text" size="36" value="<?php echo $options[ 'map_icon_directions' ]; ?>" />
-		<input id="upload_image_button_5" type="button" value="Upload Image" /><br/>
-		<span class="description"><?php _e( 'Icon image for the driving directions to the place.' ); ?></span>
-		</td>
-	</tr>			
-	<tr>
-	<th scope="row"><?php _e( 'Custom Map Style' ); ?></th>
-		<td>
-			<textarea rows="4" cols="60" name="welocally_map_custom_style"><?php printf($options[ 'map_custom_style' ]); ?></textarea><br/>
-			<span class="description"><?php _e( 'This is the custom styling for your maps. Leave blank to use default style. To style your map use the <a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html">Maps Style Wizard</a>' ); ?></span>
-		</td>
-	</tr>*/	?>
-	<tr valign="top">
-		<th scope="row"><?php _e('Category Options' ); ?></th>
-		<td>
-			<ul>
-				<li><input type="checkbox" id="welocally_cat_map_select_show" name="welocally_cat_map_select_show" <?php if($options[ 'cat_map_select_show' ]=='on') { echo 'checked';  } ?>> Show Select Boxes</li>
-				<li><input type="checkbox" id="welocally_cat_map_select_excerpt" name="welocally_cat_map_select_excerpt" <?php if($options[ 'cat_map_select_excerpt' ]=='on') { echo 'checked';  } ?>> Show Excerpt Content</li>
-			</ul>
-		</td>
-	</tr>
-	<?php /*<tr>
-	<th scope="row"><?php _e( 'Select Box Size' ); ?></th>
-		<td>
-			<input id="welocally_cat_map_select_width" name="welocally_cat_map_select_width"  type="text" size="4" 
-				value="<?php echo $options[ 'cat_map_select_width' ]; ?>" /> <span class="description"><?php _e( 'width in pixels' ); ?></span>&nbsp;
-			<input id="welocally_cat_map_select_height" name="welocally_cat_map_select_height"  type="text" size="4" 
-				value="<?php echo $options[ 'cat_map_select_height' ]; ?>" /> <span class="description"><?php _e( 'height in pixels' ); ?></span>
-		</td>			
-	</tr>
-	<tr>
-	<th scope="row"><?php _e( 'Select Box Text Scaling' ); ?></th>
-		<td>
-			<input id="welocally_cat_map_infobox_text_scale" name="welocally_cat_map_infobox_text_scale"  type="hidden"  
-				value="<?php echo $options[ 'cat_map_infobox_text_scale' ]; ?>" />
-			<div id="slider_amount" style="width:300px; text-align:center;"><?php echo $options[ 'cat_map_infobox_text_scale' ]; ?>%</div>
-			<div id="slider" style="width: 300px;"></div>
-		</td>			
-	</tr>*/?>
-	
+
 	
 </table>
 

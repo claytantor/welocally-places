@@ -156,7 +156,6 @@
 .wl_places_multi_infobox { 
 	font-size: 0.8em;
 	list-style-type:none; 
-	width: 160px; 
 	background: #f2f2f2; padding:5px;
 	border: 1px solid #aaaaaa; 
 	-webkit-border-radius: 4px;
@@ -165,7 +164,7 @@
  }
 .wl_places_multi_infobox li { 
 	list-style-type:none; 
-	
+	width: 160px; 
  }
  
  .wl_selectable_marker { float: left }

@@ -164,7 +164,7 @@ WELOCALLY_PlaceWidget.prototype.initMapForPlace = function(place, map_canvas) {
 WELOCALLY_PlaceWidget.prototype.setMapEvents = function(map){
 	var tilesHandle = google.maps.event.addListener(map, 'tilesloaded', function() {
 		console.log('tilesloaded');
-		jQuery('.wl_places_place_map_canvas').find('img').css('max-width','none');
+		//jQuery('.wl_places_place_map_canvas').find('img').css('max-width','none');
 		google.maps.event.removeListener(tilesHandle);
 		WELOCALLY.util.preload([
 				 'http://maps.google.com/mapfiles/openhand.cur'

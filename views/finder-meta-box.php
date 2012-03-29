@@ -1,4 +1,27 @@
-<?php global $post; ?>
+<?php 
+
+global $post; 
+global $wlPlaces;
+		
+$options = $wlPlaces->getOptions();
+$custom_style=null;
+if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
+	$custom_style = stripslashes($options[ 'map_custom_style' ]);
+}
+
+$marker_image_path = WP_PLUGIN_URL.'/welocally-places/resources/images/marker_all_base.png' ;
+if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_default_marker' ])  && $options[ 'map_default_marker' ]!=''){
+	$marker_image_path = $options[ 'map_default_marker' ];
+}
+ 
+$endpoint = 'https://api.welocally.com';
+if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
+	$endpoint = $options[ 'api_endpoint' ];
+} 
+ 
+?>
+
+
 <script type="text/javascript">
 jQuery(document).ready(function(jQuery) {	
 	console.log('place finder ready');
@@ -17,10 +40,12 @@ jQuery(document).ready(function(jQuery) {
 				var placeSelected = new WELOCALLY_PlaceWidget({}).init();
 			    var cfg = { 
 						id:'finder_1',
+						<?php if(isset($options['default_search_addr'])):?> defaultLocation:<?php echo('\''.$options['default_search_addr'].'\''.','); endif;?>		
 						showLetters: true,
 						zoom:4, 
-						imagePath: 'http://gaudi-vb/placehound/images',
-				    	endpoint:'http://stage.welocally.com',
+						imagePath:'<?php echo($marker_image_path); ?>',
+		    			endpoint:'<?php echo($endpoint); ?>',
+		    			<?php if(isset($custom_style)):?> styles:<?php echo($custom_style.','); endif;?>
 				    	showSelection: true,
 				    	observers:[placeSelected],				
 			    };

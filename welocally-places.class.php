@@ -117,10 +117,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			//app stuff, for right now we will embed this key but this should be coming from a web service
 			wp_enqueue_script('jquery' , 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');			
 			wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
+			
 						
-			wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true&language=en' , false , '3');
-			//wp_enqueue_script('wl-places-script', $placesURL.'places.js', array('jquery'), WelocallyPlaces::VERSION  );
-							
+			wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true&language=en' , false , '3');				
 			
 			//welocally
 			wp_enqueue_script('wl_base_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_base.js', array('jquery'));
@@ -140,24 +139,28 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			if( class_exists('WelocallyPlacesCustomize' ) 
 				&& $options['style_customize' ]=='on'){
 					
+				if(!isset($options['style_customize_version'])){
+					$options['style_customize_version'] = 'v'.microtime(true);
+				}
+					
 				if(isset($options['font_names']) && $options['font_names'] != ''){
 					wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css?family='.$options['font_names'] );
 				}	
 					
 				if(file_exists($target_path.'/wl_places.css'))  {
-					wp_enqueue_style('wl_places', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+					wp_enqueue_style('wl_places', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places.css', array(), $options['style_customize_version'], 'screen' );
 				} else {
 					wp_enqueue_style( 'wl_places',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
 				}
 				
 				if(file_exists($target_path.'/wl_places_place.css'))  {
-					wp_enqueue_style('wl_places_place', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
+					wp_enqueue_style('wl_places_place', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places_place.css', array(), $options['style_customize_version'], 'screen' );
 				} else {
 					wp_enqueue_style( 'wl_places_place',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
 				}
 				
 				if(file_exists($target_path.'/wl_places_multi.css'))  {
-					wp_enqueue_style('wl_places_multi', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );
+					wp_enqueue_style('wl_places_multi', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places_multi.css', array(), $options['style_customize_version'], 'screen' );
 				} else {
 					wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );
 				}	
@@ -438,7 +441,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * @param int|object $cat the category object or category ID (optional). defaults to the query category (if any).
 		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website.
 		 */
-		public function getCategoryMapMarkup($cat=null) {
+		public function getCategoryMapMarkup($cat=null, $template=null, $showIfEmpty=null) {
+			
+			
 			static $uid = 0;
 
 			if (!$cat)
@@ -454,17 +459,61 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$t->catId = $t->category->cat_ID;
 			$t->posts = $posts;
 			$t->places = array();
+			
+			$options = $this->getOptions();
 
 			foreach ($t->posts as $post) {
 				$post_places = $this->getPostPlaces($post->ID);
 
 				foreach ($post_places as $place) {
+					
+					if($options['infobox_title_link']=='on'){
+   						$place->properties->titlelink=get_permalink( $post->ID ) ;	
+   					} 
+					
 					array_push($t->places, $place);
 				}
+			}			
+					
+			//setup options
+			$options = $this->getOptions();
+			$custom_style=null;
+			if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
+				$custom_style = stripslashes($options[ 'map_custom_style' ]);
 			}
+			
+			$marker_image_path = WP_PLUGIN_URL.'/welocally-places/resources/images/marker_all_base.png' ;
+			if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_default_marker' ])  && $options[ 'map_default_marker' ]!=''){
+				$marker_image_path = $options[ 'map_default_marker' ];
+			}
+			 
+			$endpoint = 'https://api.welocally.com';
+			if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
+				$endpoint = $options[ 'api_endpoint' ];
+			} 
             
             ob_start();
-            include(dirname(__FILE__) . '/views/category-map-content-template.php');
+            
+            //we do this so we can provide different style overrides for different template views 
+            //while keeping the same controller
+            syslog(LOG_WARNING, 'count:'.count($t->places).' cat:'.$cat);
+            if(count($t->places)>0){
+            	if(!isset($template)){
+	            	include(dirname(__FILE__) . '/views/category-map-content-template.php');
+	            } else {
+	            	include($template);
+	            }    
+            } else {
+            	syslog(LOG_WARNING, 'cat:'.$cat);
+            	
+            	if($showIfEmpty && ($cat != $this->placeCategory())){
+            		return $this->getCategoryMapMarkup($this->placeCategory(), $template, false);           		
+            	} else {
+            		include(dirname(__FILE__) . '/views/category-map-content-empty.php');
+            	}
+            		
+            }
+                  
             $html = ob_get_contents();
             ob_end_clean();
 
