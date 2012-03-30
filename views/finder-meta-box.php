@@ -24,7 +24,7 @@ if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
 
 <script type="text/javascript">
 jQuery(document).ready(function(jQuery) {	
-	console.log('place finder ready');
+
 });
 </script>
 <style type="text/css">

@@ -338,9 +338,6 @@ WELOCALLY_PlacesMultiWidget.prototype.setMapEvents = function(map, markers){
 	});		
 	
 	var tilesHandle = google.maps.event.addListener(map, 'tilesloaded', function() {
-		console.log('tilesloaded2');
-		
-		//jQuery('.wl_places_multi_map_canvas').find('img').css('max-width','none');
 		
 		_instance.setStatus(
 				_instance._mapStatus, 
@@ -424,7 +421,6 @@ WELOCALLY_PlacesMultiWidget.prototype.resetOverlays=function (location, markersA
 
 WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation) {
 	var _instance = this;
-	console.log('refresh');
 	google.maps.event.trigger(_instance._map, 'resize');
 	
 	if(_instance._placeMarkers.length==0){
@@ -445,7 +441,7 @@ WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation) {
 			'wl_message', false);
 	
 	var listener = google.maps.event.addListener(_instance._map, "tilesloaded", function() {
-		console.log('tilesloaded');
+
 		google.maps.event.removeListener(listener);
 		
 		_instance._map.setCenter(searchLocation);

@@ -1,7 +1,7 @@
 /*
 	copyright 2012 welocally. NO WARRANTIES PROVIDED
 */
-
+//foo
 function WELOCALLY_AddPlaceWidget (cfg) {		
 	this.selectedSection;
 	this.cfg;
@@ -277,7 +277,6 @@ WELOCALLY_AddPlaceWidget.prototype.selectedClassifiedHandler = function(event,ui
 WELOCALLY_AddPlaceWidget.prototype.nameChangeHandler = function(event, ui) {
 	
 	var _instance = event.data._instance;
-	console.log('name changed:'+jQuery(this).val());
 	_instance.selectedPlace.properties.name=jQuery(this).val();	
 	jQuery(event.data.form).find('.wl_addplace_loc_field_area').show();
 	jQuery(event.data.form).find('.wl_addplace_location').focus();
@@ -288,7 +287,6 @@ WELOCALLY_AddPlaceWidget.prototype.nameChangeHandler = function(event, ui) {
 WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 	
 	var addressValue = jQuery(this).val();
-	console.log('location: '+addressValue);
 	
 	var _instance = event.data._instance;
 	var _field = this;
@@ -365,7 +363,7 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 	
 	var ajaxurl = _instance.cfg.endpoint +
 				'/geodb/place/1_0/save.json';
-	console.log(ajaxurl);
+	
 	   
 	jqxhr = jQuery.ajax({
 	  type: 'GET',		  
@@ -380,8 +378,6 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 	  error : function(jqXHR, textStatus, errorThrown) {
 		if(textStatus != 'abort'){
 			_instance.setStatus(_instance.statusArea,'ERROR : '+textStatus, 'error', false);
-		}	else {
-			console.log(textStatus);
 		}		
 	  },		  
 	  success : function(data, textStatus, jqXHR) {
@@ -400,7 +396,6 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 WELOCALLY_AddPlaceWidget.prototype.setSelectedPlace = function(selectedPlace) {
 
 	var _instance=this;
-	console.log(selectedPlace._id);
 	jQuery(this.formArea).hide();
 	var selectedPlaceArea = jQuery('<div class="wl_selected"></div>');
 	
@@ -577,7 +572,7 @@ WELOCALLY_AddPlaceWidget.prototype.getCategories = function(type, category) {
 	
 	var ajaxurl = _instance.cfg.endpoint +
 				classifier_path+'?'+WELOCALLY.util.serialize(options)+"&callback=?";
-	console.log(ajaxurl);
+
 	
 	jqxhr = jQuery.ajax({
 	  url: ajaxurl,
@@ -588,8 +583,6 @@ WELOCALLY_AddPlaceWidget.prototype.getCategories = function(type, category) {
 	  error : function(jqXHR, textStatus, errorThrown) {
 		if(textStatus != 'abort'){
 			_instance.setStatus(_instance.statusArea, 'ERROR : '+textStatus,'wl_error',false);
-		}	else {
-			console.log(textStatus);
 		}	
 	  },		  
 	  success : function(data, textStatus, jqXHR) {

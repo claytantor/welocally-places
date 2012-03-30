@@ -496,7 +496,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
             
             //we do this so we can provide different style overrides for different template views 
             //while keeping the same controller
-            syslog(LOG_WARNING, 'count:'.count($t->places).' cat:'.$cat);
+            //syslog(LOG_WARNING, 'count:'.count($t->places).' cat:'.$cat);
             if(count($t->places)>0){
             	if(!isset($template)){
 	            	include(dirname(__FILE__) . '/views/category-map-content-template.php');
@@ -504,7 +504,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	            	include($template);
 	            }    
             } else {
-            	syslog(LOG_WARNING, 'cat:'.$cat);
+            	//syslog(LOG_WARNING, 'cat:'.$cat);
             	
             	if($showIfEmpty && ($cat != $this->placeCategory())){
             		return $this->getCategoryMapMarkup($this->placeCategory(), $template, false);           		

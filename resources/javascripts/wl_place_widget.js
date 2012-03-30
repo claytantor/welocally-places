@@ -140,7 +140,7 @@ WELOCALLY_PlaceWidget.prototype.initMapForPlace = function(place, map_canvas) {
     	map_canvas, 
     	options);
 
-    var markerIcon = 
+    var markerIcon =  
 		new google.maps.MarkerImage(
 				_instance.cfg.imagePath, 
 				new google.maps.Size(32, 32), 
@@ -163,7 +163,7 @@ WELOCALLY_PlaceWidget.prototype.initMapForPlace = function(place, map_canvas) {
 
 WELOCALLY_PlaceWidget.prototype.setMapEvents = function(map){
 	var tilesHandle = google.maps.event.addListener(map, 'tilesloaded', function() {
-		console.log('tilesloaded');
+		
 		//jQuery('.wl_places_place_map_canvas').find('img').css('max-width','none');
 		google.maps.event.removeListener(tilesHandle);
 		WELOCALLY.util.preload([
@@ -172,7 +172,7 @@ WELOCALLY_PlaceWidget.prototype.setMapEvents = function(map){
 	}); 
 	
 	var idleHandle = google.maps.event.addListener(map, 'idle', function() {
-		console.log('idle');
+		
 		//jQuery(map).find('img').css('max-width','none');
 		WELOCALLY.util.preload([
 				 'http://maps.google.com/mapfiles/openhand.cur'

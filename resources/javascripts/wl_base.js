@@ -12,7 +12,7 @@ if (!window.WELOCALLY) {
     window.WELOCALLY = {
     	env: {
     		init: function(){
-    			console.log('init WELOCALLY');
+    			
     		},
     		initJQuery: function(){
 		    	if (typeof(jQuery.fn.parseJSON) == "undefined" || typeof(jQuery.parseJSON) != "function") { 

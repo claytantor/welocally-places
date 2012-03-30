@@ -119,7 +119,7 @@ WELOCALLY_PlaceFinderWidget.prototype.locationFieldInputHandler = function(event
 	var _instance = event.data.instance;
 	
 	var addressValue = jQuery(this).val();
-	console.log('location: '+addressValue);
+	
 	
 	_instance.setStatus(_instance._ajaxStatus, 'Geocoding','wl_update',true);
 	
@@ -228,7 +228,6 @@ WELOCALLY_PlaceFinderWidget.prototype.searchHandler = function(event) {
 		
 		var surl = _instance._cfg.endpoint +
 			'/geodb/place/1_0/search.json?'+WELOCALLY.util.serialize(query)+"&callback=?";
-		console.log(surl);
 		
 		_instance.setStatus(_instance._ajaxStatus, 'Finding places','wl_update',true);
 		jQuery(_instance._multiPlacesWidget._results).hide();
