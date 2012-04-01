@@ -10,11 +10,11 @@ $options = $wlPlaces->getOptions();
       	var placeSelected = new WELOCALLY_PlaceWidget({}).init();
 	    var cfg = { 
 				id:'multi_<?php echo $t->uid; ?>',
-				showLetters: true,
+				<?php if($options['show_letters_tag']=='on'):?> showLetters: true,<?php else: ?>showLetters: false,<?php endif;?>
 				<?php if(isset($options['category_selector_override'])):?> overrideSelectableStyle:<?php echo('\''.$options['category_selector_override'].'\''.','); endif;?>
 				imagePath:'<?php echo($marker_image_path); ?>',
 		    	endpoint:'<?php echo($endpoint); ?>',
-		    	showSelection: true,
+		    	<?php if($options['show_selection_tag']=='on'):?>showSelection: true,<?php else: ?>showSelection: false,<?php endif;?>
 		    	observers:[placeSelected],
 				<?php if(isset($custom_style)):?> styles:<?php echo($custom_style.','); endif;?>
 				places: <?php echo json_encode($t->places); ?>

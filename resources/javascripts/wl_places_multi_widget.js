@@ -55,7 +55,10 @@ WELOCALLY_PlacesMultiWidget.prototype.initCfg = function(cfg) {
 		cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
 	}
 	
-	
+	if (cfg.showSelection==null) {
+		cfg.showSelection = true;
+	}
+		
 	if (!cfg.zoom) {
 		cfg.zoom = 16;
 	}
@@ -236,22 +239,26 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 			markerIcon);
 		
 		//add result to list
-		var listItem = _instance.makeItemContents(item,i, true);
-		
-		if(_instance._cfg.overrideSelectableStyle){
-			jQuery(listItem).attr('style',_instance._cfg.overrideSelectableStyle);
+		if(_instance._cfg.showSelection){
+			var listItem = _instance.makeItemContents(item,i, true);
+			
+			if(_instance._cfg.overrideSelectableStyle){
+				jQuery(listItem).attr('style',_instance._cfg.overrideSelectableStyle);
+			}
+			
+			
+			jQuery(listItem).attr('id','wl_places_mutli_selectable_'+i);
+			jQuery(listItem).attr('class','ui-widget-content');
+			
+			jQuery(listItem).mouseover(function() {
+		    	jQuery(this).css('cursor', 'pointer');
+		    });
+			
+			jQuery(_instance._results).append(jQuery(listItem));
+			
+			jQuery(_instance._results).show();
 		}
 		
-		
-		jQuery(listItem).attr('id','wl_places_mutli_selectable_'+i);
-		jQuery(listItem).attr('class','ui-widget-content');
-		
-		jQuery(listItem).mouseover(function() {
-	    	jQuery(this).css('cursor', 'pointer');
-	    });
-		
-		jQuery(_instance._results).append(jQuery(listItem));
-		jQuery(_instance._results).show();
 	
 	});	
 	

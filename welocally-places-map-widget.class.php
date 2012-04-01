@@ -30,9 +30,8 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 				extract( $args );
 
 				/* User-selected settings. */
-				$style = $instance['style'];
-				$title = apply_filters('widget_title', $instance['title'] );
-				$limit = 20;
+				$title = $instance['title'];
+				$limit = $instance['limit'];
 				
 				if( function_exists( 'get_places' ) ) {
 					$old_display = $wp_query->get('placeMapDisplay');
@@ -43,9 +42,21 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 				if( $posts ) {
 					/* Display list of places. */
 						if( function_exists( 'get_places' ) ) {
-							$templateLoc = apply_filters('map_widget_template','');
+							//$templateLoc = apply_filters('map_widget_template','');
 							//view
-							include( $templateLoc );
+							//include( $templateLoc );
+							
+							$currentCat = get_query_var( 'cat' );
+							
+							if(!$currentCat){
+								$currentCat = $wlPlaces->placeCategory();
+							}
+							echo($wlPlaces->getCategoryMapMarkup(
+								$currentCat, 
+								dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php',
+								true));
+							
+							
 							
 							$wp_query->set('placeMapDisplay', $old_display);
 						}
@@ -60,8 +71,10 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 					$instance = $old_instance;
 
 					/* Strip tags (if needed) and update the widget settings. */
-					$instance['title'] = strip_tags( $new_instance['title'] );
-					$instance['style'] = strip_tags( $new_instance['style'] );
+					$instance['title'] = strip_tags( $new_instance['title'] );					
+					$instance['limit'] = strip_tags( $new_instance['limit'] );
+					/*if(eval($instance['limit'])>25)
+						$instance['limit'] = '25';*/
 					
 
 					return $instance;
@@ -69,7 +82,7 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 		
 			function form( $instance ) {
 				/* Set up default widget settings. */
-				$defaults = array( 'style'=>'aside', 'title' => 'Published Items', 'limit' => '5', 'start' => 'on', 'start-time' => '','end' => '', 'end-time' => '', 'venue' => '', 'country' => 'on', 'address' => '', 'city' => 'on', 'state' => 'on', 'province' => 'on', 'zip' => '', 'phone' => '', 'cost' => '');
+				$defaults = array( 'style'=>'aside', 'title' => 'Published Places', 'limit' => '25');
 				$instance = wp_parse_args( (array) $instance, $defaults );			
 				include( dirname( __FILE__ ) . '/views/welocally-places-map-widget-admin.php' );
 			}

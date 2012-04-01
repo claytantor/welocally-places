@@ -15,7 +15,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		$changed = false;
 		
-		$default_search_address = 'Oakland, CA'; 
+		$default_search_address = ''; 
 		$default_marker_icon = plugins_url() . "/welocally-places/resources/images/marker_all_base.png";
 		$default_api_endpoint = 'https://api.welocally.com'; 
 		$default_update_places = 'off';
@@ -23,6 +23,15 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$default_site_name= get_bloginfo('name');
 		$default_site_home= get_bloginfo('home');
 		$default_email=  get_bloginfo('admin_email');
+		
+		$default_show_letters = 'on'; 
+		$default_show_selection = 'on'; 		
+		$default_infobox_title_link = 'on'; 
+
+		$default_show_letters_tag = 'on'; 
+		$default_show_selection_tag = 'on'; 		
+		$default_infobox_title_link_tag = 'on'; 
+
 			
 		// Set current version level. Because this can be used to detect version changes (and to what extent), this
 		// information may be useful in future upgrades
@@ -33,9 +42,18 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		
 		// always check each option - if not set, apply default
 		if ( !array_key_exists( 'default_search_addr', $options ) ) { $options[ 'default_search_addr' ] = $default_search_address; $changed = true; }
+		
+		//widget
+		if ( !array_key_exists( 'show_letters', $options ) ) { $options[ 'show_letters' ] = $default_show_letters; $changed = true; }
+		if ( !array_key_exists( 'show_selection', $options ) ) { $options[ 'show_selection' ] = $default_show_selection; $changed = true; }
+		if ( !array_key_exists( 'infobox_title_link', $options ) ) { $options[ 'infobox_title_link' ] = $default_infobox_title_link; $changed = true; }
 				
-		if ( !array_key_exists( 'map_default_marker', $options ) ) { $options[ 'map_default_marker' ] = $default_marker_icon; $changed = true; }
-	    
+		//tag
+		if ( !array_key_exists( 'show_letters_tag', $options ) ) { $options[ 'show_letters_tag' ] = $default_show_letters_tag; $changed = true; }
+		if ( !array_key_exists( 'show_selection_tag', $options ) ) { $options[ 'show_selection_tag' ] = $default_show_selection_tag; $changed = true; }
+		if ( !array_key_exists( 'infobox_title_link_tag', $options ) ) { $options[ 'infobox_title_link_tag' ] = $default_infobox_title_link_tag; $changed = true; }
+
+		
 	    //site
 	    if ( !array_key_exists( 'siteKey', $options ) ) { $options[ 'siteKey' ] = null; $changed = true; }
 	    if ( !array_key_exists( 'siteToken', $options ) ) { $options[ 'siteToken' ] = null; $changed = true; }
@@ -71,11 +89,15 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		}
 	}
 	
-	function delete_post_places($post_id=0) {
+	function delete_post_places($post_place_id=null) {
 	    global $wlPlaces;	    
-	    if (!$post_id) $post_id = get_the_ID();	    
-	    $wlPlaces->deletePostPlaces($post_id);
+	    if ($post_place_id){
+	    	$wlPlaces->deletePostPlaces($post_place_id);
+	    }
+	    
 	}
+	
+	
 	
 	function delete_post_places_meta($post_id=0) {
 	    global $wlPlaces;	    
@@ -332,7 +354,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	
-	function wl_get_post_excerpt( $postId = null) {
+	/*function wl_get_post_excerpt( $postId = null) {
 		global $wpdb;
 		
 		$query = "
@@ -350,9 +372,9 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$excerpt = trim( preg_replace( '/\s+/', ' ', $excerpt ) );
 		
 		return $excerpt;
-	}
+	}*/
 	
-	function wl_trim_excerpt($text, $excerpt)
+	/*function wl_trim_excerpt($text, $excerpt)
 	{
 		if ($excerpt) return $excerpt;
 	
@@ -372,7 +394,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		}
 	
 		return apply_filters('wp_trim_excerpt', $text, $raw_excerpt);
-	}
+	}*/
 	
 	function places_get_mapview_link( ) {
 		global $wlPlaces;

@@ -1,6 +1,7 @@
 <?php
-global $wlPlaces;
-?>
+global $wlPlaces; 
+
+?>  
 
 <style type="text/css">
 tr.d0 td {
@@ -13,27 +14,25 @@ tr.d1 td {
 </style>
 
 <div class="wrap">
-
 <div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
 <h2>Welocally Places Manager</h2>
+
 <?php 
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
 include($menubar_include);
-?>
-<?php
+
 // If options have been updated on screen, update the database
 if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-manager', 'welocally_places_manager_nonce' ) ) ) { 
 	
-	if(!empty($_POST['post_id'])){
-		delete_post_places($_POST['post_id']);
+	if(!empty($_POST['post_place_id'])){
+		delete_post_places($_POST['post_place_id']);		
 	}
 	
-	if(!empty($_POST['post_id_meta'])){
-		delete_post_places_meta($_POST['post_id_meta']);
-	}
-		
+	
 	echo '<div class="updated fade"><p><strong>' . __( 'Places Removed.' ) . "</strong></p></div>\n";
 }
+
+$t = $wlPlaces->getPlaces($wlPlaces->placeCategory(),500, false);
 
 //display error if not subscribed
 if(!is_subscribed()) {
@@ -41,36 +40,22 @@ if(!is_subscribed()) {
 } 
 
 ?>
-<form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">
-<fieldset>
-<span class="wl_options_heading"><?php _e( 'Places' ); ?></span>
-<p/>
-<table class="form-table">	
 
+<form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">
+<span class="wl_options_heading"><?php _e( 'Post Places: '.count($t->places) ); ?></span>
+<p/>
 <?php
-$places_found = false;
-$index = 0;
-$pindex = 0;
-$args = array( 'numberposts' => 5000, 'orderby' => 'post_date', 'order' => 'ASC'  );
-$posts = get_posts($args);
-foreach( $posts as $post ) {
-    $places = get_post_places($post->ID);     
-    if(count($places)>0):
-    $places_found = true;
-    echo("<tr class=\"d".($pindex & 1)."\">");
+foreach ($t->places as $place) :
 ?>
-	<td>
-		<div>
-			<input type="checkbox" name="post_id[]" value="<?php echo($post->ID) ?>" />
-			<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$post->ID.'&action=edit' ?>"><strong><?php print_r($post->post_title)  ?></strong></a> Places Linked: <?php echo(count($places));?>
-		</div>
-<?php    
-    foreach ($places as $place):
-?>
+
 		<div style="border: solid #808080 1px; margin: 5px; background: #f9f9f9;">
 			<table>
 				<tr>
-					<td width="150" style="background: #f9f9f9;">   <strong><?php echo($place->properties->name);?></strong></td>
+					<td width="20" style="background: #f9f9f9;"><input type="checkbox" name="post_place_id[]" value="<?php echo($place->post->ID.","); echo($place->_id) ?>" /></td>
+					<td width="150" style="background: #f9f9f9;"><strong><?php echo($place->properties->name);?></strong></td>
+					<td width="150" style="background: #f9f9f9;">
+					<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$place->post->ID.'&action=edit' ?>"><strong><?php print_r($place->post->post_title)  ?></strong></a> 
+					</td>
 					<td width="200" style="background: #f9f9f9;"><?php echo($place->properties->address." ".$place->properties->city." ".$place->properties->state." ".$place->properties->postcode); ?></td>		
 					<td align="left" style="background: #f9f9f9;"><a href="#" onclick="jQuery('#post_place_<?php echo($pindex) ?>').toggle(); return false;">show details</a></td>		
 							
@@ -83,18 +68,8 @@ foreach( $posts as $post ) {
 			
 
 <?php	
-	endforeach;
-	if($places_found){
-		$pindex=$pindex+1;
-	}
-	endif;
-?>
-	</td>	
-	</tr>	
-<?php	
-	$index=$index+1;
-}
-if($places_found):
+endforeach;
+if(count($t->places)>0):
 ?>		
 	<tr valign="top">
 		<td colspan="2">
@@ -112,83 +87,7 @@ else:
 	</tr>
 <?php
 endif;
-?>		
-</table>
-</form>
-	
-<form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">
-<fieldset>
-<span class="wl_options_heading"><?php _e( 'Legacy Places Support' ); ?></span>
-<table class="form-table">
-	<tr valign="top">	
-		<td>			
-		<h1><?php get_places_legacy_count() ?></h1>
-		<?php if(get_places_legacy_count() > 0): ?>	
-		<div><img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_cancel.png" alt="" title=""/></div>
-		<div><strong>You need to relink the places in this section!</strong>&nbsp; You have recenty upgraded Welocally Places. <?php print_r(get_places_legacy_count());  ?> Legacy Posts were found.  
-		Please read the <a href="http://www.welocally.com/?page_id=104" target="_blank">help documentation</a> when upgrading. If you have problems <a href="http://www.welocally.com/?page_id=139" target="_new">email us</a>. 
-		<p/><strong>ALWAYS BACKUP PRIOR TO UPGRADE</strong></div>
-		
-		<?php
-		$places_found_meta = false;
-		$index = 0;
-		$legacy_posts = get_legacy_posts();
-		foreach( $legacy_posts as $post ) {
-		    $places = get_legacy_place_by_post_id($post->ID);  
-		    echo("<tr class=\"d".($index & 1)."\">");
-		    if(!empty($places)):
-		    $places_found_meta = true;
-		?>
-				<td>
-					<div>
-						<input type="checkbox" name="post_id_meta[]" value="<?php echo($post->ID) ?>" />
-						<a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/post.php?post='.$post->ID.'&action=edit' ?>"><strong><?php print_r($post->post_title)  ?></strong></a> Meta Place Found
-						&nbsp; <a href="#" onclick="jQuery('#post_meta_place_<?php echo($post->ID) ?>').toggle(); return false;">show details</a>
-					</div>
-					<div id="post_meta_place_<?php echo($post->ID) ?>" style="display:none">
-				   		<pre><?php print_r($places) ?></pre>
-				   </div>	   
-			   </td>
-			</tr>
-		<?php
-			endif;
-			$index=$index+1;
-		}?>
-		
-		
-		
-		
-		
-		
-		<?php else: ?>
-		<img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_check.png" alt="" title=""/>	Your places are up to date. 	
-		<?php endif; ?>
-		</td>
-	</tr>
-
-
-<?php
-if($places_found_meta):
-?>	
-	<tr valign="top">
-		<td colspan="2">
-			<?php wp_nonce_field( 'welocally-places-manager','welocally_places_manager_nonce', true, true ); ?>
-			<p class="submit"><input type="submit" name="Submit" class="button-primary" value="<?php _e( 'Delete Post Meta' ); ?>"/></p>		
-		</td>
-	</tr>
-<?php 
-else:
 ?>
-	<tr valign="top">
-		<td colspan="2">
-			<h3>No places found.</h3>
-		</td>
-	</tr>
-<?php
-endif;
-?>		
-</table>
-</form>	
-	
-				
+
+</form>
 </div> 

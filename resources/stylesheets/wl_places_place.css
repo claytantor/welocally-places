@@ -38,7 +38,7 @@
 	font-family: Fixed, monospace;	
 }
 
-.wl_places_place_script { width:100%; padding: 4px; }
+.wl_places_place_script { width:100%; padding: 4px; display:none }
 .wl_places_place_script textarea{ 
 	border: 1px solid #9c9c9c;
 	-webkit-border-radius: 4px;

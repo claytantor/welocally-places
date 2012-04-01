@@ -262,6 +262,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 			
 			update_option('Welocally_DBVersion', self::DB_VERSION);
+			
+			
 		}
 
 
@@ -354,19 +356,35 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					break;
 				case 'category':
 					/* handle [welocally categories="..." /] tag */
+
 					$categoryIds = array();
 
 					if (!$tag->categories):
 						$categoryIds = array(get_query_var('cat')); // fetch category from request
 					else:
-						$categoryIds = array_map('get_cat_ID', $tag->categories);
+						$newcats = array();
+						//required for special chars
+						foreach ( $tag->categories as $cat ) {
+
+							//this seems rediculous to have to do
+							$string = preg_replace('/&(?!amp;)/', '&amp;', $cat);
+							$string = preg_replace('/#038;/', '', $string);
+
+							array_push($categoryIds, get_cat_ID($string));
+						}					
+
 					endif;
 
 					if (!$categoryIds) return $str;
 
 					$html = '';
 					foreach ($categoryIds as $cat)
-						$html .= $this->getCategoryMapMarkup($cat);
+						$html .= $this->getCategoryMapMarkup(
+							$cat,
+							dirname(__FILE__) . '/views/category-map-content-template.php',
+							false,
+							25
+							);
 
 					return $html;
 
@@ -383,8 +401,20 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		    global $post;
 		    global $wpdb;
 		    static $placecount = 0;
+		    
+		    //$place = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id));
+			
+			//changing this to join so it actually must be in post places, someone please
+			//use your sprintf magic!
+			$place = $wpdb->get_row($wpdb->prepare(
+				"SELECT {$wpdb->prefix}wl_places.* " .
+				"FROM {$wpdb->prefix}wl_places,{$wpdb->prefix}wl_places_posts " .
+				" WHERE {$wpdb->prefix}wl_places.id={$wpdb->prefix}wl_places_posts.place_id " .
+				" AND {$wpdb->prefix}wl_places_posts.post_id =".$post->ID.
+				" AND wl_id = '". $tag->id."'"));
 
-            if ($place = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id))) {
+            if($place) {
+                
                 $place_json = $place->place;
                 
                 $resultContent = '';
@@ -435,15 +465,13 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
             
             return null;
 		}
-
-		/**
-		 * Builds a category map for a given category.
-		 * @param int|object $cat the category object or category ID (optional). defaults to the query category (if any).
-		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website.
-		 */
-		public function getCategoryMapMarkup($cat=null, $template=null, $showIfEmpty=null) {
+		
+		public function getId($filtervalue){
 			
-			
+		}
+		
+		public function getPlaces($cat=null, $maxElements=25, $filter=true) {
+						
 			static $uid = 0;
 
 			if (!$cat)
@@ -460,6 +488,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$t->posts = $posts;
 			$t->places = array();
 			
+			$pids = array();
+			
 			$options = $this->getOptions();
 
 			foreach ($t->posts as $post) {
@@ -467,13 +497,39 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 
 				foreach ($post_places as $place) {
 					
-					if($options['infobox_title_link']=='on'){
-   						$place->properties->titlelink=get_permalink( $post->ID ) ;	
-   					} 
-					
-					array_push($t->places, $place);
+					//determin if we are filtering
+					if(!$filter || !in_array($place->_id, $pids)){
+						if($options['infobox_title_link']=='on'){
+	   						$place->properties->titlelink=get_permalink( $post->ID ) ;	
+	   					} 
+						
+						$place->post = $post;										
+						array_push($t->places, $place);
+						array_push($pids, $place->_id);						
+					}					
+
 				}
-			}			
+				
+				//max
+				if(count($t->places)>$maxElements){
+					$t->places = array_slice($t->places, 0, $maxElements);
+					break;
+				}
+			}	
+								
+			return $t;
+		}
+
+		/**
+		 * Builds a category map for a given category.
+		 * @param int|object $cat the category object or category ID (optional). defaults to the query category (if any).
+		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website.
+		 */
+		public function getCategoryMapMarkup(
+			$cat=null, $template=null, $showIfEmpty=null, $maxElements=25) {
+			
+			
+			$t = $this->getPlaces($cat, $maxElements);		
 					
 			//setup options
 			$options = $this->getOptions();
@@ -504,8 +560,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	            	include($template);
 	            }    
             } else {
-            	//syslog(LOG_WARNING, 'cat:'.$cat);
             	
+            	//this is being done so we can show all places if none are found in the cat
             	if($showIfEmpty && ($cat != $this->placeCategory())){
             		return $this->getCategoryMapMarkup($this->placeCategory(), $template, false);           		
             	} else {
@@ -552,6 +608,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$this->addPlaceMeta( $postId, 'publish_post' );	
 		}	
 			
+		/**
+		 * obsolete?
+		 */	
 		public function addPlaceMeta( $postId, $action ) {
 			error_log("addPlaceMeta: [".$_POST['PlaceSelected']."]", 0);
 			//check to delete existing place info
@@ -699,39 +758,63 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * this is probably inefficient and could be done better with
 		 * some sort of join
 		 */
-		public function deletePostPlaces($postId) {
+		public function deletePostPlaces($post_place_id) {
+			//print_r($post_place_id);
 			
-		    global $wpdb;
-			    
-			//will recurse to elements    		    		   	    
-		    if (is_array($postId)) {  	        
-		        foreach ($postId as $p) {		            
-		            $this->deletePostPlaces($p);
-		        }
-		    }		    
-		    	    
-		    $postId = is_array($postId) ? $postId['ID'] : (is_object($postId) ? $postId->ID : intval($postId));
-		    
-		    //remove it from places table
-		    $post_places = $this->getPostPlaces($postId) ;
-		    foreach ($post_places as $place) {
-
-		    	$wpdb->query(
+			global $wpdb;
+			
+			foreach ($post_place_id as $p) {		            
+		            $parts = preg_split("/[\s,]+/", $p);
+		            $postId = $parts[0];
+		            $placeId = $parts[1];
+		            
+		            /*
+		             * select 
+						  wp_wl_places_posts.id as wp_wl_places_posts_id,
+						  wp_wl_places.id as wp_wl_places_id,
+						  wp_wl_places_posts.post_id,
+						  wp_wl_places.wl_id 
+						from wp_wl_places_posts,wp_wl_places 
+						where wp_wl_places.id=wp_wl_places_posts.place_id
+						and wp_wl_places_posts.post_id=104
+						and wp_wl_places.wl_id='WL_sacf2k1jqe5lsbgr9fsre2_58.299649_-134.407658@1329495792'; 
+		             */
+		            //if you can figure out how to do this with one quesry pleas
+		            //be my guest					
+					$query = "SELECT {$wpdb->prefix}wl_places.id place_id, {$wpdb->prefix}wl_places_posts.id places_post_id " .
+							" FROM {$wpdb->prefix}wl_places, {$wpdb->prefix}wl_places_posts".
+							" WHERE {$wpdb->prefix}wl_places.id={$wpdb->prefix}wl_places_posts.place_id " .
+							" AND {$wpdb->prefix}wl_places_posts.post_id=$postId " .
+							" AND {$wpdb->prefix}wl_places.wl_id='$placeId'" ;
+			
+					$return = $wpdb->get_results($query, OBJECT);
+					//print_r($return);
+					$idsObject = $return[0]; 
+					print_r('place_id:'.$idsObject->place_id.' ');
+					print_r('places_post_id:'.$idsObject->places_post_id);
+							            		        		            
+		            /*$wpdb->query(
 					"
 					DELETE FROM {$wpdb->prefix}wl_places 
-					WHERE wl_id = '$place->_id';
+					WHERE id = ".$idsObject->place_id."
 					"
-					);		    	
-		    }		    	
-		    
-		    //remove it from posts
-		    $wpdb->query(
+					);*/	
+					
+					$wpdb->query(
 					"
 					DELETE FROM {$wpdb->prefix}wl_places_posts 
-					WHERE post_id = $postId;
+					WHERE id = ".$idsObject->places_post_id. "
 					"
-					);		  
+					);	
+					
+					
+		            
+		    }
+
 		}
+		
+		
+		
 		
 		public function getPostPlaces($postId) {
 		    global $wpdb;

@@ -439,6 +439,7 @@ WELOCALLY_AddPlaceWidget.prototype.setSelectedPlace = function(selectedPlace) {
 				qVal+'" target="_new">Driving Directions</a></div>');
 		
 	}
+	
 	 
 	//the tag
 	var tag = '[welocally id="'+selectedPlace._id+'" /]';

@@ -90,6 +90,7 @@ if (!class_exists('WelocallyPlaces_Tag')) {
 			} else {
 				throw new Exception('Invalid tag arguments.');
 			}
+			
 
 			$this->id = $id;
 			$this->categories = $categories;

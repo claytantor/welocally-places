@@ -469,7 +469,6 @@ $options = wl_set_general_defaults();
 							    
 							    <!-- the form -->
 								<div id="form-signup">
-								 <div class="action" style="width:100%; text-align:right;"><a id="edit-form-action" href="#">Edit</a></div>
 								 <form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">
 								 <fieldset>									
 									<div>
@@ -507,7 +506,10 @@ $options = wl_set_general_defaults();
 								</fieldset>
 								<?php wp_nonce_field( 'welocally-places-subscribe','welocally_places_subscribe_nonce', true, true ); ?>
 								
-								<p class="submit"><input type="submit" id="primary-action-button" class="button-primary" value="Register Now"/></p>
+								<p class="submit">
+								<a id="edit-form-action" class="button-primary" value="edit">Edit Fields</a>&nbsp;
+								<input type="submit" id="primary-action-button" class="button-primary" value="Register Now"/>								
+								</p>
 																
 								</form>
 							</div>

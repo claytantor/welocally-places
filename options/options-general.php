@@ -20,9 +20,41 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	
 	$options = wl_get_options();
 	
+	
 	$options[ 'default_search_addr' ] = $_POST[ 'welocally_default_search_addr' ];
 	
+	//infobox_title_link
 	$options[ 'infobox_title_link' ] = $_POST[ 'welocally_infobox_title_link' ];
+	if(!isset($options['infobox_title_link']) || $options['infobox_title_link'] == ''){
+		$options['infobox_title_link'] = 'off';
+	} 
+	
+	
+	//widget
+	//welocally_show_letters
+	$options[ 'show_letters' ] = $_POST[ 'welocally_show_letters' ];
+	if(!isset($options['show_letters']) || $options['show_letters'] == ''){
+		$options['show_letters'] = 'off';
+	} 
+	
+	//welocally_show_letters
+	$options[ 'show_selection' ] = $_POST[ 'welocally_show_selection' ];
+	if(!isset($options['show_selection']) || $options['show_selection'] == ''){
+		$options['show_selection'] = 'off';
+	} 
+	
+		
+	//welocally_show_letters_tag
+	$options[ 'show_letters_tag' ] = $_POST[ 'welocally_show_letters_tag' ];
+	if(!isset($options['show_letters_tag']) || $options['show_letters_tag'] == ''){
+		$options['show_letters_tag'] = 'off';
+	} 
+	
+	//welocally_show_letters_tag
+	$options[ 'show_selection_tag' ] = $_POST[ 'welocally_show_selection_tag' ];
+	if(!isset($options['show_selection_tag']) || $options['show_selection_tag'] == ''){
+		$options['show_selection_tag'] = 'off';
+	} 
 	
 	
 	wl_save_options($options);
@@ -87,20 +119,33 @@ jQuery(document).ready(function() {
 		</td>
 	</tr>
 	<tr valign="top">
-		<th scope="row"><?php _e('Map Options' ); ?></th>
+		<th scope="row"><?php _e('General Map Options' ); ?></th>
 		<td>
 			<ul>
 				<li><input type="checkbox" id="welocally_infobox_title_link" name="welocally_infobox_title_link" <?php if($options[ 'infobox_title_link' ]=='on') { echo 'checked';  }  ?>>Infobox Link Place Name To Post</li>
-				<li><input type="checkbox" id="welocally_show_letters" name="welocally_show_letters" <?php if($options[ 'welocally_show_letters' ]=='on') { echo 'checked';  }  ?>>Show Indexed Markers</li>
-
+			</ul>
+		</td>
+	</tr
+	<tr valign="top">
+		<th scope="row"><?php _e('Category Widget Map Options' ); ?></th>
+		<td>
+			<ul>
+				<li><input type="checkbox" id="welocally_show_letters" name="welocally_show_letters" <?php if($options[ 'show_letters' ]=='on') { echo 'checked';  }  ?>>Show Indexed Markers</li>
+				<li><input type="checkbox" id="welocally_show_selection" name="welocally_show_selection" <?php if($options[ 'show_selection' ]=='on') { echo 'checked';  }  ?>>Show Selection Item List</li>
 			</ul>
 		</td>
 	</tr>
-
+	<tr valign="top">
+		<th scope="row"><?php _e('Category Tag Map Options' ); ?></th>
+		<td>
+			<ul>
+				<li><input type="checkbox" id="welocally_show_letters_tag" name="welocally_show_letters_tag" <?php if($options[ 'show_letters_tag' ]=='on') { echo 'checked';  }  ?>>Show Indexed Markers</li>
+				<li><input type="checkbox" id="welocally_show_selection_tag" name="welocally_show_selection_tag" <?php if($options[ 'show_selection_tag' ]=='on') { echo 'checked';  }  ?>>Show Selection Item List</li>
+			</ul>
+		</td>
+	</tr>
 	
 </table>
-
-
 
 
 <?php wp_nonce_field( 'welocally-places-general','welocally_places_general_nonce', true, true ); ?>

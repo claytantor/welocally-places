@@ -42,6 +42,7 @@ jQuery(document).ready(function(jQuery) {
 						id:'finder_1',
 						<?php if(isset($options['default_search_addr'])):?> defaultLocation:<?php echo('\''.$options['default_search_addr'].'\''.','); endif;?>		
 						showLetters: true,
+						showShare: true,
 						zoom:4, 
 						imagePath:'<?php echo($marker_image_path); ?>',
 		    			endpoint:'<?php echo($endpoint); ?>',

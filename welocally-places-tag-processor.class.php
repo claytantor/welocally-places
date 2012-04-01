@@ -24,8 +24,10 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
         }
         
         public function processTag($tag, $postId=0) {
+        	
             global $wpdb;
             global $wlPlaces;
+            
             
             if (!$tag->id || $tag->type != 'post')
                 return false;
@@ -34,6 +36,7 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
             
             $place = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id));
             
+                      
             if ($place == null) {
                 $place_info = $this->queryPlace($tag);
 
@@ -42,8 +45,8 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
                                                                         
                     $place = $wpdb->get_row( 
                         $wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id) );
-
                 }
+                
             }
             
             if (!$place)
@@ -52,24 +55,29 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
             if ($postId) {
                 $wpdb->insert("{$wpdb->prefix}wl_places_posts", array('place_id' => $place->id,
                                                                       'post_id' => $postId));
-                
-                if ($tag->categories && get_post_type($postId) != 'page') {
-                    $customCategories = array();
-                    
+                //make sure its categorized as place no matter what 
+                $postCategories = wp_get_post_categories($postId);                                                      
+                $customCategories = array(); 
+                array_push($postCategories,$wlPlaces->placeCategory());
+                           
+       
+                if ($tag->categories && get_post_type($postId) != 'page') {                   
                     foreach ($tag->categories as $customCategory) {
                         $customCategories[] = get_cat_ID($customCategory) ? get_cat_ID($customCategory) : wp_create_category($customCategory);
-                    }
-                    
-                    $postCategories = wp_get_post_categories($postId);
-                    $newCategories = array_merge($postCategories, $customCategories);
-                    wp_set_post_categories($postId, $newCategories);
+                    }                   
                 }
+                
+                $newCategories = array_merge($postCategories, $customCategories);
+                syslog(LOG_WARNING, 'new categores:'.print_r($newCategories,true));
+                wp_set_post_categories($postId, $newCategories);
                 
                 update_post_meta($this->postId, '_isWLPlace', true);
                 
                 // delete post metadata from previous versions of the plugin
                 delete_post_meta($postId, '_PlaceSelected');
                 delete_post_meta($postId, '_WLPlaces');
+            } else {
+            	
             }
             
             return $place;

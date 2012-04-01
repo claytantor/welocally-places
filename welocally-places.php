@@ -30,7 +30,6 @@ add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
 
 // add filter's for plugin templates
 add_filter('map_widget_template', 'wl_places_get_template_map_widget',10);
-add_filter('list_widget_template', 'wl_places_get_template_list_widget',10);
 add_filter('category_template', 'wl_places_get_template_category',10);
 
 
@@ -430,11 +429,6 @@ function welocally_is_curl_installed() {
 	} else {
 		return false;
 	}
-}
-
-function wl_get_excerpt_basic() {
-	global $post;
-	return wl_get_post_excerpt($post->ID);
 }
 
 
