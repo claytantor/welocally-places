@@ -77,9 +77,8 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 	    jQuery(this._locationField).attr('class','wl_widget_field wl_placefinder_search_field');
 	    jQuery(this._locationField).bind('change' , {instance: this}, this.locationFieldInputHandler);   
 	    
-	    jQuery(this._locationField).bind('keypress',{instance: this}, this.locationFieldInputHandler);
-	    
-	    	    
+	   
+	    	    	    
 		if(this._cfg.defaultLocation){
 			jQuery(this._locationField).val(this._cfg.defaultLocation);
 			jQuery(this._locationField).trigger('change' , {instance: _instance}, this.locationFieldInputHandler); 
@@ -93,8 +92,7 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 		jQuery(wrapper).append('<div>Enter what you are searching for, this can be a type of place like "Restaurant", what they sell like "Pizza", or the name of the place like "Seward Park".</div>');       
 		jQuery(this._searchField).attr('class','wl_widget_field wl_placefinder_search_field');
 		jQuery(this._searchField).bind('change' , {instance: this}, this.searchHandler);  
-		
-		
+			
 		jQuery(wrapper).append(this._searchField);
 		
 		//bind focus
