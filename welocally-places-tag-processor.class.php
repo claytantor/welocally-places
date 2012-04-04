@@ -68,7 +68,7 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
                 }
                 
                 $newCategories = array_merge($postCategories, $customCategories);
-                syslog(LOG_WARNING, 'new categores:'.print_r($newCategories,true));
+                //syslog(LOG_WARNING, 'new categores:'.print_r($newCategories,true));
                 wp_set_post_categories($postId, $newCategories);
                 
                 update_post_meta($this->postId, '_isWLPlace', true);

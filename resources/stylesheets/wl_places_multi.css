@@ -1,8 +1,6 @@
 
 .wl_places_multi_widget{
-	margin: 5px auto;
-	width: 100%;
-	padding: 5px;
+	width: 98%;
 }
 
 .wl_places_multi_selected {
@@ -37,7 +35,9 @@
 #wl_places_mutli_selectable .ui-selected { background: #e2e2e2;  }
 #wl_places_mutli_selectable ol {  display: inline; }
 #wl_places_mutli_selectable li { 
-	margin: 3px; padding: 0.4em; font-size: 0.8em; 
+	margin-bottom: 3px; 
+	padding: 0.4em; 
+	font-size: 0.8em; 
 	border: 1px solid #aaaaaa; 
 	display: inline-block; 	
 	-webkit-border-radius: 4px;

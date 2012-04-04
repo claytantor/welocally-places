@@ -39,6 +39,17 @@ if (!window.WELOCALLY) {
     		}
     	},
     	util: {
+    		getErrorString: function(errorModel){
+    			//{"errors":[{"errorMessage":"Please provide the name for your site.","errorCode":104}]}
+    			var errorString = '';
+    			jQuery.each(errorModel, function(i,item){
+    				errorString = errorString+(i+1)+'. '+item.errorMessage+' ';
+    			});
+    			return errorString;
+    		},
+    		log: function(logString){
+    			if (window.console) console.log(logString);
+    		},
     		serialize: function(obj, prefix) {
 				var str = [];
 				for(var p in obj) {

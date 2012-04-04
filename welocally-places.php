@@ -19,6 +19,8 @@ add_action('wp_ajax_add_place', 'welocally_add_place');
 add_action('wp_ajax_get_places', 'welocally_getplaces');
 add_action('wp_ajax_remove_token', 'welocally_remove_token');
 add_action('wp_ajax_save_place', 'welocally_save_place');
+add_action('wp_ajax_register', 'welocally_register');
+
 
 //catgeories
 add_action('wp_ajax_get_classifiers_types', 'welocally_get_classifiers_types');
@@ -43,7 +45,7 @@ function welocally_getkey() {
 	$selectedPostJson = json_encode($_POST);
 
 	//set POST variables 
-	$url = wl_server_base() . '/admin/signup/2_0/plugin/key.json';
+	$url = wl_server_base() . '/admin/signup/3_0/plugin/key.json';
 	
 	error_log("url:".$url, 0);
 
@@ -57,17 +59,23 @@ function welocally_getkey() {
 	die(); // this is required to return a proper result
 }
 
-function welocally_register($selectedPostJson) {
-
-	$url = wl_server_base() . '/admin/signup/2_0/plugin/register';
+function welocally_register() {
+	syslog(LOG_WARNING, 'welocally_register');
 	
-	error_log("url:".$url, 0);
+	global $wlPlaces;
+	$options = $wlPlaces->getOptions();
+	
+	syslog(LOG_WARNING, print_r($_POST,true));
+	if(isset($_POST["key"])){
+		$options["siteKey"] = $_POST["key"];
+	}
+	if(isset($_POST["token"])){
+		$options["siteToken"] = $_POST["token"];
+	}
+	
+	$wlPlaces->saveOptions($options);
+	
 
-	$result_json = wl_do_curl_post($url, $selectedPostJson, array (
-		'Content-Type: application/json; charset=utf-8'
-	), true);
-
-	return $result_json;
 }
 
 
@@ -78,13 +86,13 @@ function welocally_save_place() {
 	$placeToSave['properties']['address'] = stripslashes($_POST['place']['properties']['address']);
 	
 	$selectedPostJson = json_encode($placeToSave);
-	error_log("place 1:".print_r($placeToSave, true),0);
-	error_log("place 2:".strval($selectedPostJson),0);
+	//error_log("place 1:".print_r($placeToSave, true),0);
+	//error_log("place 2:".strval($selectedPostJson),0);
 
 	//set POST variables 
 	$url = wl_server_base() . '/geodb/place/1_0/';
 	
-	error_log("url:".$url, 0);
+	//error_log("url:".$url, 0);
 
 	$result_json = wl_do_curl_put($url, $selectedPostJson, array (
 		'Content-Type: application/json; charset=utf-8',
@@ -102,7 +110,7 @@ function welocally_getplaces() {
 	
 	$url = wl_server_base() .'/geodb/place/1_0/search.json?'.http_build_query($_GET);
 	
-	error_log("url:".$url, 0);
+	//error_log("url:".$url, 0);
 
 	$result_json = wl_do_curl_get($url, array (
 		'Content-Type: application/json; charset=utf-8',
@@ -118,7 +126,7 @@ function welocally_get_classifiers_types() {
 	
 	$url = wl_server_base() .'/geodb/classifier/1_0/types.json';
 	
-	error_log("url:".$url, 0);
+	//error_log("url:".$url, 0);
 
 	$result_json = wl_do_curl_get($url, array (
 		'Content-Type: application/json; charset=utf-8',
@@ -134,7 +142,7 @@ function welocally_get_classifiers_categories() {
 
 	$url = wl_server_base() .'/geodb/classifier/1_0/categories.json?'.http_build_query($_GET);
 	
-	error_log("url:".$url, 0);
+	//error_log("url:".$url, 0);
 
 	$result_json = wl_do_curl_get($url, array (
 		'Content-Type: application/json; charset=utf-8',
@@ -149,7 +157,7 @@ function welocally_get_classifiers_subcategories() {
 
 	$url = wl_server_base() .'/geodb/classifier/1_0/subcategories.json?'.http_build_query($_GET);
 	
-	error_log("url:".$url, 0);
+	//error_log("url:".$url, 0);
 
 	$result_json = wl_do_curl_get($url, array (
 		'Content-Type: application/json; charset=utf-8',
@@ -163,7 +171,7 @@ function welocally_get_classifiers_subcategories() {
 //-------- GET ------------
 
 function wl_do_curl_get($url, $headers){
-	error_log("wl_do_curl_get url:".$url, 0);
+	//error_log("wl_do_curl_get url:".$url, 0);
 	
 	$result_json = '';
 	if (preg_match("/https/", $url)) {
@@ -216,7 +224,7 @@ function wl_do_curl_get_https($https_url, $headers) {
 
 //-------- PUT ------------
 function wl_do_curl_put($url, $selectedPostJson, $headers) {
-	error_log("PUT url:".$url." JSON:".$selectedPostJson, 0);
+	//error_log("PUT url:".$url." JSON:".$selectedPostJson, 0);
 
 	$result_json = '';
 	if (preg_match("/https/", $url)) {

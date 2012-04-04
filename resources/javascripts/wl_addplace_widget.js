@@ -15,6 +15,7 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 	this.locationMarker;
 	this.selectedClassifiersArea;
 	this.classifiersArea;
+	this.jqxhr;
 	
 	this.selectedPlace = {
 		properties: {},
@@ -365,15 +366,15 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 				'/geodb/place/1_0/save.json';
 	
 	   
-	jqxhr = jQuery.ajax({
+	_instance.jqxhr = jQuery.ajax({
 	  type: 'GET',		  
 	  url: ajaxurl,
 	  data: selectedPlace,
 	  dataType : 'jsonp',
 	  beforeSend: function(jqXHR){
-		jqxhr = jqXHR;
-		jqxhr.setRequestHeader("site-key", _instance.cfg.siteKey);
-		jqxhr.setRequestHeader("site-token", _instance.cfg.siteToken);
+		_instance.jqxhr = jqXHR;
+		_instance.jqxhr.setRequestHeader("site-key", _instance.cfg.siteKey);
+		_instance.jqxhr.setRequestHeader("site-token", _instance.cfg.siteToken);
 	  },
 	  error : function(jqXHR, textStatus, errorThrown) {
 		if(textStatus != 'abort'){
@@ -575,11 +576,11 @@ WELOCALLY_AddPlaceWidget.prototype.getCategories = function(type, category) {
 				classifier_path+'?'+WELOCALLY.util.serialize(options)+"&callback=?";
 
 	
-	jqxhr = jQuery.ajax({
+	_instance.jqxhr = jQuery.ajax({
 	  url: ajaxurl,
 	  dataType : 'json',
 	  beforeSend: function(jqXHR){
-		jqxhr = jqXHR;
+		_instance.jqxhr = jqXHR;
 	  },
 	  error : function(jqXHR, textStatus, errorThrown) {
 		if(textStatus != 'abort'){

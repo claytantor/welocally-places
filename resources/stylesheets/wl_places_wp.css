@@ -1,0 +1,148 @@
+.form-table form input {border:none;}
+#submitLabel {display: block;}
+#submitLabel input {
+	display: block;
+	padding: 0;
+}
+#checkBoxLabel {}
+
+.publisher-status {
+    background:#f2f2f2 repeat-x scroll left top;
+	text-decoration: none;
+	font-size: 11px;
+	line-height: 16px;
+	padding: 5px 11px;
+	margin-top:10px;
+	margin-bottom:5px;
+	cursor: pointer;
+	border: 1px solid #bbb;
+	-moz-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	-khtml-box-sizing: content-box;
+	box-sizing: content-box;
+	text-shadow: rgba(255,255,255,1) 0 1px 0;
+	color: #6b6b6b;
+	font-weight: bold;
+	text-transform: uppercase;
+	width: 95%;
+	
+}
+
+.basic-frame {
+	display: inline-block;
+    background:#ffffff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border: 2px solid #bbb;
+	-moz-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	-khtml-box-sizing: content-box;
+	color: #6b6b6b;
+	width: 95%;
+	padding: 5px;
+	
+}
+
+
+
+.option-form-label { width: 100px; display: inline-block;}
+
+.options-title2 {
+    	border-bottom:1px solid #cccccc; padding-bottom:3px;
+    	margin-bottom: 10px;
+		font-weight:bold;
+		font-size:1.2em;
+		text-transform:uppercase;
+		width: 100%;
+}
+
+.options-signup-text { 
+		margin-bottom: 10px; 
+		font-style:italic; 
+		font-weight:normal; 
+		color: #333333;  }
+
+.line-spacer-10 {
+	height: 10px;
+}
+
+	
+#form-service {
+	display: none;
+}
+	
+#form-plugin {
+	display: none;
+}
+
+#key-section {
+	display: none;
+}
+
+#token-section {
+	display: none;
+}
+
+#offer-section {
+	display: none;
+}
+
+#save_options_button {
+	display: none;
+}
+
+#action-getkey { 
+	display: none;
+}
+
+#paypal-subscribe {
+	display: none;
+}
+
+
+
+#wl_api_endpoint {
+	display: none;
+	width: 95%;
+}
+
+#api-endpoint-assigned {
+	width: 400px;
+}
+
+
+#form-signup {
+	width: 95%;
+}
+	
+.assigned-field {
+	background: #DBDBDB;
+	font-size:1.2em;
+	font-weight:bold; 
+	color: #595959;
+	font-family: monospace;
+	width: 95%;
+	height:20px;
+	margin-bottom: 10px;
+}
+
+label { font-size:1.2em; color: #595959; font-weight:bold; width:400px; margin-top:10px;  }
+	
+.option-form-field { 
+	width: 95%; 
+	height:20px;
+	margin-bottom: 10px;
+}
+
+#plugin-options th { width: 80px; }
+
+.wl_register_value { font-size:1.2em; color: #595959; font-weight:bold; font-family: monospace; height: 20px; background-color: #eeeeee; padding: 4px; margin-bottom: 10px;}
+.wl_register_field { font-size:1.2em; color: #595959; font-weight:bold; height: 25px; padding: 2px; }
