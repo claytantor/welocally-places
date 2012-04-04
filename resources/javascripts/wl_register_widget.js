@@ -66,6 +66,8 @@ function WELOCALLY_RegisterWidget (cfg) {
 		jQuery(this._formArea).css('display','none');
 		jQuery(this._wrapper).append(this._formArea);
 		
+		this.showFields();
+		
 		//get the status
 		this.getSubscriberInfo(cfg.siteKey, cfg.siteHome, cfg.siteName, cfg.siteEmail, cfg.siteToken);
 				
@@ -176,13 +178,16 @@ WELOCALLY_RegisterWidget.prototype.getSubscriberInfo = function(siteKey, siteHom
 			}		
 		  },		  
 		  success : function(data, textStatus, jqXHR) {
-			if(data != null && data.errors != null) {
-				_instance.setStatus(_instance._ajaxStatus,'Could not get publisher info. '+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-			} else {
-				_instance.setStatus(_instance._ajaxStatus, JSON.stringify(data), 'wl_message', false);
-				_instance.setFormFields(data.subscriptionStatus, data.site.key, siteHome, siteName, siteEmail, siteToken);
+			 
+			  if(data != null && data.errors != null) {
+				_instance.setStatus(_instance._ajaxStatus,'Issue with publisher info. '+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
+				_instance.setFormFields("DENIED", siteKey, siteHome, siteName, siteEmail, siteToken);
 				
-			}
+			  } else {	
+				  _instance.setStatus(_instance._ajaxStatus, JSON.stringify(data), 'wl_message', false);  
+				  _instance.setFormFields(data.subscriptionStatus, data.site.key, siteHome, siteName, siteEmail, siteToken);
+				
+			  }	
 		  }
 		});
 
@@ -218,8 +223,18 @@ WELOCALLY_RegisterWidget.prototype.setFormFields =
 			'<div style="clear:both"></div>');
 			jQuery(_instance._formArea).find('#wl_register_submit_action').html('Refresh Registration');
 			jQuery(_instance._formArea).find('#wl_register_token_area').show();
+		} else if (status == 'DENIED') {
+			jQuery("#wl_register_status_area").html('<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" '+
+					'src="'+_instance._cfg.imagePath+'/denied1.png" alt="" title=""/>'+
+			'<span class="options-text">There activity you attemped was denied, this is probably a license issue. Be sure to <a href="'+_instance._cfg.endpoint+'/admin/home" target="_blank">log into your portal</a> and add this site, or contact Welocally.</span>'+
+			'<div style="clear:both"></div>');
+			jQuery(_instance._formArea).find('#wl_register_submit_action').html('Refresh Registration');
+			_instance.showEditable();
+			jQuery(_instance._formArea).find('#wl_register_token_area').show();
 		}
 	
+		
+		//LICENSE_ISSUE
 	}
 	
 	if(siteKey != null) {
@@ -250,124 +265,7 @@ WELOCALLY_RegisterWidget.prototype.setFormFields =
 	
 	jQuery(_instance._formArea).show();
 	
-	/*if(key != null) {
-		jQuery("#paypal-custom").val(key);	
-		jQuery("#key-assigned").html(key);	
-		jQuery("#siteKey").val(key);	
-	}
-	
-	if(token != null){
-		jQuery("#token-assigned").html(token);
-		jQuery("#welocally-places-display_token").val(token);
-		jQuery("#siteToken").val(token);
-	} 
-		
-	if(status != null) {
-		jQuery("#publisher-status").html(status);
-		if(status == 'KEY_ASSIGNED') {
-			
-			wl_set_cancelled_state_ajax();
-			
-			jQuery("#token-box").hide();
-			
-			jQuery("#siteToken").val('');
-			jQuery("#token-assigned").val('');
-			
-			jQuery("#key-section").show();
-						
-		    jQuery("#save_options_button").hide();
-			
-			jQuery("#offer-section").show();
-			jQuery("#paypal-subscribe").show();	
-			
-			
-			jQuery("#finished-action").hide();
-			jQuery("#subscribed-action").hide();
-			jQuery("#key-assigned-action").show();
-			
-			var statusimg = '<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/free1.png" alt="" title=""/>'+
-			'<span class="options-text">We have assigned a key to you, but to use or basic service you must register. Go ahead, its easy. Just press the <strong>Register Now</strong> button and we will send you your secret token.</span>'; 
-			jQuery("#action-area").html(statusimg);
-			
-			jQuery("#primary-action-button").val('Register Now');
-					
-						
-		}  else if(status == 'REGISTERED') {
-			
-			jQuery("#token-box").show();
-			
-			jQuery("#key-section").show();
-			jQuery("#token-section").show();
-			
-			jQuery("#finished-action").hide();
-			jQuery("#subscribed-action").hide();
-			jQuery("#key-assigned-action").show();	
-			
-			
-			var statusimg = '<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/token1.png" alt="" title=""/>'+
-				'<span class="options-text">Great you are almost there! Now look the your inbox for the email address you gave us, and there should be an email with your free token. Enter it in into the Publisher Token field and press the <em>Save Settings</em> button.</span>'; 
-			jQuery("#action-area").html(statusimg);
-			
-			jQuery("#primary-action-button").val('Save Token');
-			
-					
-		} else if(status == 'SUBSCRIBED') {
-			
-			jQuery("#token-box").show();
-			
-			jQuery("#key-section").show();
-			jQuery("#token-section").show();
-			
-			jQuery("#paypal-subscribe").hide();		
-			jQuery("#action-getkey").show();
-			
-			
-		    jQuery("#save_options_button").show();
-			
-			if(!subscribed_saved) {
-				jQuery("#finished-action").hide();
-			    jQuery("#key-assigned-action").hide();
-				jQuery("#subscribed-action").show();
-			} else {
-				jQuery("#subscribed-action").hide();					
-			    jQuery("#key-assigned-action").hide();
-			    jQuery("#finished-action").show();						
-			}
-			
-			var statusimg = '<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribed1.png" alt="" title=""/>'+
-				'<span class="options-text">You did it! You signed up for our product and now you can use it. You have been given access to our user portal with help, support and a whole bunch of other free welocally resouces. Be sure to <a href="<?php echo wl_server_base().'/admin/home'?>" target="_blank">log into your portal</a> as soon as possible.</span>'; 
-			jQuery("#action-area").html(statusimg);
-			
-			jQuery("#primary-action-button").val('Save Settings');
-			
-			
-		} else if(status == 'CANCELLED') {
-			
-			jQuery("#token-box").hide();
-				
-			//ajax post to admin server
-			wl_set_cancelled_state_ajax();
-			
-			jQuery("#key-section").show();
-			jQuery("#token-section").show();
-			
-			//the button token
-			if(buttonToken != null) {
-				jQuery("#hosted_button_id").val(buttonToken);
-			} else {
-				jQuery("#hosted_button_id").val('WKLRWF9WC9UZY');
-			}
-			
-			jQuery("#offer-section").show();
-			jQuery("#paypal-subscribe").show();		
-			jQuery("#save_options_button").hide();
-						
-			jQuery("#finished-action").hide();
-			jQuery("#subscribed-action").hide();
-			jQuery("#key-assigned-action").show();
-			
-			jQuery("#primary-action-button").val('Save Settings');
-		}  */
+
 };
 	
 WELOCALLY_RegisterWidget.prototype.setStatus = function(statusArea, message, type, showloading){
@@ -422,7 +320,9 @@ WELOCALLY_RegisterWidget.prototype.registrationHandler = function(event, ui) {
 		  },		  
 		  success : function(data, textStatus, jqXHR) {
 			if(data != null && data.errors != null) {
-				_instance.setStatus(_instance._ajaxStatus,'Could not get publisher info. '+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
+				_instance.setStatus(_instance._ajaxStatus,'Could register publisher. '+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
+				var origData = _instance.getSiteInfo();
+				_instance.setFormFields("DENIED", origData.siteKey, origData.siteHome, origData.siteName, origData.siteEmail, origData.siteToken);
 			} else {
 				_instance.setStatus(_instance._ajaxStatus, JSON.stringify(data), 'wl_message', false);
 				_instance.setFormFields(data.subscriptionStatus, data.site.key, data.site.home, data.site.name, data.site.email, data.site.token);
@@ -446,6 +346,36 @@ WELOCALLY_RegisterWidget.prototype.editHandler = function(event, ui) {
 	
 	jQuery(_instance._formArea).find('.wl_field_area').each(function(i,item){
 		jQuery(item).toggle();		
+	});
+	
+	return false;
+		
+};
+
+WELOCALLY_RegisterWidget.prototype.showEditable = function() {
+	var _instance = this;
+	
+	jQuery(_instance._formArea).find('.wl_field_value').each(function(i,item){
+		jQuery(item).hide();		
+	});
+	
+	jQuery(_instance._formArea).find('.wl_field_area').each(function(i,item){
+		jQuery(item).show();		
+	});
+	
+	return false;
+		
+};
+
+WELOCALLY_RegisterWidget.prototype.showFields = function() {
+	var _instance = this;
+	
+	jQuery(_instance._formArea).find('.wl_field_value').each(function(i,item){
+		jQuery(item).show();		
+	});
+	
+	jQuery(_instance._formArea).find('.wl_field_area').each(function(i,item){
+		jQuery(item).hide();		
 	});
 	
 	return false;
