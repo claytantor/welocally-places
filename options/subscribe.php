@@ -49,8 +49,8 @@ jQuery(document).ready(function() {
 			<?php if(isset($options['siteEmail'])):?>siteEmail:<?php echo('\''.$options['siteEmail'].'\''.','); endif;?>	
 			<?php if(isset($options['siteKey'])):?>siteKey:<?php echo('\''.$options['siteKey'].'\''.','); endif;?>	
 			<?php if(isset($options['siteToken']) && $options['siteToken'] != "null"):?>siteToken:<?php echo('\''.$options['siteToken'].'\''.','); endif;?>	
+			<?php if(isset($options['api_endpoint'])):?>endpoint:<?php echo('\''.$options['api_endpoint'].'\''.','); endif;?>			
 			wrapper: jQuery('#wl_registration_form_wrapper'),
-			endpoint: 'http://dev.welocally.com',
 			registeredCallback: wl_register_callback,
 			imagePath: '<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images'
 			}).init();
