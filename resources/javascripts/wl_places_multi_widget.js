@@ -232,6 +232,7 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 		}
 		
 		_instance.addMarker(
+			i,	
 			placeMarkers,
 			map,
 			itemLocation,
@@ -377,7 +378,7 @@ WELOCALLY_PlacesMultiWidget.prototype.selectedItemHandler = function(event, ui) 
 	} else if(this.nodeName=='MARKER'){
 		_instance = this.instance;
 		marker = this;
-		var index = marker.__gm_id-1;
+		var index = marker.index;
 		jQuery(_instance._selectedSection).empty();
 		jQuery('#wl_places_mutli_selectable').find('li').removeClass('ui-selected');
 		jQuery('#wl_places_mutli_selectable_'+index).addClass('ui-selected');
@@ -504,9 +505,10 @@ WELOCALLY_PlacesMultiWidget.prototype.colName = function (n) {
 
 
 
-WELOCALLY_PlacesMultiWidget.prototype.addMarker = function(markersArray, markerMap, location, item, icon) {
+WELOCALLY_PlacesMultiWidget.prototype.addMarker = function(i, markersArray, markerMap, location, item, icon) {
 	var _instance = this;
 	var marker = new google.maps.Marker({
+		index: i,
 	    nodeName: 'MARKER',
 	    instance: this,
 		position: location,
