@@ -73,7 +73,7 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 	    //location field
 	    this._locationField =
 			jQuery('<input type="text" name="location"/>');
-	    jQuery(wrapper).append('<div>Enter a location to search such as "New York NY". You can even provide a full address for more refined searches.</div>');
+	    jQuery(wrapper).append('<div class="wl_field_description">Enter a location to search such as "New York NY". You can even provide a full address for more refined searches.</div>');
 	    jQuery(this._locationField).attr('class','wl_widget_field wl_placefinder_search_field');
 	    jQuery(this._locationField).bind('change' , {instance: this}, this.locationFieldInputHandler);   
 	    
@@ -89,7 +89,7 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 		//search field
 	    this._searchField =
 			jQuery('<input type="text" name="search" id="wl_finder_search_field"/>');
-		jQuery(wrapper).append('<div>Enter what you are searching for, this can be a type of place like "Restaurant", what they sell like "Pizza", or the name of the place like "Seward Park".</div>');       
+		jQuery(wrapper).append('<div class="wl_field_description">Enter what you are searching for, this can be a type of place like "Restaurant", what they sell like "Pizza", or the name of the place like "Seward Park".</div>');       
 		jQuery(this._searchField).attr('class','wl_widget_field wl_placefinder_search_field');
 		jQuery(this._searchField).bind('change' , {instance: this}, this.searchHandler);  
 			

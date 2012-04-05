@@ -7,7 +7,13 @@ if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_default_mar
 	$marker_image_path = $options[ 'map_default_marker' ];
 }
 
+
 ?>
+
+<?php if(empty($options['siteToken'])  ):?>
+<div class="wl_error fade"><p><strong>Please <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">Register Now</a> To Activate Welocally Places</strong></p></div>
+
+<?php else: ?>
 <body>
 	<div>
 		<div id="wl-addplace" class="input-section action" style="display:inline-block" >
@@ -25,3 +31,4 @@ var addPlaceWidget = new WELOCALLY_AddPlaceWidget(cfg).init();
 		</div>		
 	</div>
 </body>
+<?php endif; ?>

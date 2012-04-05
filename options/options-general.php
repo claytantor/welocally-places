@@ -1,5 +1,6 @@
 <?php
 global $wlPlaces;
+$options = $wlPlaces->getOptions();
 ?>
 <div class="wrap">
 <div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
@@ -8,17 +9,14 @@ global $wlPlaces;
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
 include($menubar_include);
 ?>
+<?php if(empty($options['siteToken'])  ):?>
+<div class="wl_error fade"><p><strong>Please <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">Register Now</a> To Activate Welocally Places</strong></p></div>
+<?php endif; ?>
+
 <?php
-// If options have been updated on screen, update the database
-
-
-if(!is_subscribed()) {
-	echo '<div class="error fade"><p><strong>' . __( 'Please Register To Activate Welocally Places' ) . "</strong></p></div>\n";
-} 
-
 if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 'welocally_places_general_nonce' ) ) ) { 
 	
-	$options = wl_get_options();
+	
 	
 	
 	$options[ 'default_search_addr' ] = $_POST[ 'welocally_default_search_addr' ];
@@ -67,33 +65,10 @@ $options = wl_set_general_defaults();
 
 ?>
 
-<?php if(is_subscribed()):?>
-
+<?php if(!empty($options['siteToken'])):?>
 <script type="text/javascript" charset="utf-8">
 var wl_options_imgfield = '';
 jQuery(document).ready(function() {
-	jQuery("#welocally_size_place_name").val('<?php echo $options[ 'size_place_name' ]; ?>');
-	jQuery("#welocally_size_place_address").val('<?php echo $options[ 'size_place_address' ]; ?>');
-	
-	
-	/*
-	jQuery("#slider").slider(
-		{ 
-			min: 0, 
-			max: 200,
-			stop: function(event, ui) {
-				var value = jQuery("#slider").slider( "option", "value" );
-				jQuery("#welocally_cat_map_infobox_text_scale").val(value);	
-				jQuery("#slider_amount").html(value+"%");
-							
-			} 
-		}
-	);
-	
-	jQuery("#slider").slider( "option", "value", <?php echo $options[ 'cat_map_infobox_text_scale' ]; ?> );
-	
-	*/
-	
 	window.send_to_editor = function(html) {
 	 imgurl = jQuery('img',html).attr('src');
 	 jQuery("#"+wl_options_imgfield).val(imgurl);

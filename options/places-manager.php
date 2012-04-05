@@ -32,19 +32,18 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-manager', 
 	echo '<div class="updated fade"><p><strong>' . __( 'Places Removed.' ) . "</strong></p></div>\n";
 }
 
-$t = $wlPlaces->getPlaces($wlPlaces->placeCategory(),500, false);
-
-//display error if not subscribed
-if(!is_subscribed()) {
-	echo '<div class="error fade"><p><strong>' . __( 'Please Register To Activate Welocally Places' ) . "</strong></p></div>\n";
-} 
-
 ?>
+
+<?php if(empty($options['siteToken'])  ):?>
+<div class="wl_error fade"><p><strong>Please <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">Register Now</a> To Activate Welocally Places</strong></p></div>
+
+<?php else: ?>
 
 <form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">
 <span class="wl_options_heading"><?php _e( 'Post Places: '.count($t->places) ); ?></span>
 <p/>
 <?php
+$t = $wlPlaces->getPlaces($wlPlaces->placeCategory(),500, false);
 foreach ($t->places as $place) :
 ?>
 
@@ -88,6 +87,6 @@ else:
 <?php
 endif;
 ?>
-
+<?php endif; ?>
 </form>
 </div> 

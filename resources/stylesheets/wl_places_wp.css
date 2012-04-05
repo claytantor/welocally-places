@@ -134,7 +134,22 @@
 	margin-bottom: 10px;
 }
 
-label { font-size:1.2em; color: #595959; font-weight:bold; width:400px; margin-top:10px;  }
+.form-table form input {border:none;}
+.line-spacer-10 {
+	height: 10px;
+}
+
+	
+
+#wl_api_endpoint {
+	display: none;
+	width: 400px;
+}
+
+#api-endpoint-assigned {
+	width: 400px;
+}
+
 	
 .option-form-field { 
 	width: 95%; 
@@ -146,3 +161,5 @@ label { font-size:1.2em; color: #595959; font-weight:bold; width:400px; margin-t
 
 .wl_register_value { font-size:1.2em; color: #595959; font-weight:bold; font-family: monospace; height: 20px; background-color: #eeeeee; padding: 4px; margin-bottom: 10px;}
 .wl_register_field { font-size:1.2em; color: #595959; font-weight:bold; height: 25px; padding: 2px; }
+
+.wl_subscription_status { font-size:1.4em; color: #595959; font-weight:bold; width:400px; margin-top:10px; }

@@ -180,11 +180,11 @@ WELOCALLY_RegisterWidget.prototype.getSubscriberInfo = function(siteKey, siteHom
 		  success : function(data, textStatus, jqXHR) {
 			 
 			  if(data != null && data.errors != null) {
-				_instance.setStatus(_instance._ajaxStatus,'Issue with publisher info. '+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
+				_instance.setStatus(_instance._ajaxStatus,'<strong>Issue with publisher info.</strong> '+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
 				_instance.setFormFields("DENIED", siteKey, siteHome, siteName, siteEmail, siteToken);
 				
 			  } else {	
-				  _instance.setStatus(_instance._ajaxStatus, JSON.stringify(data), 'wl_message', false);  
+				  _instance.setStatus(_instance._ajaxStatus, '<span class="wl_subscription_status">'+data.subscriptionStatus+'</span>', 'wl_message', false);  
 				  _instance.setFormFields(data.subscriptionStatus, data.site.key, siteHome, siteName, siteEmail, siteToken);
 				
 			  }	
@@ -207,6 +207,8 @@ WELOCALLY_RegisterWidget.prototype.setFormFields =
 				'<span class="options-text">We have assigned a key to you, but to use or basic service you must register. Go ahead, its easy. Just press the <strong>Register Now</strong> button and '+
 				'we will send you your secret token.</span><div style="clear:both"></div>');
 			jQuery(_instance._formArea).find('#wl_register_submit_action').html('Register Now');
+			jQuery(_instance._formArea).find('#wl_register_token_area').hide();
+			_instance.showFields();
 		} else if (status == 'REGISTERED') {
 			jQuery("#wl_register_status_area").html('<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" src="'+_instance._cfg.imagePath+'/token1.png" alt="" title=""/>'+
 			'<span class="options-text">Great you are almost there! Now look the your inbox for the email address you gave us, and there should be an email with '+
@@ -214,6 +216,7 @@ WELOCALLY_RegisterWidget.prototype.setFormFields =
 			'<div style="clear:both"></div>');
 			jQuery(_instance._formArea).find('#wl_register_submit_action').html('Save Token');
 			jQuery(_instance._formArea).find('#wl_register_token_area').show();
+			_instance.showFields();
 		} else if (status == 'SUBSCRIBED') {
 			jQuery("#wl_register_status_area").html('<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" '+
 					'src="'+_instance._cfg.imagePath+'/subscribed1.png" alt="" title=""/>'+
@@ -223,6 +226,7 @@ WELOCALLY_RegisterWidget.prototype.setFormFields =
 			'<div style="clear:both"></div>');
 			jQuery(_instance._formArea).find('#wl_register_submit_action').html('Refresh Registration');
 			jQuery(_instance._formArea).find('#wl_register_token_area').show();
+			_instance.showFields();
 		} else if (status == 'DENIED') {
 			jQuery("#wl_register_status_area").html('<img width="75" hieght="75" style="float: left; margin-right:5px" class="align-right" '+
 					'src="'+_instance._cfg.imagePath+'/denied1.png" alt="" title=""/>'+
@@ -320,11 +324,11 @@ WELOCALLY_RegisterWidget.prototype.registrationHandler = function(event, ui) {
 		  },		  
 		  success : function(data, textStatus, jqXHR) {
 			if(data != null && data.errors != null) {
-				_instance.setStatus(_instance._ajaxStatus,'Could register publisher. '+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
+				_instance.setStatus(_instance._ajaxStatus,'<strong>Could register publisher.</strong> '+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
 				var origData = _instance.getSiteInfo();
 				_instance.setFormFields("DENIED", origData.siteKey, origData.siteHome, origData.siteName, origData.siteEmail, origData.siteToken);
 			} else {
-				_instance.setStatus(_instance._ajaxStatus, JSON.stringify(data), 'wl_message', false);
+				_instance.setStatus(_instance._ajaxStatus, '<span class="wl_subscription_status">'+data.subscriptionStatus+'</span>', 'wl_message', false);
 				_instance.setFormFields(data.subscriptionStatus, data.site.key, data.site.home, data.site.name, data.site.email, data.site.token);
 				_instance._cfg.registeredCallback(data.site);				
 			}

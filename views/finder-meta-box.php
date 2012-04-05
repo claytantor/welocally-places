@@ -22,6 +22,10 @@ if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
 ?>
 
 
+<?php if(empty($options['siteToken'])  ):?>
+<div class="wl_error fade"><p><strong>Please <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">Register Now</a> To Activate Welocally Places</strong></p></div>
+
+<?php else: ?>
 <script type="text/javascript">
 jQuery(document).ready(function(jQuery) {	
 
@@ -63,3 +67,4 @@ jQuery(document).ready(function(jQuery) {
 		</div>		
 	</div>
 </body>
+<?php endif; ?>

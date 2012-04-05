@@ -107,8 +107,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			return $is_child;
 		}
 
-		
-
 		public function loadDomainStylesScripts() {
 			$options = $this->getOptions();
 			

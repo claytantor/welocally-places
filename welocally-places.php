@@ -60,7 +60,7 @@ function welocally_getkey() {
 }
 
 function welocally_register() {
-	syslog(LOG_WARNING, 'welocally_register');
+	syslog(LOG_WARNING, print_r($_POST,true));
 	
 	global $wlPlaces;
 	$options = $wlPlaces->getOptions();
@@ -68,8 +68,12 @@ function welocally_register() {
 	syslog(LOG_WARNING, print_r($_POST,true));
 	if(isset($_POST["key"])){
 		$options["siteKey"] = $_POST["key"];
-	}
-	if(isset($_POST["token"])){
+	} 
+	
+	if(empty($_POST["token"])  || !isset($_POST["token"]) || $_POST["token"]==null || $_POST["token"]=='null' )  {
+		syslog(LOG_WARNING, 'unsetting token');
+		unset($options['siteToken']);
+	} else {
 		$options["siteToken"] = $_POST["token"];
 	}
 	

@@ -181,7 +181,7 @@ WELOCALLY_AddPlaceWidget.prototype.createForm = function() {
 	var formArea = jQuery('<div></div>');
 	
 	jQuery(formArea)
-	.append('<div class="wl_field_title">Enter the real name of the place, such as "The Red Snapper Grill"</div>');
+	.append('<div class="wl_field_description">Enter the real name of the place, such as "The Red Snapper Grill"</div>');
 	
 	this.placeNameField = jQuery('<div class="wl_field_area"><input type="text" name="placeName" class="wl_widget_field wl_addplace_name"/></div>');
 	jQuery(this.placeNameField).find('input').bind('change' , {form: formArea, _instance: this}, this.nameChangeHandler);  
@@ -190,7 +190,7 @@ WELOCALLY_AddPlaceWidget.prototype.createForm = function() {
 	
 	var locFieldArea = jQuery('<div class="wl_addplace_loc_field_area" style="display:none;"></div>');
 	jQuery(locFieldArea)
-	.append('<div class="wl_field_title">Enter the most exact address of the place, such as 1234 Mullberry Rd Oakland CA 94612</div>');
+	.append('<div class="wl_field_description">Enter the most exact address of the place, such as 1234 Mullberry Rd Oakland CA 94612</div>');
 	
 	this.locationField = jQuery('<div class="wl_field_area"><input type="text" name="placeLocation" class="wl_widget_field wl_addplace_location"/></div>');
 	jQuery(this.locationField).find('input').bind('change' , {form: formArea, _instance: this}, this.locationChangeHandler);  
@@ -205,7 +205,7 @@ WELOCALLY_AddPlaceWidget.prototype.addOptionalFieldsToForm = function(formArea) 
 	var _instance = this;
 	
 	jQuery(formArea)
-	.append('<div class="wl_field_title">Enter the phone number with areacode and country code, such as +1 510 555-1234</div>');
+	.append('<div class="wl_field_description">Enter the phone number with areacode and country code, such as +1 510 555-1234</div>');
 		
 	//phone
 	var phoneField = jQuery('<div class="wl_field_area"><input type="text" name="phoneField" class="wl_widget_field wl_addplace_phone"/></div>');
@@ -216,7 +216,7 @@ WELOCALLY_AddPlaceWidget.prototype.addOptionalFieldsToForm = function(formArea) 
 	jQuery(formArea).append(phoneField);
 	
 	jQuery(formArea)
-	.append('<div class="wl_field_title">Enter the website for the place if it exists. Include the http prefix, such as http://greatplace.com</div>');
+	.append('<div class="wl_field_description">Enter the website for the place if it exists. Include the http prefix, such as http://greatplace.com</div>');
 		
 	//website
 	var webField = jQuery('<div class="wl_field_area"><input type="text" name="webField" class="wl_widget_field wl_addplace_web"/></div>');

@@ -1,5 +1,6 @@
 <?php
 global $wlPlaces;
+$options = $wlPlaces->getOptions();
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
@@ -16,36 +17,6 @@ jQuery(document).ready(function() {
 
 </script>
 
-<style type="text/css">
-.form-table form input {border:none;}
-.line-spacer-10 {
-	height: 10px;
-}
-
-	
-
-#wl_api_endpoint {
-	display: none;
-	width: 400px;
-}
-
-#api-endpoint-assigned {
-	width: 400px;
-}
-
-
-.assigned-field {
-	background: #DBDBDB;
-	font-size:1.2em;
-	font-weight:bold; 
-	color: #595959;
-	font-family: monospace;
-	width: 400px;
-	margin-bottom: 10px;
-}
-
-</style>
-
 <div class="wrap">
 
 <div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
@@ -54,6 +25,10 @@ jQuery(document).ready(function() {
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
 include($menubar_include);
 ?>
+<?php if(empty($options['siteToken'])  ):?>
+<div class="wl_error fade"><p><strong>Please <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">Register Now</a> To Activate Welocally Places</strong></p></div>
+<?php endif; ?>
+
 <?php
 // If options have been updated on screen, update the database
 if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-about', 'welocally_places_about_nonce' ) ) ) { 
@@ -67,15 +42,6 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-about', 'w
 
 	echo '<div class="updated fade"><p><strong>' . __( 'Settings Saved.' ) . "</strong></p></div>\n";
 }
-
-// Get options
-$options = wl_set_general_defaults();
-
-//display error if not subscribed
-if(!is_subscribed()) {
-	echo '<div class="error fade"><p><strong>' . __( 'Please Register To Activate Welocally Places' ) . "</strong></p></div>\n";
-} 
-
 ?>
 <form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-about' ?>">
 <fieldset>

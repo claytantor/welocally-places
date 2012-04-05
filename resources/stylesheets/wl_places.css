@@ -29,6 +29,10 @@
    	padding: 4px; 
    	color: #9E2626;
 }
+.wl_error a{  
+   	color: #9E2626;
+}
+
 .wl_warning {  
 	text-align:center; 
 	background-color: #FFF3BF; 
@@ -125,6 +129,6 @@
 .wl_place_widget_script{display:none}
 
 .wl_field_title {font-size: 1.2em; font-weight: bold;}
-.wl_field_description {font-size: 0.8em; font-style: italic;}
+.wl_field_description {font-size: 1.0em; font-style: italic; color: #888888; }
 
 
