@@ -15,6 +15,7 @@ function WELOCALLY_PlacesMultiWidget (cfg) {
 	this._selectedSection;
 	this._infoBox;
 	this._boxText;
+	this._selectedMarkerIndex;
 
 	this.init = function() {
 		
@@ -365,29 +366,30 @@ WELOCALLY_PlacesMultiWidget.prototype.selectedItemHandler = function(event, ui) 
 	var _instance = null;
 	
 	var marker;
+	var index;
 	
 	if(this.nodeName=='OL'){
 		_instance = event.data.instance;
 		jQuery(_instance._selectedSection).empty();
-		var index = ui.selected.id.replace("wl_places_mutli_selectable_","");
-		marker = _instance._placeMarkers[index];
-		
+		index = ui.selected.id.replace("wl_places_mutli_selectable_","");
+		marker = _instance._placeMarkers[index];		
 		_instance._selectedPlace = 
 			_instance._placeMarkers[index].item;
 		
 	} else if(this.nodeName=='MARKER'){
 		_instance = this.instance;
 		marker = this;
-		var index = marker.index;
+		index = marker.index;
 		jQuery(_instance._selectedSection).empty();
-		jQuery('#wl_places_mutli_selectable').find('li').removeClass('ui-selected');
+		jQuery('#wl_places_mutli_selectable_'+_instance._selectedMarkerIndex).removeClass('ui-selected');
+		
 		jQuery('#wl_places_mutli_selectable_'+index).addClass('ui-selected');
-				
-		
-		
+			
 		_instance._selectedPlace = 
 			this.item; 
 	}
+	
+	_instance._selectedMarkerIndex = index;
 		
 	//should probably do this
 	marker.map.panTo(marker.position);

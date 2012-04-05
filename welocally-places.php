@@ -77,6 +77,10 @@ function welocally_register() {
 		$options["siteToken"] = $_POST["token"];
 	}
 	
+	if( !empty($_POST["key1"])  &&  $_POST["key1"]!='null' )  {	
+		$options["key1"] = $_POST["key1"];
+	}
+	
 	$wlPlaces->saveOptions($options);
 	
 
