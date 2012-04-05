@@ -363,44 +363,49 @@ WELOCALLY_PlacesMultiWidget.prototype.selectedItemHandler = function(event, ui) 
 	
 	var _instance = null;
 	
+	var marker;
+	
 	if(this.nodeName=='OL'){
 		_instance = event.data.instance;
 		jQuery(_instance._selectedSection).empty();
 		var index = ui.selected.id.replace("wl_places_mutli_selectable_","");
+		marker = _instance._placeMarkers[index];
+		
 		_instance._selectedPlace = 
 			_instance._placeMarkers[index].item;
+		
 	} else if(this.nodeName=='MARKER'){
 		_instance = this.instance;
+		marker = this;
+		var index = marker.__gm_id-1;
 		jQuery(_instance._selectedSection).empty();
-		jQuery('#wl_placefinder_selectable').find('li').removeClass('ui-selected');
+		jQuery('#wl_places_mutli_selectable').find('li').removeClass('ui-selected');
+		jQuery('#wl_places_mutli_selectable_'+index).addClass('ui-selected');
+				
+		
+		
 		_instance._selectedPlace = 
-			this.item;
-		
-		//should probably do this
-		this.map.panTo(this.position);
-		
-		//lets do this the jquery way	
-		var contents = _instance.makeItemContents(_instance._selectedPlace, 0, false);	
-		jQuery(contents).attr('class','wl_places_multi_infobox');
-		jQuery(contents).css('min-width','100px');
-		jQuery(contents).css('min-height','30px');				
-		jQuery(_instance._boxText).html(contents);
-		 
-		jQuery(_instance._boxText).find('li a img').load(function(){
-			jQuery(_instance._boxText).find('li a').css('background','none').css('padding','0px'); 
-			jQuery(_instance._boxText).css('line-height','5px');
-			jQuery(_instance._boxText).find('ul').css('margin','0px');
-		});
-		
-		_instance._infoBox.setOffset(contents);
-		//_instance._infoBox.show();
-		_instance._infoBox.open(this.map, this);
-		
-		
-		
-		
-		
+			this.item; 
 	}
+		
+	//should probably do this
+	marker.map.panTo(marker.position);
+	
+	//lets do this the jquery way	
+	var contents = _instance.makeItemContents(_instance._selectedPlace, 0, false);	
+	jQuery(contents).attr('class','wl_places_multi_infobox');
+	jQuery(contents).css('min-width','100px');
+	jQuery(contents).css('min-height','30px');				
+	jQuery(_instance._boxText).html(contents);
+	 
+	jQuery(_instance._boxText).find('li a img').load(function(){
+		jQuery(_instance._boxText).find('li a').css('background','none').css('padding','0px'); 
+		jQuery(_instance._boxText).css('line-height','5px');
+		jQuery(_instance._boxText).find('ul').css('margin','0px');
+	});
+	
+	_instance._infoBox.setOffset(contents);
+	_instance._infoBox.open(marker.map, marker);
 	
 	if(_instance != null){
 		//broadcast to listeners
