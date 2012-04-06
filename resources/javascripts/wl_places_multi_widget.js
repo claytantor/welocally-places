@@ -275,6 +275,15 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 			bounds.getCenter(),
 			markerIconLocation);
 	
+	//forced to refresh
+	setTimeout(function () {
+     	_instance.refreshMap(bounds.getCenter(), bounds);
+ 	}, 100);
+	
+ 	setTimeout(function () {
+     	_instance.refreshMap(bounds.getCenter(), bounds);
+ 	}, 200);
+	
 	
 };
 
@@ -434,7 +443,7 @@ WELOCALLY_PlacesMultiWidget.prototype.resetOverlays=function (location, markersA
 
 };
 
-WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation) {
+WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation, bounds) {
 	var _instance = this;
 	google.maps.event.trigger(_instance._map, 'resize');
 	
@@ -454,6 +463,11 @@ WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation) {
 			_instance._mapStatus, 
 			_instance.makeMapStatus(_instance._map, _instance._placeMarkers) , 
 			'wl_message', false);
+	
+	_instance._map.setCenter(searchLocation);
+	if(bounds != null){
+		_instance._map.fitBounds(bounds);
+	}
 	
 	var listener = google.maps.event.addListener(_instance._map, "tilesloaded", function() {
 

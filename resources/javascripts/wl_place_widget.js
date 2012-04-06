@@ -9,6 +9,9 @@ function WELOCALLY_PlaceWidget (cfg) {
 	this.wrapper;
 	this.map_canvas;
 	this.map;
+	this.placehoundPath;
+	this.imagePath;
+	
 	
 	this.init = function() {
 		
@@ -26,6 +29,10 @@ function WELOCALLY_PlaceWidget (cfg) {
 		
 		if (!cfg.imagePath) {
 			cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
+		}
+		
+		if (!cfg.placehoundPath) {
+			cfg.placehoundPath = 'http://placehound.com';
 		}
 		
 		if (!cfg.zoom) {
@@ -182,6 +189,8 @@ WELOCALLY_PlaceWidget.prototype.setMapEvents = function(map){
 
 WELOCALLY_PlaceWidget.prototype.makePlaceContent = function(selectedPlace, cfg) {
 	
+	var _instance= this;
+	
 	var placeWrapper = jQuery('<div class="wl_places_place_wrapper"></div>');
 	
 	
@@ -251,13 +260,6 @@ WELOCALLY_PlaceWidget.prototype.makePlaceContent = function(selectedPlace, cfg) 
 				qVal+'" target="_new">Directions</a></div>');		
 	}
 	
-	//placehound
-	if(cfg.showPlacehoundLink){
-		jQuery(links)
-		.append('<div class="wl_places_place_driving_link"><a href="http://placehound.com/place.html?id='+
-				selectedPlace._id+'" target="_new">Placehound</a></div>');	
-	}
-	
 	//embed wrapper
 	var embed = jQuery('<div id="wl_place_embed" class="wl_place_embed"></div>');
 	if(!cfg.showShare){
@@ -290,6 +292,9 @@ WELOCALLY_PlaceWidget.prototype.makePlaceContent = function(selectedPlace, cfg) 
 	jQuery(wlSelectedTagArea).append(inputAreaTag);
 	
 	jQuery(embed).append(wlSelectedTagArea); 
+	
+	//placehound
+	jQuery(embed).append('<div class="wl_place_title"><a target="_new" href="'+_instance.cfg.placehoundPath+'/place.html?id='+selectedPlace._id+'">Place Permalink</a></div>');
 		
 	//javascript
 	var wlSelectedScriptArea = jQuery('<div id="wl_place_widget_script" class="wl_places_place_script"></div>');	

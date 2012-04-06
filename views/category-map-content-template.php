@@ -7,9 +7,10 @@ $options = $wlPlaces->getOptions();
       <script type="text/javascript">
 //<![CDATA[
 		
-      	var placeSelected = new WELOCALLY_PlaceWidget({}).init();
+      	var placeSelected = new WELOCALLY_PlaceWidget({placehoundPath: 'http://placehound.com'}).init();
 	    var cfg = { 
-				id:'multi_<?php echo $t->uid; ?>',
+				id:'multi_<?php echo $t->uid; ?>',	
+				placehoundPath: 'http://placehound.com',			
 				<?php if($options['show_letters_tag']=='on'):?> showLetters: true,<?php else: ?>showLetters: false,<?php endif;?>
 				<?php if(isset($options['category_selector_override'])):?> overrideSelectableStyle:<?php echo('\''.$options['category_selector_override'].'\''.','); endif;?>
 				imagePath:'<?php echo($marker_image_path); ?>',

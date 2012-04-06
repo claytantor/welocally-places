@@ -188,7 +188,7 @@ WELOCALLY_RegisterWidget.prototype.getSubscriberInfo = function(siteKey, siteHom
 				_instance.setFormFields("DENIED", siteKey, siteHome, siteName, siteEmail, siteToken, null);
 				
 			  } else {	
-				  _instance.setStatus(_instance._ajaxStatus, '<span class="wl_subscription_status">'+data.subscriptionStatus+'</span>'+JSON.stringify(data), 'wl_message', false);  
+				  _instance.setStatus(_instance._ajaxStatus, '<span class="wl_subscription_status">'+data.subscriptionStatus+'</span>', 'wl_message', false);  
 				  _instance.setFormFields(data.subscriptionStatus, data.site.key, siteHome, siteName, siteEmail, siteToken, data.key1);
 				
 			  }	
@@ -335,7 +335,7 @@ WELOCALLY_RegisterWidget.prototype.registrationHandler = function(event, ui) {
 				var origData = _instance.getSiteInfo();
 				_instance.setFormFields("DENIED", origData.siteKey, origData.siteHome, origData.siteName, origData.siteEmail, origData.siteToken, origData.key1);
 			} else {
-				_instance.setStatus(_instance._ajaxStatus, '<span class="wl_subscription_status">'+data.subscriptionStatus+'</span>'+JSON.stringify(data), 'wl_message', false);
+				_instance.setStatus(_instance._ajaxStatus, '<span class="wl_subscription_status">'+data.subscriptionStatus+'</span>', 'wl_message', false);
 				_instance.setFormFields(data.subscriptionStatus, data.site.key, data.site.home, data.site.name, data.site.email, data.site.token, data.key1);
 				data.site.key1 = data.key1; 
 				_instance._cfg.registeredCallback(data.site);				

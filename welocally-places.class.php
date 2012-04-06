@@ -474,6 +474,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		}
 		
 		public function getPlaces($cat=null, $maxElements=25, $filter=true) {
+			
+			global $post;
+
+			
 						
 			static $uid = 0;
 
@@ -481,6 +485,19 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				$cat = get_query_var('cat');
 			elseif (is_object($cat))
 				$cat = $cat->cat_ID;
+			elseif (isset($post)){
+				//try to get category for post if possible
+				$post_categories = wp_get_post_categories( $post->ID );
+				if($post_categories){
+		
+					foreach ($post_categories as $postCatId) {
+						$catObj = get_category( $postCatId );
+						if($catObj->name != 'Uncategorized' && $catObj->name != 'Place'){
+							$cat = $postCatId;
+						}
+					}
+				}
+			}
 
 			$posts = $this->getPlacePostsInCategory($cat);
 
@@ -495,18 +512,18 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 			$options = $this->getOptions();
 
-			foreach ($t->posts as $post) {
-				$post_places = $this->getPostPlaces($post->ID);
+			foreach ($t->posts as $postlocal) {
+				$post_places = $this->getPostPlaces($postlocal->ID);
 
 				foreach ($post_places as $place) {
 					
 					//determin if we are filtering
 					if(!$filter || !in_array($place->_id, $pids)){
 						if($options['infobox_title_link']=='on'){
-	   						$place->properties->titlelink=get_permalink( $post->ID ) ;	
+	   						$place->properties->titlelink=get_permalink( $postlocal->ID ) ;	
 	   					} 
 						
-						$place->post = $post;										
+						$place->post = $postlocal;										
 						array_push($t->places, $place);
 						array_push($pids, $place->_id);						
 					}					
