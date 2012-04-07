@@ -485,7 +485,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				$cat = get_query_var('cat');
 			elseif (is_object($cat))
 				$cat = $cat->cat_ID;
-			elseif (isset($post)){
+			elseif (isset($post) && !(is_home() || is_front_page())){
 				//try to get category for post if possible
 				$post_categories = wp_get_post_categories( $post->ID );
 				if($post_categories){
@@ -523,7 +523,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	   						$place->properties->titlelink=get_permalink( $postlocal->ID ) ;	
 	   					} 
 						
-						$place->post = $postlocal;										
+						$place->post = $postlocal;		
+						unset($place->post->post_content);								
 						array_push($t->places, $place);
 						array_push($pids, $place->_id);						
 					}					
