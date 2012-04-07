@@ -58,8 +58,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$this->pluginUrl 		= WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__));
 			$this->errors			= '';
 
-			register_deactivation_hook( __FILE__, 	array( &$this, 'on_deactivate' ) );	
-			register_activation_hook(__FILE__, 'add_defaults_fn');
+			//register_deactivation_hook( __FILE__, 	array( &$this, 'on_deactivate' ) );	
+			//register_activation_hook(__FILE__, 'add_defaults_fn');
+			
 			add_action( 'init',				array( $this, 'loadDomainStylesScripts' ) );
 			add_action( 'pre_get_posts',	array( $this, 'setOptions' ) );
 			add_action( 'admin_enqueue_scripts', 		array( $this, 'loadAdminDomainStylesScripts' ) );
@@ -70,6 +71,19 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			add_action( 'sp_places_options_top', array( 'WLPLACES_Options_Exception', 'displayMessage') );
 
             add_filter( 'the_content', array( $this, 'replaceTagsInContent') );
+           
+            
+                       
+		}
+		
+		
+		function wl_admin_message_1() {
+			return $this->wl_admin_message('Welocally Places Activated',false);
+		}
+		
+		function wl_admin_message($message='empty message', $error = false) {
+			echo '<div class="updated fade"><p>'.$message.'</p></div>';
+
 		}
 		
 				

@@ -11,6 +11,7 @@ License: GPL2
 */
 
 register_activation_hook(__FILE__, 'welocally_activate');
+register_deactivation_hook( __FILE__, 'welocally_deactivate' );
 add_action('admin_head', 'welocally_requirements_check');
 
 //ajax proxy calls
@@ -449,6 +450,8 @@ function welocally_is_curl_installed() {
 
 
 function welocally_activate() {
+	//add_action('admin_notices', 'my_admin_notice4');
+	
 	if (version_compare(PHP_VERSION, "5.1", "<") && welocally_is_curl_installed()) {
 		trigger_error('Can Not Install Welocally Places, Please Check Requirements', E_USER_ERROR);
 	} else {
@@ -458,12 +461,20 @@ function welocally_activate() {
 		require_once (dirname(__FILE__) . "/template-tags.php");
 		require_once (dirname(__FILE__) . "/mcebutton.php");
 		require_once (dirname(__FILE__) . "/menu.php");
-				
-		syslog(LOG_WARNING, "activate");
+	
 		global $wlPlaces;
 		$wlPlaces->on_activate();
 	}
 }
+
+function welocally_deactivate() {	
+	
+	if(function_exists('wl_customize_deactivate')){		
+		deactivate_plugins(WP_PLUGIN_DIR.'/welocally-places-customize/welocally-places-customize.php');
+	}
+	
+}
+
 
 if (version_compare(phpversion(), "5.1", ">=") && welocally_is_curl_installed()) {
 	require_once (dirname(__FILE__) . "/welocally-places.class.php");
@@ -474,5 +485,9 @@ if (version_compare(phpversion(), "5.1", ">=") && welocally_is_curl_installed())
 	require_once (dirname(__FILE__) . "/menu.php");
 	
 }
+
+
+
+
 
 ?>
