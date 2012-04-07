@@ -564,7 +564,7 @@ WELOCALLY_PlacesMultiWidget.prototype.getMapRadius = function(map) {
 	
 	var _instance = this;
 	
-	if(_instance._map){
+	if(_instance._map.getBounds()){
 		var bounds = _instance._map.getBounds();
 
 		var center = bounds.getCenter();
