@@ -8,7 +8,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	 */
 	class WelocallyPlaces {
 		
-		const VERSION 				= '1.1.18.DEV';
+		const VERSION 				= '1.1.18';
 		const DB_VERSION			= '2.0';
 		const WLERROROPT			= '_welocally_errors';
 		const CATEGORYNAME	 		= 'Place';
