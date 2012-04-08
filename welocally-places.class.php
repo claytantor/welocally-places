@@ -4,7 +4,7 @@ require_once('welocally-places-tag-processor.class.php');
 
 if ( !class_exists( 'WelocallyPlaces' ) ) {
 	/**
-	 * Main plugin
+	 * Main plugin 
 	 */
 	class WelocallyPlaces {
 		
