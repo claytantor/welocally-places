@@ -264,7 +264,11 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 	
 	});	
 	
-	map.fitBounds(bounds);
+	
+	
+	
+	map.fitBounds(_instance.makeMinimumBounds(bounds));
+	
 	
 	var markerIconLocation = 
 		new google.maps.MarkerImage(_instance._cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(0, 0));
@@ -287,6 +291,21 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 	
 };
 
+WELOCALLY_PlacesMultiWidget.prototype.makeMinimumBounds= function(bounds){
+	var _instance = this;
+	
+	var distance = _instance.getBoundsDistance(bounds);
+	
+	if(distance<0.1){
+		var p1 = new google.maps.LatLng(bounds.getCenter().lat()-0.005, bounds.getCenter().lng()-0.005 );
+		var p2 = new google.maps.LatLng(bounds.getCenter().lat()+0.005, bounds.getCenter().lng()+0.005 );	
+		bounds.extend(p1);
+		bounds.extend(p2);
+	}
+
+	return bounds;
+
+};
 
 WELOCALLY_PlacesMultiWidget.prototype.makeItemContents = function (item, i, showMarker) {
 	
@@ -565,7 +584,40 @@ WELOCALLY_PlacesMultiWidget.prototype.getMapRadius = function(map) {
 	var _instance = this;
 	
 	if(_instance._map.getBounds()){
-		var bounds = _instance._map.getBounds();
+		var bounds = _instance._map.getBounds();		
+		return _instance.getBoundsDistance(bounds)/2.0;
+	} else {
+		return 0.0;
+	}
+
+	
+};
+
+WELOCALLY_PlacesMultiWidget.prototype.getBoundsDistance = function(bounds) {
+	var _instance = this;
+	
+	if(bounds){
+		var center = bounds.getCenter();
+		var ne = bounds.getNorthEast();
+		
+		// r = radius of the earth in statute km
+		var r = 6378.8;  
+		
+		// Convert lat or lng from decimal degrees into radians (divide by 57.2958)
+		var lat1 = center.lat() / 57.2958; 
+		var lon1 = center.lng() / 57.2958;
+		var lat2 = ne.lat() / 57.2958;
+		var lon2 = ne.lng() / 57.2958;
+		
+		// distance = circle radius from center to Northeast corner of bounds
+		var dis = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
+		  Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));	
+		
+		return dis;
+	}
+	/*var _instance = this;
+	
+	if(bounds){
 
 		var center = bounds.getCenter();
 		var ne = bounds.getNorthEast();
@@ -583,10 +635,12 @@ WELOCALLY_PlacesMultiWidget.prototype.getMapRadius = function(map) {
 		var dis = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
 		  Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));	
 		
-		return dis/2.0;
+		return dis;
 	} else {
 		return 0.0;
-	}
+	}*/
+	
+	return 0.0;
 
 	
 };

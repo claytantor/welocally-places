@@ -1,0 +1,36 @@
+.wl_placefinder_wrapper {
+	width: 98%;
+	margin: 5px auto;
+	text-align:center;   
+	background-color: #f2f2f2;
+	margin-bottom:10px; border: 1px solid #aaaaaa; 
+   	padding: 4px;  
+   	color: #444444;
+}
+
+.wl_placefinder_wrapper input{ 
+	width: 98%; margin-bottom:10px; border: 1px solid #aaaaaa; 
+   	padding: 4px;   
+   	text-align: center;}
+
+.wl_finder_search_button_area{ width:100%; margin-bottom:5px; text-align:center; } 
+#wl_finder_search_button {
+   border-top: 1px solid #96d1f8;
+   background: #65a9d7;
+   padding: 6px 12px;
+   color: white;
+   font-size: 20px;
+   text-decoration: none;
+   vertical-align: middle;
+   }
+#wl_finder_search_button:hover {
+   border-top-color: #28597a;
+   background: #28597a;
+   color: #ccc;
+   }
+#wl_finder_search_button:active {
+   border-top-color: #1b435e;
+   background: #1b435e;
+   } 
+
+ 

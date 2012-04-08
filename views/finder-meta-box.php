@@ -27,8 +27,8 @@ if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
 
 <?php else: ?>
 <script type="text/javascript">
-jQuery(document).ready(function(jQuery) {	
-
+jQuery(document).ready(function(jQuery) {
+	
 });
 </script>
 <style type="text/css">
@@ -61,6 +61,11 @@ jQuery(document).ready(function(jQuery) {
 		  		
 		  		//now register the display for the place
 			    placeSelected.setWrapper(cfg, jQuery(placesFinder.getSelectedSection()));	
+			    
+			    jQuery('#wl-place-finder-meta-1').find('.handlediv').click(function() {
+			    	WELOCALLY.util.log('finder toggle');
+			    	jQuery(placesFinder._locationField).trigger('change' , {instance: placesFinder}, placesFinder.locationFieldInputHandler);	
+			    });
 			
 	
 		     </script>		

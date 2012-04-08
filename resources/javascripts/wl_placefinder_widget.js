@@ -137,78 +137,84 @@ WELOCALLY_PlaceFinderWidget.prototype.locationFieldInputHandler = function(event
 	
 	var addressValue = jQuery(this).val();
 	
-	
-	_instance.setStatus(_instance._ajaxStatus, 'Geocoding','wl_update',true);
-	
-	jQuery(_instance._selectedSection).hide();
-	
-	_instance._geocoder.geocode( { 'address': addressValue}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK &&  _instance.validGeocodeForSearch(results[0])) {
+	if(addressValue){
+		_instance.setStatus(_instance._ajaxStatus, 'Geocoding','wl_update',true);
 		
+		jQuery(_instance._selectedSection).hide();
 		
-			jQuery(_instance._locationField).val(results[0].formatted_address);
-			_instance._formattedAddress = results[0].formatted_address;
+		_instance._geocoder.geocode( { 'address': addressValue}, function(results, status) {
+			if (status == google.maps.GeocoderStatus.OK &&  _instance.validGeocodeForSearch(results[0])) {
 			
+			
+				jQuery(_instance._locationField).val(results[0].formatted_address);
+				_instance._formattedAddress = results[0].formatted_address;
 				
-			//set the model
-			_instance._selectedPlace.properties.address = 
-				_instance.getShortNameForType("street_number", results[0].address_components)+' '+
-				_instance.getShortNameForType("route", results[0].address_components);
-			
-			_instance._selectedPlace.properties.city = 
-				_instance.getShortNameForType("locality", results[0].address_components);
-			
-			_instance._selectedPlace.properties.province = 
-				_instance.getShortNameForType("administrative_area_level_1", results[0].address_components);
-	
-			_instance._selectedPlace.properties.postcode = 
-				_instance.getShortNameForType("postal_code", results[0].address_components);
-			
-			_instance._selectedPlace.properties.country = 
-				_instance.getShortNameForType("country", results[0].address_components);
-			
-			_instance._selectedPlace.geometry.coordinates = [];
-			_instance._selectedPlace.geometry.coordinates.push(results[0].geometry.location.lng());
-			_instance._selectedPlace.geometry.coordinates.push(results[0].geometry.location.lat());
-			
-			_instance._searchLocation = 
-				new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng());
-						
-			//setup the map
-			var sl = _instance._searchLocation;
-			_instance._multiPlacesWidget._map.setCenter(sl);
-			
-			var pm = _instance._multiPlacesWidget._placeMarkers;
-			
-			//set the zoom
-			if(results[0].address_components.length<=5){
-				_instance._multiPlacesWidget._map.setZoom(14);						
+					
+				//set the model
+				_instance._selectedPlace.properties.address = 
+					_instance.getShortNameForType("street_number", results[0].address_components)+' '+
+					_instance.getShortNameForType("route", results[0].address_components);
+				
+				_instance._selectedPlace.properties.city = 
+					_instance.getShortNameForType("locality", results[0].address_components);
+				
+				_instance._selectedPlace.properties.province = 
+					_instance.getShortNameForType("administrative_area_level_1", results[0].address_components);
+		
+				_instance._selectedPlace.properties.postcode = 
+					_instance.getShortNameForType("postal_code", results[0].address_components);
+				
+				_instance._selectedPlace.properties.country = 
+					_instance.getShortNameForType("country", results[0].address_components);
+				
+				_instance._selectedPlace.geometry.coordinates = [];
+				_instance._selectedPlace.geometry.coordinates.push(results[0].geometry.location.lng());
+				_instance._selectedPlace.geometry.coordinates.push(results[0].geometry.location.lat());
+				
+				_instance._searchLocation = 
+					new google.maps.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+							
+				//setup the map
+				var sl = _instance._searchLocation;
+				_instance._multiPlacesWidget._map.setCenter(sl);
+				
+				var pm = _instance._multiPlacesWidget._placeMarkers;
+				
+				//set the zoom
+				if(results[0].address_components.length<=5){
+					_instance._multiPlacesWidget._map.setZoom(14);						
+					
+				} else {
+					_instance._multiPlacesWidget._map.setZoom(16);
+				}		
+
+				//reset overlays
+				_instance._multiPlacesWidget.resetOverlays(
+					sl,
+					pm); 
+
+				_instance.setStatus(_instance._ajaxStatus, '','wl_message',true);
+				
+				if(_instance._searchField.val()){
+					jQuery(_instance._searchField).trigger('change');
+				}
+								
+				jQuery( _instance._multiPlacesWidget._map_canvas).show();
+				
+				_instance._multiPlacesWidget.refreshMap(_instance._searchLocation);
+				
+							
 				
 			} else {
-				_instance._multiPlacesWidget._map.setZoom(16);
-			}		
-
-			//reset overlays
-			_instance._multiPlacesWidget.resetOverlays(
-				sl,
-				pm); 
-
-			_instance.setStatus(_instance._ajaxStatus, '','wl_message',true);
-			
-			if(_instance._searchField.val()){
-				jQuery(_instance._searchField).trigger('change');
-			}
-							
-			jQuery( _instance._multiPlacesWidget._map_canvas).show();
-			
-			_instance._multiPlacesWidget.refreshMap(_instance._searchLocation);
-			
-						
-			
-		} else {
-			_instance.setStatus(_instance._ajaxStatus, 'Could not geocode:'+status,'wl_warning',false);
-		} 
-	});
+				_instance.setStatus(_instance._ajaxStatus, 'Could not geocode:'+status,'wl_warning',false);
+			} 
+		});
+	} else {
+		_instance.setStatus(_instance._ajaxStatus, 'Please choose a location to start your search.','wl_warning',false);
+	}
+	
+	
+	
 	
 	return false;
 	

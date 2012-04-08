@@ -141,14 +141,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_enqueue_script('wl_place_widget_script',  WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_place_widget.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_infobox_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_infobox.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_places_multi_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_places_multi_widget.js', array('jquery'), WelocallyPlaces::VERSION);
-						
-			//styles				
-			wp_enqueue_style( 'tinymce_button', WP_PLUGIN_URL . '/welocally-places/resources/tinymce-button.css' );
-			wp_enqueue_style('thickbox');
-						
-			//color picker
-			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));			
-						
+			
+			global $wp_styles;
+
+															
 			$target_path = WP_PLUGIN_DIR.'/welocally-places-customize/resources/custom/stylesheets';
 		
 			if( class_exists('WelocallyPlacesCustomize' ) 
@@ -166,24 +162,44 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					wp_enqueue_style('wl_places', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places.css', array(), $options['style_customize_version'], 'screen' );
 				} else {
 					wp_enqueue_style( 'wl_places',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+					wp_register_style('wl_places-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places.css');
+					$wp_styles->add_data('wl_places-ie-only', 'conditional', 'IE');
+					wp_enqueue_style('wl_places-ie-only');
 				}
 				
 				if(file_exists($target_path.'/wl_places_place.css'))  {
 					wp_enqueue_style('wl_places_place', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places_place.css', array(), $options['style_customize_version'], 'screen' );
 				} else {
 					wp_enqueue_style( 'wl_places_place',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
+					wp_register_style('wl_places_place-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_place.css');
+					$wp_styles->add_data('wl_places_place-ie-only', 'conditional', 'IE');
+					wp_enqueue_style('wl_places_place-ie-only');
 				}
 				
 				if(file_exists($target_path.'/wl_places_multi.css'))  {
 					wp_enqueue_style('wl_places_multi', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places_multi.css', array(), $options['style_customize_version'], 'screen' );
-				} else {
-					wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );
-				}	
+				} else {					
+					wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );			
+					wp_register_style('wl_places_multi-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_multi.css');
+					$wp_styles->add_data('wl_places_multi-ie-only', 'conditional', 'IE');
+					wp_enqueue_style('wl_places_multi-ie-only');				
+				}
+					
 			} else {
 				wp_enqueue_style( 'wl_places',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+				wp_register_style('wl_places-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places.css');
+				$wp_styles->add_data('wl_places-ie-only', 'conditional', 'IE');
+				wp_enqueue_style('wl_places-ie-only');
+							
 				wp_enqueue_style( 'wl_places_place',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
-				wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );
+				wp_register_style('wl_places_place-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_place.css');
+				$wp_styles->add_data('wl_places_place-ie-only', 'conditional', 'IE');
+				wp_enqueue_style('wl_places_place-ie-only');
 				
+				wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );			
+				wp_register_style('wl_places_multi-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_multi.css');
+				$wp_styles->add_data('wl_places_multi-ie-only', 'conditional', 'IE');
+				wp_enqueue_style('wl_places_multi-ie-only');				
 			}
 			
 		}
@@ -192,6 +208,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					
 			$placesURL = trailingslashit( WP_PLUGIN_URL ) 
 				. trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
+			
 						
 			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));									
 			wp_enqueue_script('media-upload');
@@ -200,7 +217,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_enqueue_script('wl_placefinder_widget_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_placefinder_widget.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_addplace_widget_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_addplace_widget.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_register_widget_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_register_widget.js', array('jquery'), WelocallyPlaces::VERSION);
-			
+		
+			//styles				
+			wp_enqueue_style( 'tinymce_button', WP_PLUGIN_URL . '/welocally-places/resources/tinymce-button.css' );
 					 	
 			wp_enqueue_style('thickbox');
 			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
