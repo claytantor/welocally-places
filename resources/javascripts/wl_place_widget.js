@@ -102,8 +102,8 @@ WELOCALLY_PlaceWidget.prototype.loadLocal = function(placeJson) {
 	_instance.setMapEvents(_instance.map);
 	
 	var latlng = new google.maps.LatLng(
-			place.geometry.coordinates[1], 
-			place.geometry.coordinates[0]);
+			placeJson.geometry.coordinates[1], 
+			placeJson.geometry.coordinates[0]);
 	
 	//forced to refresh
 	setTimeout(function () {
@@ -354,12 +354,12 @@ WELOCALLY_PlaceWidget.prototype.show = function(selectedPlace) {
 
 WELOCALLY_PlaceWidget.prototype.refreshMap = function(searchLocation) {
 	var _instance = this;
-	google.maps.event.trigger(_instance._map, 'resize');
+	google.maps.event.trigger(_instance.map, 'resize');
 	
 	
-	var listener = google.maps.event.addListener(_instance._map, "tilesloaded", function() {
+	var listener = google.maps.event.addListener(_instance.map, "tilesloaded", function() {
 
-		_instance._map.setCenter(searchLocation);
+		_instance.map.setCenter(searchLocation);
 		
 		google.maps.event.removeListener(listener);
 		
