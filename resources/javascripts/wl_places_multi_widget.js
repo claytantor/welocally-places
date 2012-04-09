@@ -293,9 +293,9 @@ WELOCALLY_PlacesMultiWidget.prototype.makeMinimumBounds= function(bounds){
 	
 	var distance = _instance.getBoundsDistance(bounds);
 	
-	if(distance<0.1){
-		var p1 = new google.maps.LatLng(bounds.getCenter().lat()-0.005, bounds.getCenter().lng()-0.005 );
-		var p2 = new google.maps.LatLng(bounds.getCenter().lat()+0.005, bounds.getCenter().lng()+0.005 );	
+	if(distance<0.05){
+		var p1 = new google.maps.LatLng(bounds.getCenter().lat()-0.002, bounds.getCenter().lng()-0.002 );
+		var p2 = new google.maps.LatLng(bounds.getCenter().lat()+0.002, bounds.getCenter().lng()+0.002 );	
 		bounds.extend(p1);
 		bounds.extend(p2);
 	}
