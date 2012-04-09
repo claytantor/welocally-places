@@ -83,9 +83,6 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 		this.statusArea = jQuery('<div></div>');
 		jQuery(this.ajaxStatus).css('display','none');	
 		jQuery(this.wrapper).append(this.statusArea);
-		
-//		this.addPlaceArea = jQuery('<div class="wl_wl_addplace_form_area"></div>');
-//		jQuery(this.wrapper).append(this.statusArea);
 	
 		jQuery(script).parent().before(this.wrapper);
 		
@@ -178,12 +175,13 @@ WELOCALLY_AddPlaceWidget.prototype.setStatus = function(statusArea, message, typ
 };
 
 WELOCALLY_AddPlaceWidget.prototype.createForm = function() {
+	var _instance = this;
 	var formArea = jQuery('<div></div>');
 	
 	jQuery(formArea)
 	.append('<div class="wl_field_description">Enter the real name of the place, such as "The Red Snapper Grill"</div>');
 	
-	this.placeNameField = jQuery('<div class="wl_field_area"><input type="text" name="placeName" class="wl_widget_field wl_addplace_name"/></div>');
+	this.placeNameField = jQuery('<div class="wl_field_area"><input id="wl_addplace_name_field" type="text" name="placeName" class="wl_widget_field wl_addplace_name"/></div>');
 	jQuery(this.placeNameField).find('input').bind('change' , {form: formArea, _instance: this}, this.nameChangeHandler);  
 	
 	jQuery(formArea).append(this.placeNameField);
@@ -192,10 +190,29 @@ WELOCALLY_AddPlaceWidget.prototype.createForm = function() {
 	jQuery(locFieldArea)
 	.append('<div class="wl_field_description">Enter the most exact address of the place, such as 1234 Mullberry Rd Oakland CA 94612</div>');
 	
-	this.locationField = jQuery('<div class="wl_field_area"><input type="text" name="placeLocation" class="wl_widget_field wl_addplace_location"/></div>');
+	this.locationField = jQuery('<div class="wl_field_area"><input id="wl_addplace_location_field" type="text" name="placeLocation" class="wl_widget_field wl_addplace_location"/></div>');
 	jQuery(this.locationField).find('input').bind('change' , {form: formArea, _instance: this}, this.locationChangeHandler);  
 	
 	jQuery(locFieldArea).append(this.locationField);	
+	
+	//bind focus
+	jQuery(this.placeNameField).keypress(function(e){
+        if ( e.which == 13 ){
+        	jQuery('#wl_addplace_name_field').trigger('change' , {form: formArea, _instance: _instance}, _instance.nameChangeHandler);
+        	jQuery('#wl_addplace_location_field').focus();
+        	return false;
+        }
+    });
+	
+	//bind focus
+	jQuery(this.locationField).keypress(function(e){
+        if ( e.which == 13 ){
+        	jQuery('#wl_addplace_location_field').trigger('change' , {form: formArea, _instance: _instance}, _instance.locationChangeHandler);
+        	return false;
+        }
+    });
+	
+	
 	jQuery(formArea).append(locFieldArea);
 		
 	return formArea;
@@ -348,7 +365,7 @@ WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 								
 			
 		} else {
-			_instance.setStatus(_instance.statusArea, 'Could not geocode:'+status,'wl_warning',false);
+			_instance.setStatus(_instance.statusArea, 'We need the full address, ie. 123 Mulberry Rd Oakland CA, to add it.','wl_warning',false);
 		} 
 	});
 		
@@ -455,9 +472,17 @@ WELOCALLY_AddPlaceWidget.prototype.setSelectedPlace = function(selectedPlace) {
 };
 
 WELOCALLY_AddPlaceWidget.prototype.validGeocodeForSearch = function (geocode) {	
-	if(geocode.geometry.location.lat() && geocode.geometry.location.lng()){
-		return true;
-	}
+	var _instance = this;
+	
+	var hasAll = _instance.hasType("country", geocode.address_components);
+	hasAll = hasAll && _instance.hasType("street_number", geocode.address_components);
+	hasAll = hasAll && _instance.hasType("route", geocode.address_components);
+	hasAll = hasAll && _instance.hasType("locality", geocode.address_components);
+	hasAll = hasAll && _instance.hasType("administrative_area_level_1", geocode.address_components);
+	hasAll = hasAll && _instance.hasType("postal_code", geocode.address_components);
+
+	return hasAll;
+	
 };
 
 WELOCALLY_AddPlaceWidget.prototype.loadWithWrapper = function(cfg, map_canvas, wrapper) {
