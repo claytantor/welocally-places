@@ -100,6 +100,16 @@ WELOCALLY_PlaceWidget.prototype.loadLocal = function(placeJson) {
 	_instance.map = _instance.initMapForPlace(placeJson,_instance.map_canvas);
 	_instance.show(placeJson);
 	_instance.setMapEvents(_instance.map);
+	
+	var latlng = new google.maps.LatLng(
+			place.geometry.coordinates[1], 
+			place.geometry.coordinates[0]);
+	
+	//forced to refresh
+	setTimeout(function () {
+     	_instance.refreshMap(latlng);
+ 	}, 200);
+	
 };
 
 WELOCALLY_PlaceWidget.prototype.load = function(map_canvas) {
@@ -117,6 +127,16 @@ WELOCALLY_PlaceWidget.prototype.load = function(map_canvas) {
 				_instance.map = _instance.initMapForPlace(data[0],map_canvas);
 				_instance.show(data[0]);
 				_instance.setMapEvents(_instance.map);
+				
+				var latlng = new google.maps.LatLng(
+						data[0].geometry.coordinates[1], 
+						data[0].geometry.coordinates[0]);
+				
+				//forced to refresh
+				setTimeout(function () {
+			     	_instance.refreshMap(latlng);
+			 	}, 200);
+				
 			},
 			error: function() {
 			}
@@ -329,4 +349,20 @@ WELOCALLY_PlaceWidget.prototype.show = function(selectedPlace) {
 	this.wrapper.append(this.makePlaceContent(selectedPlace, this.cfg));	
 	jQuery(this.wrapper).show();
 	                        
+};
+
+
+WELOCALLY_PlaceWidget.prototype.refreshMap = function(searchLocation) {
+	var _instance = this;
+	google.maps.event.trigger(_instance._map, 'resize');
+	
+	
+	var listener = google.maps.event.addListener(_instance._map, "tilesloaded", function() {
+
+		_instance._map.setCenter(searchLocation);
+		
+		google.maps.event.removeListener(listener);
+		
+	});
+	
 };

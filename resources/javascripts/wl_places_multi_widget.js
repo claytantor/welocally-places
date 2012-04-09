@@ -262,10 +262,7 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 		}
 		
 	
-	});	
-	
-	
-	
+	});		
 	
 	map.fitBounds(_instance.makeMinimumBounds(bounds));
 	
@@ -501,8 +498,6 @@ WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation, boun
 		
 	});
 	
-	
-
 };
 
 
