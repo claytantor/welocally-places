@@ -37,7 +37,8 @@ jQuery(document).ready(function() {
 			imagePath:'<?php echo($marker_image_path); ?>', 
 			endpoint:'<?php echo($endpoint); ?>', 
 			<?php if(isset($custom_style)):?> styles:<?php echo($custom_style.','); endif;?>
-			showShare: false
+			showShare: false,
+			placehoundPath: 'http://placehound.com'
 		};
 			    		
 		var placeWidget<?php echo $t->uid; ?> = 

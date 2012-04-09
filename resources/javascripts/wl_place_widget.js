@@ -293,7 +293,7 @@ WELOCALLY_PlaceWidget.prototype.makePlaceContent = function(selectedPlace, cfg) 
 	
 	jQuery(embed).append(wlSelectedTagArea); 
 	
-	//placehound
+	//placehound permalink
 	jQuery(embed).append('<div class="wl_place_title"><a target="_new" href="'+_instance.cfg.placehoundPath+'/place.html?id='+selectedPlace._id+'">Place Permalink</a></div>');
 		
 	//javascript

@@ -44,6 +44,7 @@ jQuery(document).ready(function(jQuery) {
 				var placeSelected = new WELOCALLY_PlaceWidget({}).init();
 			    var cfg = { 
 						id:'finder_1',
+						placehoundPath: 'http://placehound.com',	
 						<?php if(isset($options['default_search_addr'])):?> defaultLocation:<?php echo('\''.$options['default_search_addr'].'\''.','); endif;?>		
 						showLetters: true,
 						showShare: true,

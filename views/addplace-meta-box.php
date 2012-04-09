@@ -19,6 +19,7 @@ if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_default_mar
 		<div id="wl-addplace" class="input-section action" style="display:inline-block" >
 			<script type="text/javascript">
 var cfg = { 
+	placehoundPath: 'http://placehound.com',
 	showShare: true,
 	<?php if(isset($options['api_endpoint'])):?> endpoint:<?php echo('\''.$options['api_endpoint'].'\''.','); endif;?>	
 	imagePath:'<?php echo($marker_image_path); ?>',
