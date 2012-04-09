@@ -352,6 +352,22 @@ WELOCALLY_RegisterWidget.prototype.registrationHandler = function(event, ui) {
 WELOCALLY_RegisterWidget.prototype.editHandler = function(event, ui) {
 	var _instance = event.data.instance;
 	
+	//copy all field area to values 
+	jQuery('#wl_register_value_site_name')
+		.html(jQuery('#wl_register_site_name').val());	
+	
+	jQuery('#wl_register_value_site_home')
+		.html(jQuery('#wl_register_site_home').val());	
+	
+	jQuery('#wl_register_value_email')
+		.html(jQuery('#wl_register_email').val());	
+	
+	jQuery('#wl_register_value_key')
+		.html(jQuery('#wl_register_key').val());	
+	
+	jQuery('#wl_register_value_token')
+		.html(jQuery('#wl_register_token').val());	
+			
 	jQuery(_instance._formArea).find('.wl_field_value').each(function(i,item){
 		jQuery(item).toggle();		
 	});
