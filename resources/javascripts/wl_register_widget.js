@@ -352,7 +352,7 @@ WELOCALLY_RegisterWidget.prototype.registrationHandler = function(event, ui) {
 WELOCALLY_RegisterWidget.prototype.editHandler = function(event, ui) {
 	var _instance = event.data.instance;
 	 
-	//copy all field area to values 
+	//copy all field area to values weird
 	jQuery('#wl_register_value_site_name')
 		.html(jQuery('#wl_register_site_name').val());	
 	
