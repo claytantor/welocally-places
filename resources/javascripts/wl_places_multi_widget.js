@@ -63,8 +63,9 @@ WELOCALLY_PlacesMultiWidget.prototype.initCfg = function(cfg) {
 	if (!cfg.zoom) {
 		cfg.zoom = 16;
 	}
-			
-		
+	
+	
+					
 	this._cfg = cfg;
 	
 	

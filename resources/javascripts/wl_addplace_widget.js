@@ -352,10 +352,6 @@ WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 				results[0].geometry.location.lng());
 			_instance.setLocation(location);
 						
-//			_instance.setLocationMarker(
-//				_instance.map, 
-//				location,  
-//				_instance.cfg.imagePath+'/marker_search.png');
 					
 			jQuery(_instance.map_canvas).show();
 			google.maps.event.trigger(_instance.map, 'resize');
@@ -415,6 +411,11 @@ WELOCALLY_AddPlaceWidget.prototype.setSelectedPlace = function(selectedPlace) {
 
 	var _instance=this;
 	jQuery(this.formArea).hide();
+	jQuery('.wl_addplace_widget').find('.wl_addplace_selected_classifiers').hide();
+	jQuery('.wl_addplace_widget').find('.wl_field_description').hide();
+	jQuery('.wl_addplace_widget').find('.wl_field_area').hide();
+	jQuery('.wl_addplace_widget').find('.wl_addplace_save_button_area').hide();
+	
 	var selectedPlaceArea = jQuery('<div class="wl_selected"></div>');
 	
 	jQuery(selectedPlaceArea)

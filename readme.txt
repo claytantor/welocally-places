@@ -23,22 +23,9 @@ Welocally Places For WordPress makes it simple to attach real places to your con
 * Integrated driving directions
 * Category based map, automatically integrates "featured image" in pop-up (only for supported themes); 
 
-We have moved to a new "theme support" model for category map support, but if your theme is not listed here that does not mean that the plug- in will not work please give it a try, it works with most themes. Please contact us if you would like us to support your theme.
-
-Currently supported themes that will work with category maps:
-
-* Twenty Eleven
-* Twenty Ten
-* Suffusion
-* Light Word
-* Chateau
-* Delicate
-* zBench
-* iFeature
-
-Please goto http://www.welocally.com/?page_id=520 for a complete list of supported themes.
-
-
+Product Overview: http://welocally.com/?page_id=2
+Product Help: http://welocally.com/?page_id=104
+ 
 == Installation ==
 
 1. Upload the `welocally-places` folder to the `/wp-content/plugins/` directory or install directly through the plugin installer.
@@ -66,6 +53,22 @@ A: NO our places are in the US only. This will change soon but right now we only
 
 
 == Changelog ==
+1.1.18
+Feature #56: Welocally Namespace Javascript Refactoring
+Feature #87: Widgetize Place Finder
+Feature #100: Refactor wp_postmeta to remove obsolete concepts
+Feature #128: Category Map Tag Support
+Feature #140: API Keys incorporated into web services
+Feature #152: Widgetize Places
+Feature #154: Remove Font Customization
+Feature #156: Support for post links as title anchors
+Feature #160: Multi widget support for style overrides
+Feature #161: Use sprited markers
+Feature #169: Widgetize Registration
+Feature #170: Multisite licensing
+Feature #171: Map selector improvements
+Feature #174: Catgerory map widget should be context aware
+
 1.1.17
 147 "Excerpts not working"
 
