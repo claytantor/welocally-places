@@ -208,9 +208,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					
 			$placesURL = trailingslashit( WP_PLUGIN_URL ) 
 				. trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
-			
-						
-			wp_enqueue_script('js-color-picker',WP_PLUGIN_URL.'/welocally-places/resources/jscolor.js', array('jquery'));									
+									
 			wp_enqueue_script('media-upload');
 			wp_enqueue_script('thickbox');
 			//welocally

@@ -115,7 +115,7 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 			jQuery(this.selectedClassifiersArea).css('display','none');
 			jQuery(this.wrapper).append(this.selectedClassifiersArea);
 			
-			this.classifiersArea = jQuery('<div class="wl_addplace_classifiers"><ul id="wl_addplace_selectable"></ul></div>');
+			this.classifiersArea = jQuery('<div class="wl_addplace_classifiers" style="margin-top:10px"><div class="wl_field_description">Click on the classifiers below to categorize the place. (Required)</div><ul id="wl_addplace_selectable"></ul></div>');
 			jQuery(this.classifiersArea).find('#wl_addplace_selectable').selectable({ cancel: 'a' });
 			jQuery(this.classifiersArea).css('display','none');
        
