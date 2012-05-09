@@ -20,9 +20,9 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		$default_api_endpoint = 'https://api.welocally.com'; 
 		$default_update_places = 'off';
 		
-		$default_site_name= get_bloginfo('name');
-		$default_site_home= get_bloginfo('home');
-		$default_email=  get_bloginfo('admin_email');
+		$default_site_name= bloginfo('name');
+		$default_site_home= bloginfo('url');
+		$default_email=  bloginfo('admin_email');
 		
 		$default_show_letters = 'on'; 
 		$default_show_selection = 'on'; 		
@@ -52,7 +52,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		if ( !array_key_exists( 'show_letters_tag', $options ) ) { $options[ 'show_letters_tag' ] = $default_show_letters_tag; $changed = true; }
 		if ( !array_key_exists( 'show_selection_tag', $options ) ) { $options[ 'show_selection_tag' ] = $default_show_selection_tag; $changed = true; }
 		if ( !array_key_exists( 'infobox_title_link_tag', $options ) ) { $options[ 'infobox_title_link_tag' ] = $default_infobox_title_link_tag; $changed = true; }
-
 		
 	    //site
 	    if ( !array_key_exists( 'siteKey', $options ) ) { $options[ 'siteKey' ] = null; $changed = true; }

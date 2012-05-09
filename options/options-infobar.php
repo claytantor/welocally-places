@@ -1,37 +1,11 @@
 <?php
 global $wlPlaces;
-$options = wl_get_options();
+$options = $wlPlaces->getOptions();
 ?>
 <script type="text/javascript" charset="utf-8">
 jQuery(document).ready(function() {
 	jQuery( "input:submit, a, button", ".action" ).button();
-	
-	/*jQuery('#options_login_button').click(function() {	
-		jQuery('#wl-options-error').html('');
-		jQuery('#wl-options-error').hide();
 		
-		var data = {
-			action: 'publisher_login',
-			publisherKey: '<?php echo wl_get_option('siteKey',null) ?>',
-			publisherToken: '<?php echo wl_get_option('siteToken',null) ?>',
-		};
-						
-		jQuery.ajax({
-		  type: 'POST',
-		  url: ajaxurl,
-		  data: data,
-	 	  error : function(jqXHR, textStatus, errorThrown) {
-				jQuery('#wl-options-error').append('<div class="error fade">ERROR 100: '+
-					textStatus+'</div>');
-		  },	  
-		  success: function(data) {			
-			jQuery('#welocally-content').html(data);
-		  }
-		});
-		
-		
-	});*/
-	
 });
 </script>
 <div id="wl-options-error" class="wl-places-error error" style="width:97%"></div>

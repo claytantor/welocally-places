@@ -5,7 +5,7 @@ function wl_menu_initialise() {
 	$main_content =  file_get_contents(dirname( __FILE__ ) . '/help/options-general-help.php');
 	add_contextual_help( $main_slug, __( $main_content ) );
 	
-	wl_add_submenu( 'Welocally Places Registration', 'Register', 'welocally-places-subscribe', 'wl_places_subscribe' );
+	//wl_add_submenu( 'Welocally Places Registration', 'Register', 'welocally-places-subscribe', 'wl_places_subscribe' );
 	wl_add_submenu( 'Welocally Places About', 'About', 'welocally-places-about', 'wl_support_about' );
 	wl_add_submenu( 'Welocally Places Manager', 'Places Manager', 'welocally-places-manager', 'wl_support_manager' );
 
@@ -17,9 +17,9 @@ function wl_menu_initialise() {
 add_action( 'admin_menu','wl_menu_initialise' );
 add_filter( 'plugin_row_meta', 'wl_set_plugin_meta', 10, 2 );
 
-function wl_places_subscribe() {
-	include_once( WP_PLUGIN_DIR . "/welocally-places/options/subscribe.php" );
-}
+//function wl_places_subscribe() {
+//	include_once( WP_PLUGIN_DIR . "/welocally-places/options/subscribe.php" );
+//}
 
 
 function wl_general_options() {

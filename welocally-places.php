@@ -13,362 +13,16 @@ License: GPL2
 register_activation_hook(__FILE__, 'welocally_activate');
 register_deactivation_hook( __FILE__, 'welocally_deactivate' );
 add_action('admin_head', 'welocally_requirements_check');
-
-//ajax proxy calls
-add_action('wp_ajax_getkey', 'welocally_getkey');
-add_action('wp_ajax_add_place', 'welocally_add_place');
-add_action('wp_ajax_get_places', 'welocally_getplaces');
-add_action('wp_ajax_remove_token', 'welocally_remove_token');
-add_action('wp_ajax_save_place', 'welocally_save_place');
-add_action('wp_ajax_register', 'welocally_register');
-
-
-//catgeories
-add_action('wp_ajax_get_classifiers_types', 'welocally_get_classifiers_types');
-add_action('wp_ajax_get_classifiers_categories', 'welocally_get_classifiers_categories');
-add_action('wp_ajax_get_classifiers_subcategories', 'welocally_get_classifiers_subcategories');
-
-
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
+add_action('wp_ajax_save_place', 'welocally_save_place');
+add_action('wp_ajax_edit_place', 'welocally_edit_place');
+add_action('wp_ajax_delete_place', 'welocally_delete_place');
+add_action('wp_ajax_getpage', 'wl_pager_getpage');
+add_action('wp_ajax_get_metadata', 'wl_pager_get_metadata');
 
 // add filter's for plugin templates
 add_filter('map_widget_template', 'wl_places_get_template_map_widget',10);
 add_filter('category_template', 'wl_places_get_template_category',10);
-
-
-function wl_server_base() {
-	return wl_get_option("api_endpoint", null);
-}
-
-
-function welocally_getkey() {
-
-	$selectedPostJson = json_encode($_POST);
-
-	//set POST variables 
-	$url = wl_server_base() . '/admin/signup/3_0/plugin/key.json';
-	
-	error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_post($url, $selectedPostJson, array (
-		'Content-Type: application/json; charset=utf-8'
-	));
-	
-	$result_model = json_decode($result_json);
-	
-
-	die(); // this is required to return a proper result
-}
-
-function welocally_register() {
-	syslog(LOG_WARNING, print_r($_POST,true));
-	
-	global $wlPlaces;
-	$options = $wlPlaces->getOptions();
-	
-	syslog(LOG_WARNING, print_r($_POST,true));
-	if(isset($_POST["key"])){
-		$options["siteKey"] = $_POST["key"];
-	} 
-	
-	if(empty($_POST["token"])  || !isset($_POST["token"]) || $_POST["token"]==null || $_POST["token"]=='null' )  {
-		syslog(LOG_WARNING, 'unsetting token');
-		unset($options['siteToken']);
-	} else {
-		$options["siteToken"] = $_POST["token"];
-	}
-	
-	if( !empty($_POST["key1"])  &&  $_POST["key1"]!='null' )  {	
-		$options["key1"] = $_POST["key1"];
-	}
-	
-	$wlPlaces->saveOptions($options);
-	
-
-}
-
-
-function welocally_save_place() {
-
-	$placeToSave = $_POST['place'];
-	$placeToSave['properties']['name'] = stripslashes($_POST['place']['properties']['name']);
-	$placeToSave['properties']['address'] = stripslashes($_POST['place']['properties']['address']);
-	
-	$selectedPostJson = json_encode($placeToSave);
-	//error_log("place 1:".print_r($placeToSave, true),0);
-	//error_log("place 2:".strval($selectedPostJson),0);
-
-	//set POST variables 
-	$url = wl_server_base() . '/geodb/place/1_0/';
-	
-	//error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_put($url, $selectedPostJson, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-	
-	$result_model = json_decode($result_json);
-
-	die(); // this is required to return a proper result
-}
-
-function welocally_getplaces() {
-
-	
-	$url = wl_server_base() .'/geodb/place/1_0/search.json?'.http_build_query($_GET);
-	
-	//error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_get($url, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-
-	die(); // this is required to return a proper result
-}
-
-function welocally_get_classifiers_types() {
-
-	
-	$url = wl_server_base() .'/geodb/classifier/1_0/types.json';
-	
-	//error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_get($url, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-
-	die(); // this is required to return a proper result
-}
-
-function welocally_get_classifiers_categories() {
-
-
-	$url = wl_server_base() .'/geodb/classifier/1_0/categories.json?'.http_build_query($_GET);
-	
-	//error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_get($url, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-
-	die(); // this is required to return a proper result
-}
-
-function welocally_get_classifiers_subcategories() {
-
-	$url = wl_server_base() .'/geodb/classifier/1_0/subcategories.json?'.http_build_query($_GET);
-	
-	//error_log("url:".$url, 0);
-
-	$result_json = wl_do_curl_get($url, array (
-		'Content-Type: application/json; charset=utf-8',
-		'site-key:' . wl_get_option('siteKey', null),
-		'site-token:' . wl_get_option('siteToken', null)
-	));
-
-	die(); // this is required to return a proper result
-}
-
-//-------- GET ------------
-
-function wl_do_curl_get($url, $headers){
-	//error_log("wl_do_curl_get url:".$url, 0);
-	
-	$result_json = '';
-	if (preg_match("/https/", $url)) {
-		$result_json = wl_do_curl_get_https($url, $headers);
-	} else {
-		$result_json = wl_do_curl_get_http($url, $headers);
-	}
-
-	return $result_json;
-}
-
-function wl_do_curl_get_http($url, $headers) {
-	//open connection
-	$ch = curl_init();
-
-	//set the url, number of POST vars, POST data
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-	//execute post
-	$result_json = curl_exec($ch);
-
-	curl_close($ch);
-
-	return $result_json;
-}
-
-
-function wl_do_curl_get_https($https_url, $headers) {
-
-	//open connection
-	$ch = curl_init();
-
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	curl_setopt($ch, CURLOPT_CAINFO, NULL);
-	curl_setopt($ch, CURLOPT_CAPATH, NULL);
-
-	//set the url, number of POST vars, POST data
-	curl_setopt($ch, CURLOPT_URL, $https_url);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-	//execute post
-	$result_json = curl_exec($ch);
-
-	curl_close($ch);
-
-	return $result_json;
-}
-
-//-------- PUT ------------
-function wl_do_curl_put($url, $selectedPostJson, $headers) {
-	//error_log("PUT url:".$url." JSON:".$selectedPostJson, 0);
-
-	$result_json = '';
-	if (preg_match("/https/", $url)) {
-		$result_json = wl_do_curl_put_https($url, $selectedPostJson, $headers);
-	} else {
-		$result_json = wl_do_curl_put_http($url, $selectedPostJson, $headers);
-	}
-
-	return $result_json;
-}
-
-
-
-
-function wl_do_curl_put_http($url, $selectedPostJson, $headers) {
-	//open connection
-	$ch = curl_init();
-	
-	$requestLength = strlen($selectedPostJson);
-
-	$fh = fopen('php://memory', 'rw');
-	fwrite($fh, $selectedPostJson);
-	rewind($fh);
-
-	//set the url, number of POST vars, POST data
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_INFILE, $fh);
-	curl_setopt($ch, CURLOPT_INFILESIZE, $requestLength);
-	curl_setopt($ch, CURLOPT_PUT, true);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-	//execute put
-	$result_json = curl_exec($ch);
-
-	curl_close($ch);
-	
-	fclose($fh);
-
-	return $result_json;
-}
-
-function wl_do_curl_put_https($https_url, $selectedPostJson, $headers) {
-
-	//open connection
-	$ch = curl_init();
-	
-	$requestLength = strlen($selectedPostJson);
-
-	$fh = fopen('php://memory', 'rw');
-	fwrite($fh, $selectedPostJson);
-	rewind($fh);
-
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	curl_setopt($ch, CURLOPT_CAINFO, NULL);
-	curl_setopt($ch, CURLOPT_CAPATH, NULL);
-
-	//set the url, number of POST vars, POST data
-	curl_setopt($ch, CURLOPT_URL, $https_url);
-	curl_setopt($ch, CURLOPT_INFILE, $fh);
-	curl_setopt($ch, CURLOPT_INFILESIZE, $requestLength);
-	curl_setopt($ch, CURLOPT_PUT, true);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-	//execute put
-	$result_json = curl_exec($ch);
-
-	curl_close($ch);
-	
-	fclose($fh);
-
-	return $result_json;
-}
-
-
-
-
-
-
-//-------- POST ------------
-function wl_do_curl_post($url, $selectedPostJson, $headers, $returnxfer = false) {
-	$result_json = '';
-	if (preg_match("/https/", $url)) {
-		$result_json = wl_do_curl_post_https($url, $selectedPostJson, $headers,$returnxfer);
-	} else {
-		$result_json = wl_do_curl_post_http($url, $selectedPostJson, $headers,$returnxfer);
-	}
-
-	return $result_json;
-}
-
-function wl_do_curl_post_http($url, $selectedPostJson, $headers, $returnxfer = false) {
-	//open connection
-	$ch = curl_init();
-
-	//set the url, number of POST vars, POST data
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $selectedPostJson);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, $returnxfer);
-	
-
-	//execute post
-	$result_json = curl_exec($ch);
-
-	curl_close($ch);
-
-	return $result_json;
-}
-
-function wl_do_curl_post_https($https_url, $selectedPostJson, $headers, $returnxfer = false) {
-
-	//open connection
-	$ch = curl_init();
-
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	curl_setopt($ch, CURLOPT_CAINFO, NULL);
-	curl_setopt($ch, CURLOPT_CAPATH, NULL);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, $returnxfer);
-
-	//set the url, number of POST vars, POST data
-	curl_setopt($ch, CURLOPT_URL, $https_url);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $selectedPostJson);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-	//execute post
-	$result_json = curl_exec($ch);
-
-	curl_close($ch);
-
-	return $result_json;
-}
 
 
 //----- end of neworking section ----------//
@@ -413,49 +67,119 @@ function wl_self_deprecating_sidebar_registration() {
 	wp_set_sidebars_widgets($new_widgets);
 }
 
-function welocally_remove_token() {
-
-	$selectedPostJson = json_encode($_POST);
+function welocally_save_place() {
 	
-	$options = wl_get_options();
+	global $wpdb, $wlPlaces;
 
-	$options['siteToken'] = null;
-
-	wl_save_options($options);
+	$placeToSave = $_POST['place'];
+	$placeToSave['properties']['name'] = stripslashes($_POST['place']['properties']['name']);
+	$placeToSave['properties']['address'] = stripslashes($_POST['place']['properties']['address']);
+	
+	//generate if new (save)
+	if(!isset($placeToSave['_id'])){
+		//init date
+		date_default_timezone_set('UTC');
+		$mysqldate = date( 'Y-m-d H:i:s', time() );
+		$placeToSave['_id'] = $wlPlaces->generatePlaceId($placeToSave['geometry']['coordinates'][1],$placeToSave['geometry']['coordinates'][0]); 
+	
+			//save to places table
+		if ($wpdb->insert("{$wpdb->prefix}wl_places", 
+			array('wl_id' => $placeToSave['_id'], 'place' => json_encode($placeToSave), 'created' =>$mysqldate )) ) {
+				$place = $wpdb->get_row(
+				$wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $placeToSave['_id']) );
+	    }
+	    
+	    echo $place;
+	} else { //update
+		
+		$placeId = $placeToSave['_id'];
+		$statement = "UPDATE {$wpdb->prefix}wl_places SET place='".json_encode($placeToSave)."' WHERE wl_id = '".$placeId."'";
+		$wpdb->query($wpdb->prepare($statement));
+	}	
 
 	die(); // this is required to return a proper result
 }
 
 
+function wl_pager_get_metadata() {	
+	
+	global $wlPager;
+	$fields = $_POST['fields'];
+	$table = $_POST['table'];
+	$filter = $_POST['filter'];
+	$orderBy = $_POST['orderBy'];
+	$pagesize = $_POST['pagesize'];
+		
+	echo json_encode($wlPager->getMetadata($table, $fields, $filter, $orderBy, $pagesize));	
+
+	die(); // this is required to return a proper result		
+}
+
+function wl_pager_getpage() {
+	
+	global $wlPager;
+	$fields = $_POST['fields'];
+	$table = $_POST['table'];
+	$filter = $_POST['filter'];
+	$pagesize = $_POST['pagesize'];
+	$orderBy = $_POST['orderBy'];
+	$odd = $_POST['odd'];
+	$even = $_POST['even'];	
+	$page = $_POST['page'];
+	
+	$content = base64_decode($_POST['content']);
+	
+	if($wlPager->tableAllowed($table))	
+		echo $wlPager->embedPagination($table, $fields, $filter, $orderBy, $pagesize, $content, $page, $odd, $even);
+	else
+		echo '<div class="wl_error">The table you have selected for pagination is not permitted. Goto Welocally Pager Shortcode options in Admin Dashboard for settings.</div>' ;	
+		
+	die(); // this is required to return a proper result
+}
+
+function welocally_edit_place() {
+	
+	global $wpdb, $wlPlaces;
+
+	$placeId = $_POST['wl_id'];
+	$recordId = $_POST['id'];
+	$place = $wpdb->get_row(
+			$wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $placeId) );
+		
+	echo '{ "id":'.$recordId.', "places" :[' .$place->place.']}';
+
+	die(); // this is required to return a proper result
+}
+
+function welocally_delete_place() {
+	
+	global $wpdb, $wlPlaces;
+
+	$placeId = $_POST['wl_id'];
+	$recordId = $_POST['id'];
+	$wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $placeId));
+		
+	echo '{ "id":'.$recordId.',"status": "SUCCEED", "action": "DELETE" }';
+
+	die(); // this is required to return a proper result
+}
 
 function welocally_requirements_check() {
 
 	if (version_compare(PHP_VERSION, "5.1", "<")) {
-		echo "<div class='error fade'>Welocally Places requires PHP 5.1 or greater.  Please de-activate Welocally Places.</div>";
+		trigger_error('Welocally Places requires PHP 5.1 or greater.  Please de-activate Welocally Places.', E_USER_ERROR);		
 	}
 
-	if (!welocally_is_curl_installed()) {
-		echo "<div class='error fade'>Welocally Places requires libCURL be installed.  Please de-activate Welocally Places or install.</div>";
-	}
 
-}
-
-function welocally_is_curl_installed() {
-	if (in_array('curl', get_loaded_extensions())) {
-		return true;
-	} else {
-		return false;
-	}
 }
 
 
 function welocally_activate() {
-	//add_action('admin_notices', 'my_admin_notice4');
-	
-	if (version_compare(PHP_VERSION, "5.1", "<") && welocally_is_curl_installed()) {
+	if (version_compare(PHP_VERSION, "5.1", "<")) {
 		trigger_error('Can Not Install Welocally Places, Please Check Requirements', E_USER_ERROR);
 	} else {
 		require_once (dirname(__FILE__) . "/welocally-places.class.php");
+		require_once (dirname(__FILE__) . "/WelocallyWPPagination.class.php");
 		require_once (dirname(__FILE__) . "/welocally-places-exception.class.php");
 		require_once (dirname(__FILE__) . "/welocally-places-map-widget.class.php");
 		require_once (dirname(__FILE__) . "/template-tags.php");
@@ -468,22 +192,19 @@ function welocally_activate() {
 }
 
 function welocally_deactivate() {	
-	
 	if(function_exists('wl_customize_deactivate')){		
 		deactivate_plugins(WP_PLUGIN_DIR.'/welocally-places-customize/welocally-places-customize.php');
 	}
-	
 }
 
-
-if (version_compare(phpversion(), "5.1", ">=") && welocally_is_curl_installed()) {
+if (version_compare(phpversion(), "5.1", ">=")) {
 	require_once (dirname(__FILE__) . "/welocally-places.class.php");
+	require_once (dirname(__FILE__) . "/WelocallyWPPagination.class.php");
 	require_once (dirname(__FILE__) . "/welocally-places-exception.class.php");
 	require_once (dirname(__FILE__) . "/welocally-places-map-widget.class.php");
 	require_once (dirname(__FILE__) . "/template-tags.php");
 	require_once (dirname(__FILE__) . "/mcebutton.php");
-	require_once (dirname(__FILE__) . "/menu.php");
-	
+	require_once (dirname(__FILE__) . "/menu.php");	
 }
 
 

@@ -25,15 +25,11 @@ jQuery(document).ready(function() {
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
 include($menubar_include);
 ?>
-<?php if(empty($options['siteToken'])  ):?>
-<div class="wl_error fade"><p><strong>Please <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">Register Now</a> To Activate Welocally Places</strong></p></div>
-<?php endif; ?>
 
 <?php
 // If options have been updated on screen, update the database
 if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-about', 'welocally_places_about_nonce' ) ) ) { 
 
-	$options = wl_get_options();
 
 	$options[ 'api_endpoint' ] = $_POST[ 'wl_api_endpoint' ];
 	$options[ 'update_places' ] = $_POST[ 'wl_update_places' ];
@@ -43,7 +39,7 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-about', 'w
 	echo '<div class="updated fade"><p><strong>' . __( 'Settings Saved.' ) . "</strong></p></div>\n";
 }
 ?>
-<form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-about' ?>">
+<form method="post" action="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-about' ?>">
 <fieldset>
 <span class="wl_options_heading"><?php _e( 'Plugin Info' ); ?></span>
 <table class="form-table">
@@ -56,7 +52,7 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-about', 'w
 		<td>			
 		<?php if(get_places_legacy_count() > 0): ?>	
 		<div><img width="48" height="48" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/Crystal_Clear_cancel.png" alt="" title=""/></div>
-		<div>You have recenty upgraded Welocally Places. <?php echo(get_places_legacy_count());  ?> Legacy Posts were found. You can use the <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">Place Manager</a> 
+		<div>You have recenty upgraded Welocally Places. <?php echo(get_places_legacy_count());  ?> Legacy Posts were found. You can use the <a href="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">Place Manager</a> 
 		to track your migration. Please read the <a href="http://www.welocally.com/?page_id=104" target="_blank">help documentation</a> when upgrading. If you have problems <a href="http://www.welocally.com/?page_id=139" target="_new">email us</a>. 
 		<p/><strong>ALWAYS BACKUP PRIOR TO UPGRADE</strong></div>
 		<?php else: ?>
@@ -78,8 +74,8 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-about', 'w
 		<th scope="row"><?php _e( 'API Server' ); ?></th>
 		<td>
 			<div id="server-section" class="action">
-				<span id="api-endpoint-assigned" class="assigned-field" style="margin-right:10px;"><?php echo wl_get_option('api_endpoint',null) ?></span><button id="edit-server-link" href="#">Change</button>
-				<input type="text" name="wl_api_endpoint" id="wl_api_endpoint" value="<?php echo wl_get_option('api_endpoint',null) ?>" /></div>
+				<span id="api-endpoint-assigned" class="assigned-field" style="margin-right:10px;"><?php echo $options['api_endpoint'] ?></span><button id="edit-server-link" href="#">Change</button>
+				<input type="text" name="wl_api_endpoint" id="wl_api_endpoint" value="<?php echo $options['api_endpoint'] ?>" /></div>
 			</div>	
 		</td>
 	</tr>

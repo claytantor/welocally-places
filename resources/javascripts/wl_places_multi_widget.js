@@ -4,35 +4,37 @@
 
 function WELOCALLY_PlacesMultiWidget (cfg) {	
 	
-	this._map;
-	this._map_canvas;
-	this._searchLocation;
-	this._cfg;
-	this._options;
-	this._placeMarkers = [];
-	this._mapStatus;
-	this._results;
-	this._selectedSection;
-	this._infoBox;
-	this._boxText;
-	this._selectedMarkerIndex;
+	this.map;
+	this.map_canvas;
+	this.searchLocation;
+	this.cfg;
+	this.options;
+	this.placeMarkers = [];
+	this.mapStatus;
+	this.results;
+	this.selectedSection;
+	this.infoBox;
+	this.boxText;
+	this.selectedMarkerIndex;
 
 	this.init = function() {
 		
-		this.initCfg(cfg);
+		var errors = this.initCfg(cfg);
 		
 		// Get current script object
 		var script = jQuery('SCRIPT');
 		script = script[script.length - 1];
-
-		var wrapper = this.makeWrapper();
-	
-		jQuery(script).parent().before(wrapper);
-		jQuery(this._map_canvas).show();	
 		
-		
-		jQuery(wrapper).show();	
-		
+		if(errors){
+			var errorsArea = jQuery('<div></div>');
+			WELOCALLY.ui.setStatus(errorsArea, errors,'wl_error');
+			jQuery(script).parent().before(errorsArea);			
+		} else {
+			// Build Widget
+			this.wrapper = this.makeWrapper();	
+			jQuery(script).parent().before(this.wrapper);		
+		}
+				
 		return this;
 					
 	};
@@ -40,20 +42,32 @@ function WELOCALLY_PlacesMultiWidget (cfg) {
 }
 
 WELOCALLY_PlacesMultiWidget.prototype.initCfg = function(cfg) {
-	var error;
+	var errors = [];
 	if (!cfg) {
-		error = "Please provide configuration for the widget";
+		errors.push("Please provide configuration for the widget");
 		cfg = {};
 	}
 	
-	// summary (optional) - the summary of the article
+	//temporary until we can deal with refresh event
+	if (!cfg.hidePlaceSectionMaps) {
+		cfg.hidePlaceSectionMap=true;
+	}
+	
+	if (!cfg.id) {
+		cfg.id = WELOCALLY.util.keyGenerator();
+	}
+	
 	// hostname (optional) - the name of the host to use
 	if (!cfg.endpoint) {
-		cfg.endpoint = 'http://stage.welocally.com';
+		cfg.endpoint = 'https://api.welocally.com';
+	}
+	
+	if (!cfg.baseUrl) {
+		cfg.baseUrl = 'http://placehound.com';
 	}
 	
 	if (!cfg.imagePath) {
-		cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
+		cfg.imagePath = cfg.baseUrl+'/images/marker_all_base.png';
 	}
 	
 	if (cfg.showSelection==null) {
@@ -64,66 +78,76 @@ WELOCALLY_PlacesMultiWidget.prototype.initCfg = function(cfg) {
 		cfg.zoom = 16;
 	}
 	
+	if(errors.length>0)
+		return errors;
 	
+	this.cfg = cfg;
 					
-	this._cfg = cfg;
-	
-	
-	return this;
 	
 };
 
 WELOCALLY_PlacesMultiWidget.prototype.makeWrapper = function() {
 	// Build wrapper
+	var _instance = this;
 	var wrapper = jQuery('<div></div>');		
 	jQuery(wrapper).attr('class','wl_places_multi_widget');
-	jQuery(wrapper).attr('id','wl_places_multi_widget_'+cfg.id);
+	jQuery(wrapper).attr('id','wl_places_multi_widget_'+_instance.cfg.id);
 	
 	//selected area
-	this._selectedSection = 
+	this.selectedSection = 
 		jQuery('<div class="wl_places_multi_selected"></div>');
-	jQuery(this._selectedSection).css('display', 'none');
-	jQuery(wrapper).append(this._selectedSection);
+	jQuery(this.selectedSection).css('display', 'none');
+	jQuery(wrapper).append(this.selectedSection);
+	
 	
 	//google maps does not like jquery instances
-	this._map_canvas = document.createElement('DIV');
-	jQuery(this._map_canvas).css('display','none');	
-    jQuery(this._map_canvas).attr('class','wl_places_multi_map_canvas');
-	jQuery(this._map_canvas).attr("id","welocally_places_multi_map_canvas_"+cfg.id);
-	jQuery(wrapper).append(this._map_canvas);
+	this.map_canvas = document.createElement('DIV');
+	jQuery(this.map_canvas).css('display','none');	
+    jQuery(this.map_canvas).attr('class','wl_places_multi_map_canvas');
+	jQuery(this.map_canvas).attr("id","welocally_places_multi_map_canvas_"+_instance.cfg.id);
+	jQuery(wrapper).append(this.map_canvas);
 	
-	this._mapStatus = jQuery('<div class="wl_places_multi_map_status"></div>');
-	jQuery(wrapper).append(this._mapStatus);
+	this.mapStatus = jQuery('<div class="wl_places_multi_map_status"></div>');
+	jQuery(wrapper).append(this.mapStatus);
 	
 	//results
-	this._results = 
+	this.results = 
 		jQuery('<ol id="wl_places_mutli_selectable"></ol>');	
 	
-	jQuery(this._results).css('display','none');
-	jQuery( this._results ).bind( "selectableselected", {instance: this}, this.selectedItemHandler);
-	jQuery(wrapper).append(this._results);
+	jQuery(this.results).css('display','none');
+	jQuery( this.results ).bind( "selectableselected", {instance: this}, this.selectedItemHandler);
+	jQuery(wrapper).append(this.results);
 	
 
-	if(this._cfg.places != null && this._cfg.places.length>0){
-		this.setPlaces(this._cfg.places);
+	if(this.cfg.places != null && this.cfg.places.length>0){
+		this.setPlaces(this.cfg.places);
 	} else {
 		//just the map init
-		this._map = this.initMap(this._map_canvas);
+		this.map = this.initMap(this.map_canvas);
 	}
 	
-	jQuery(this._results).selectable({ cancel: 'a' });
+	jQuery(this.results).selectable({ cancel: 'a' });
+	
+	//make sure it knows its own wrapper
+	this.wrapper = wrapper;
+	
 	return wrapper;
 };
 
 WELOCALLY_PlacesMultiWidget.prototype.setPlaces = function(places) {
 	var _instance = this;
-	if(_instance._map == null){
-		_instance._map = _instance.initMapForPlaces(_instance._cfg.places, _instance._map_canvas, _instance._placeMarkers);
+	if(_instance.map == null){
+		_instance.map = _instance.initMapForPlaces(_instance.cfg.places, _instance.map_canvas, _instance.placeMarkers);
 	} else {
-		_instance.deleteOverlays(_instance._placeMarkers);
-	    _instance.addPlaces(_instance._map, places, _instance._placeMarkers);
-	    _instance.setMapEvents(_instance._map, _instance._placeMarkers);		
-	}		
+		_instance.deleteOverlays(_instance.placeMarkers);
+	    _instance.addPlaces(_instance.map, places, _instance.placeMarkers);
+	    _instance.setMapEvents(_instance.map, _instance.placeMarkers);		
+	}	
+	
+	if(!_instance.cfg.hideMap){
+		jQuery(_instance.map_canvas).show();
+	}
+	
 };
 
 WELOCALLY_PlacesMultiWidget.prototype.initMap = function(map_canvas) {
@@ -132,11 +156,11 @@ WELOCALLY_PlacesMultiWidget.prototype.initMap = function(map_canvas) {
     
 	var options = {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      zoom: _instance._cfg.zoom
+      zoom: _instance.cfg.zoom
     };
     
-    if(_instance._cfg.styles){
-		options.styles = _instance._cfg.styles;
+    if(_instance.cfg.styles){
+		options.styles = _instance.cfg.styles;
 	}
     
     var map = new google.maps.Map(
@@ -144,11 +168,11 @@ WELOCALLY_PlacesMultiWidget.prototype.initMap = function(map_canvas) {
         options);
     
     //init the infobox for the map
-    _instance._boxText = document.createElement("div");
-    _instance._boxText.className = "wl_places_mutli_infobox"; 
-    _instance._boxText.innerHTML = "none selected";
+    _instance.boxText = document.createElement("div");
+    _instance.boxText.className = "wl_places_mutli_infobox"; 
+    _instance.boxText.innerHTML = "none selected";
     
-    _instance._infoBox = this.makeInfoBox(_instance._boxText);
+    _instance.infoBox = this.makeInfoBox(_instance.boxText);
     
     return map;
 	
@@ -158,6 +182,7 @@ WELOCALLY_PlacesMultiWidget.prototype.initMapForPlaces = function(places, map_ca
 		
     var _instance = this;
     var map = _instance.initMap(map_canvas);
+    
        
     //add all the markers
     _instance.addPlaces(map, places, placeMarkers);
@@ -183,7 +208,7 @@ WELOCALLY_PlacesMultiWidget.prototype.makeInfoBox = function(boxText){
 				  	opacity: 0.85
 				 }
 				,closeBoxMargin: '2px 2px 2px 2px'
-				,closeBoxURL: _instance._cfg.imagePath
+				,closeBoxURL: _instance.cfg.imagePath
 				,infoBoxClearance: new google.maps.Size(1, 1)
 				,isHidden: false
 				,pane: "floatPane"
@@ -200,11 +225,11 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 	var _instance = this;
 	var bounds = new google.maps.LatLngBounds();
 	
-	_instance.deleteOverlays(_instance._placeMarkers);
-	jQuery(_instance._results).empty();
-	jQuery(_instance._results).hide();
+	_instance.deleteOverlays(_instance.placeMarkers);
+	jQuery(_instance.results).empty();
+	jQuery(_instance.results).hide();
 	
-	_instance._infoBox.close();
+	_instance.infoBox.close();
 	
 	jQuery.each(places, function(i,item){
 		
@@ -218,17 +243,17 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 				
 		var markerIcon = null;
 		
-		if(_instance._cfg.showLetters){
+		if(_instance.cfg.showLetters){
 			//fourth element
 			var offset = (3*32)+(32*i);
 			
 			markerIcon = 
-				new google.maps.MarkerImage(_instance._cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(offset, 0));		
+				new google.maps.MarkerImage(_instance.cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(offset, 0));		
 			
 		} else {
 			
 			markerIcon = 
-				new google.maps.MarkerImage(_instance._cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(32, 0));
+				new google.maps.MarkerImage(_instance.cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(32, 0));
 
 		
 		}
@@ -242,11 +267,11 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 			markerIcon);
 		
 		//add result to list
-		if(_instance._cfg.showSelection){
+		if(_instance.cfg.showSelection){
 			var listItem = _instance.makeItemContents(item,i, true);
 			
-			if(_instance._cfg.overrideSelectableStyle){
-				jQuery(listItem).attr('style',_instance._cfg.overrideSelectableStyle);
+			if(_instance.cfg.overrideSelectableStyle){
+				jQuery(listItem).attr('style',_instance.cfg.overrideSelectableStyle);
 			}
 			
 			
@@ -257,9 +282,9 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 		    	jQuery(this).css('cursor', 'pointer');
 		    });
 			
-			jQuery(_instance._results).append(jQuery(listItem));
+			jQuery(_instance.results).append(jQuery(listItem));
 			
-			jQuery(_instance._results).show();
+			jQuery(_instance.results).show();
 		}
 		
 	
@@ -269,7 +294,7 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 	
 	
 	var markerIconLocation = 
-		new google.maps.MarkerImage(_instance._cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(0, 0));
+		new google.maps.MarkerImage(_instance.cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(0, 0));
 	
 	_instance.addMarkerCenter(
 			placeMarkers,
@@ -311,13 +336,13 @@ WELOCALLY_PlacesMultiWidget.prototype.makeItemContents = function (item, i, show
 	
 	var wrapper = jQuery('<li></il>');
 	
-	if(_instance._cfg.showLetters && showMarker){
+	if(_instance.cfg.showLetters && showMarker){
 		
 		//fourth element
 		var offset = (3*32)+(32*i);
 		
 		var markerImage = jQuery('<span class="wl_selectable_marker" style="display:block; width: 32px; height: 32px;'+
-				' background:url(' + _instance._cfg.imagePath + ') -'+
+				' background:url(' + _instance.cfg.imagePath + ') -'+
 				offset+'px 0px; background-repeat:no-repeat;" />');
 		
 		jQuery(wrapper).append(markerImage);
@@ -325,8 +350,14 @@ WELOCALLY_PlacesMultiWidget.prototype.makeItemContents = function (item, i, show
 	} 
 	
 		
-	
-	if (item.properties.titlelink != null
+	if(_instance.cfg.idLinks){
+			jQuery(wrapper).append('<a href="'+_instance.cfg.baseUrl+'/place.html?id='
+							+ item.id
+							+ '"><div class="selectable_title">'
+							+ item.properties.name
+							+ '</a></div>');
+		
+	} else if (item.properties.titlelink != null
 			&& item.properties.titlelink != '') {
 
 		jQuery(wrapper).append('<a href="'
@@ -365,8 +396,8 @@ WELOCALLY_PlacesMultiWidget.prototype.setMapEvents = function(map, markers){
 		zoomChangeBoundsListener = google.maps.event.addListener(map, 'bounds_changed', function(event) {
 			
 			_instance.setStatus(
-					_instance._mapStatus, 
-					_instance.makeMapStatus(_instance._map, _instance._placeMarkers) , 
+					_instance.mapStatus, 
+					_instance.makeMapStatus(_instance.map, _instance.placeMarkers) , 
 					'wl_message', false);
 
 		});
@@ -375,8 +406,8 @@ WELOCALLY_PlacesMultiWidget.prototype.setMapEvents = function(map, markers){
 	var tilesHandle = google.maps.event.addListener(map, 'tilesloaded', function() {
 		
 		_instance.setStatus(
-				_instance._mapStatus, 
-				_instance.makeMapStatus(_instance._map, _instance._placeMarkers) , 
+				_instance.mapStatus, 
+				_instance.makeMapStatus(_instance.map, _instance.placeMarkers) , 
 				'wl_message', false);
 		
 		google.maps.event.removeListener(tilesHandle);
@@ -396,52 +427,52 @@ WELOCALLY_PlacesMultiWidget.prototype.selectedItemHandler = function(event, ui) 
 	
 	if(this.nodeName=='OL'){
 		_instance = event.data.instance;
-		jQuery(_instance._selectedSection).empty();
 		index = ui.selected.id.replace("wl_places_mutli_selectable_","");
-		marker = _instance._placeMarkers[index];		
-		_instance._selectedPlace = 
-			_instance._placeMarkers[index].item;
+		marker = _instance.placeMarkers[index];		
+		_instance.selectedPlace = 
+			_instance.placeMarkers[index].item;
 		
 	} else if(this.nodeName=='MARKER'){
 		_instance = this.instance;
 		marker = this;
 		index = marker.index;
-		jQuery(_instance._selectedSection).empty();
-		jQuery('#wl_places_mutli_selectable_'+_instance._selectedMarkerIndex).removeClass('ui-selected');
+		jQuery('#wl_places_mutli_selectable_'+_instance.selectedMarkerIndex).removeClass('ui-selected');
 		
 		jQuery('#wl_places_mutli_selectable_'+index).addClass('ui-selected');
 			
-		_instance._selectedPlace = 
+		_instance.selectedPlace = 
 			this.item; 
 	}
 	
-	_instance._selectedMarkerIndex = index;
+	_instance.selectedMarkerIndex = index;
 		
 	//should probably do this
 	marker.map.panTo(marker.position);
 	
 	//lets do this the jquery way	
-	var contents = _instance.makeItemContents(_instance._selectedPlace, 0, false);	
+	var contents = _instance.makeItemContents(_instance.selectedPlace, 0, false);	
 	jQuery(contents).attr('class','wl_places_multi_infobox');
 	jQuery(contents).css('min-width','100px');
 	jQuery(contents).css('min-height','30px');				
-	jQuery(_instance._boxText).html(contents);
+	jQuery(_instance.boxText).html(contents);
 	 
-	jQuery(_instance._boxText).find('li a img').load(function(){
-		jQuery(_instance._boxText).find('li a').css('background','none').css('padding','0px'); 
-		jQuery(_instance._boxText).css('line-height','5px');
-		jQuery(_instance._boxText).find('ul').css('margin','0px');
+	jQuery(_instance.boxText).find('li a img').load(function(){
+		jQuery(_instance.boxText).find('li a').css('background','none').css('padding','0px'); 
+		jQuery(_instance.boxText).css('line-height','5px');
+		jQuery(_instance.boxText).find('ul').css('margin','0px');
 	});
 	
-	_instance._infoBox.setOffset(contents);
-	_instance._infoBox.open(marker.map, marker);
+	_instance.infoBox.setOffset(contents);
+	_instance.infoBox.open(marker.map, marker);
 	
 	if(_instance != null){
 		//broadcast to listeners
-		if(_instance._cfg.observers != null && _instance._cfg.observers.length>0){
-			jQuery.each(_instance._cfg.observers, function(i,item){
-				item.show(_instance._selectedPlace);
+		if(_instance.cfg.observers != null && _instance.cfg.observers.length>0){
+			
+			jQuery.each(_instance.cfg.observers, function(i,item){
+				item.show(_instance.selectedPlace);
 			});
+			jQuery(_instance.getSelectedArea()).show();
 		}	
 	}
 
@@ -451,50 +482,50 @@ WELOCALLY_PlacesMultiWidget.prototype.selectedItemHandler = function(event, ui) 
 WELOCALLY_PlacesMultiWidget.prototype.resetOverlays=function (location, markersArray) {
 	
 	var _instance = this; 
-	_instance._map.setCenter(location);
-	jQuery(_instance._map_canvas).show();
-	jQuery(_instance._map).show();
+	_instance.map.setCenter(location);
+	jQuery(_instance.map_canvas).show();
+	jQuery(_instance.map).show();
 	
 	_instance.deleteOverlays(markersArray);
-	_instance._placeMarkers = [];
+	_instance.placeMarkers = [];
 
 };
 
 WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation, bounds) {
 	var _instance = this;
-	google.maps.event.trigger(_instance._map, 'resize');
+	google.maps.event.trigger(_instance.map, 'resize');
 	
-	if(_instance._placeMarkers.length==0){
+	if(_instance.placeMarkers.length==0){
 		var markerIconLocation = 
-			new google.maps.MarkerImage(_instance._cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(0, 0));
+			new google.maps.MarkerImage(_instance.cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(0, 0));
 
 		_instance.addMarkerCenter(
-				_instance._placeMarkers,
-				_instance._map,
+				_instance.placeMarkers,
+				_instance.map,
 				searchLocation,
 				markerIconLocation);
 				
 	}
 	
 	_instance.setStatus(
-			_instance._mapStatus, 
-			_instance.makeMapStatus(_instance._map, _instance._placeMarkers) , 
+			_instance.mapStatus, 
+			_instance.makeMapStatus(_instance.map, _instance.placeMarkers) , 
 			'wl_message', false);
 	
-	_instance._map.setCenter(searchLocation);
+	_instance.map.setCenter(searchLocation);
 	if(bounds != null){
-		_instance._map.fitBounds(bounds);
+		_instance.map.fitBounds(bounds);
 	}
 	
-	var listener = google.maps.event.addListener(_instance._map, "tilesloaded", function() {
+	var listener = google.maps.event.addListener(_instance.map, "tilesloaded", function() {
 
 		google.maps.event.removeListener(listener);
 		
-		_instance._map.setCenter(searchLocation);
+		_instance.map.setCenter(searchLocation);
 						
 		_instance.setStatus(
-				_instance._mapStatus, 
-				_instance.makeMapStatus(_instance._map, _instance._placeMarkers) , 
+				_instance.mapStatus, 
+				_instance.makeMapStatus(_instance.map, _instance.placeMarkers) , 
 				'wl_message', false);	
 		
 	});
@@ -579,8 +610,8 @@ WELOCALLY_PlacesMultiWidget.prototype.getMapRadius = function(map) {
 	
 	var _instance = this;
 	
-	if(_instance._map.getBounds()){
-		var bounds = _instance._map.getBounds();		
+	if(_instance.map.getBounds()){
+		var bounds = _instance.map.getBounds();		
 		return _instance.getBoundsDistance(bounds)/2.0;
 	} else {
 		return 0.0;
@@ -611,30 +642,7 @@ WELOCALLY_PlacesMultiWidget.prototype.getBoundsDistance = function(bounds) {
 		
 		return dis;
 	}
-	/*var _instance = this;
-	
-	if(bounds){
 
-		var center = bounds.getCenter();
-		var ne = bounds.getNorthEast();
-		
-		// r = radius of the earth in statute km
-		var r = 6378.8;  
-		
-		// Convert lat or lng from decimal degrees into radians (divide by 57.2958)
-		var lat1 = center.lat() / 57.2958; 
-		var lon1 = center.lng() / 57.2958;
-		var lat2 = ne.lat() / 57.2958;
-		var lon2 = ne.lng() / 57.2958;
-		
-		// distance = circle radius from center to Northeast corner of bounds
-		var dis = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
-		  Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));	
-		
-		return dis;
-	} else {
-		return 0.0;
-	}*/
 	
 	return 0.0;
 
@@ -649,8 +657,9 @@ WELOCALLY_PlacesMultiWidget.prototype.setStatus = function(statusArea, message, 
 	jQuery(statusArea).addClass(type);
 	
 	if(showloading){
+		//commented for example
 		/*jQuery(statusArea).append('<div><img class="wl_ajax_loading" src="'+
-				_instance._cfg.imagePath+'/ajax-loader.gif"/></div>');*/
+				_instance.cfg.imagePath+'/ajax-loader.gif"/></div>');*/
 	}
 	
 	jQuery(statusArea).append('<em>'+message+'</em>');
@@ -669,7 +678,7 @@ WELOCALLY_PlacesMultiWidget.prototype.makeMapStatus = function (map, markers) {
 	
 	var status = '';
 	
-	var radius = _instance.getMapRadius(_instance._map);
+	var radius = _instance.getMapRadius(_instance.map);
 	if(markers != null && markers.length>1) {
 		status = status + ' places found: '+eval(markers.length-1);
 	}
@@ -677,3 +686,34 @@ WELOCALLY_PlacesMultiWidget.prototype.makeMapStatus = function (map, markers) {
 	status = status + ' zoom: '+map.getZoom();
 	return status;
 };
+
+
+//same as selected for this widget when being observer
+WELOCALLY_PlacesMultiWidget.prototype.getSelectedArea = function (){
+	var _instance = this;
+	return _instance.selectedSection;
+};
+
+//use map status area
+WELOCALLY_PlacesMultiWidget.prototype.getStatusArea = function (){
+	var _instance = this;
+	return _instance.mapStatus;
+};
+
+WELOCALLY_PlacesMultiWidget.prototype.triggerResize = function(){
+	
+	var _instance = this;
+	
+	google.maps.event.trigger(_instance.map, 'resize');
+		
+};
+
+//for place selectors
+WELOCALLY_PlacesMultiWidget.prototype.show = function(selectedPlace) {	
+	jQuery( this.results ).trigger( "observerselected", {instance: this, type:observer, place:selectedPlace}, this.selectedItemHandler);
+	
+};
+
+
+
+

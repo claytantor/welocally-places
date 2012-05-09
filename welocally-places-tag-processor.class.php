@@ -9,18 +9,9 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
         private function queryPlace($tag) {
             if (!$tag->id)
                 return false;
-
-            $url = sprintf('%s/geodb/place/1_0/%s.json', wl_server_base(), $tag->id);
-            
-            // TODO: wl_do_curl_get() does not use the CURLOPT_RETURNTRANSFER flag so the output
-            // gets printed instead of returned. i'm using ob_* as a hack around this for the moment.
-            ob_start();
-            wl_do_curl_get($url);
-            $json_response = ob_get_contents();
-            ob_end_clean();
-
-            $response = json_decode($json_response);
-            return $response[0];
+                
+//            $response = json_decode($json_response);
+//            return $response[0];
         }
         
         public function processTag($tag, $postId=0) {
@@ -68,7 +59,6 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
                 }
                 
                 $newCategories = array_merge($postCategories, $customCategories);
-                //syslog(LOG_WARNING, 'new categores:'.print_r($newCategories,true));
                 wp_set_post_categories($postId, $newCategories);
                 
                 update_post_meta($this->postId, '_isWLPlace', true);

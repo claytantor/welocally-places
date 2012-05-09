@@ -9,9 +9,6 @@ $options = $wlPlaces->getOptions();
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
 include($menubar_include);
 ?>
-<?php if(empty($options['siteToken'])  ):?>
-<div class="wl_error fade"><p><strong>Please <a href="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-subscribe' ?>">Register Now</a> To Activate Welocally Places</strong></p></div>
-<?php endif; ?>
 
 <?php
 if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 'welocally_places_general_nonce' ) ) ) { 
@@ -60,12 +57,9 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	echo '<div class="updated fade"><p><strong>' . __( 'Settings Saved.' ) . "</strong></p></div>\n";
 }
 
-// Get options
-$options = wl_set_general_defaults();
 
 ?>
 
-<?php if(!empty($options['siteToken'])):?>
 <script type="text/javascript" charset="utf-8">
 var wl_options_imgfield = '';
 jQuery(document).ready(function() {
@@ -81,7 +75,7 @@ jQuery(document).ready(function() {
 
 <p><?php _e( 'These are the general settings for Welocally Places.' ); ?></p>
 
-<form method="post" action="<?php echo get_bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-general' ?>">
+<form method="post" action="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-general' ?>">
 
 <span class="wl_options_heading"><?php _e( 'General Settings' ); ?></span>
 <table class="form-table">
@@ -128,13 +122,5 @@ jQuery(document).ready(function() {
 <p class="submit"><input type="submit" name="Submit" class="button-primary" value="<?php _e( 'Save Settings' ); ?>"/></p>
 
 </form>
-<?php else:?>
-<div style="text-align:center;">
-	<img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribe_intro.png" alt="" title=""/>
-</div>
-<div style="text-align:center;">
-	<a href="admin.php?page=welocally-places-subscribe"><img border="0" src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/subscribe_button.png" alt="" title=""/></a>
-</div>
-<?php endif; ?>
 
 </div>

@@ -29,7 +29,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					'_PlaceSelected',
 					'_ShowPlaceAddress',
 					self::WLERROROPT
-				);
+					);
 		
 		
 		/**
@@ -57,9 +57,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$this->pluginDir		= basename(dirname(__FILE__));
 			$this->pluginUrl 		= WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__));
 			$this->errors			= '';
-
-			//register_deactivation_hook( __FILE__, 	array( &$this, 'on_deactivate' ) );	
-			//register_activation_hook(__FILE__, 'add_defaults_fn');
 			
 			add_action( 'init',				array( $this, 'loadDomainStylesScripts' ) );
 			add_action( 'pre_get_posts',	array( $this, 'setOptions' ) );
@@ -143,64 +140,21 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_enqueue_script('wl_places_multi_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_places_multi_widget.js', array('jquery'), WelocallyPlaces::VERSION);
 			
 			global $wp_styles;
-
-															
-			$target_path = WP_PLUGIN_DIR.'/welocally-places-customize/resources/custom/stylesheets';
 		
-			if( class_exists('WelocallyPlacesCustomize' ) 
-				&& $options['style_customize' ]=='on'){
-					
-				if(!isset($options['style_customize_version'])){
-					$options['style_customize_version'] = 'v'.microtime(true);
-				}
-					
-				if(isset($options['font_names']) && $options['font_names'] != ''){
-					wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css?family='.$options['font_names'] );
-				}	
-					
-				if(file_exists($target_path.'/wl_places.css'))  {
-					wp_enqueue_style('wl_places', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places.css', array(), $options['style_customize_version'], 'screen' );
-				} else {
-					wp_enqueue_style( 'wl_places',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
-					wp_register_style('wl_places-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places.css');
-					$wp_styles->add_data('wl_places-ie-only', 'conditional', 'IE');
-					wp_enqueue_style('wl_places-ie-only');
-				}
-				
-				if(file_exists($target_path.'/wl_places_place.css'))  {
-					wp_enqueue_style('wl_places_place', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places_place.css', array(), $options['style_customize_version'], 'screen' );
-				} else {
-					wp_enqueue_style( 'wl_places_place',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
-					wp_register_style('wl_places_place-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_place.css');
-					$wp_styles->add_data('wl_places_place-ie-only', 'conditional', 'IE');
-					wp_enqueue_style('wl_places_place-ie-only');
-				}
-				
-				if(file_exists($target_path.'/wl_places_multi.css'))  {
-					wp_enqueue_style('wl_places_multi', WP_PLUGIN_URL.'/welocally-places-customize/resources/custom/stylesheets/wl_places_multi.css', array(), $options['style_customize_version'], 'screen' );
-				} else {					
-					wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );			
-					wp_register_style('wl_places_multi-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_multi.css');
-					$wp_styles->add_data('wl_places_multi-ie-only', 'conditional', 'IE');
-					wp_enqueue_style('wl_places_multi-ie-only');				
-				}
-					
-			} else {
-				wp_enqueue_style( 'wl_places',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
-				wp_register_style('wl_places-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places.css');
-				$wp_styles->add_data('wl_places-ie-only', 'conditional', 'IE');
-				wp_enqueue_style('wl_places-ie-only');
-							
-				wp_enqueue_style( 'wl_places_place',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
-				wp_register_style('wl_places_place-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_place.css');
-				$wp_styles->add_data('wl_places_place-ie-only', 'conditional', 'IE');
-				wp_enqueue_style('wl_places_place-ie-only');
-				
-				wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );			
-				wp_register_style('wl_places_multi-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_multi.css');
-				$wp_styles->add_data('wl_places_multi-ie-only', 'conditional', 'IE');
-				wp_enqueue_style('wl_places_multi-ie-only');				
-			}
+			wp_enqueue_style( 'wl_places',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+			wp_register_style('wl_places-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places.css');
+			$wp_styles->add_data('wl_places-ie-only', 'conditional', 'IE');
+			wp_enqueue_style('wl_places-ie-only');
+						
+			wp_enqueue_style( 'wl_places_place',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
+			wp_register_style('wl_places_place-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_place.css');
+			$wp_styles->add_data('wl_places_place-ie-only', 'conditional', 'IE');
+			wp_enqueue_style('wl_places_place-ie-only');
+			
+			wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );			
+			wp_register_style('wl_places_multi-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_multi.css');
+			$wp_styles->add_data('wl_places_multi-ie-only', 'conditional', 'IE');
+			wp_enqueue_style('wl_places_multi-ie-only');				
 			
 		}
 		
@@ -212,19 +166,15 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_enqueue_script('media-upload');
 			wp_enqueue_script('thickbox');
 			//welocally
-			wp_enqueue_script('wl_placefinder_widget_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_placefinder_widget.js', array('jquery'), WelocallyPlaces::VERSION);
-			wp_enqueue_script('wl_addplace_widget_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_addplace_widget.js', array('jquery'), WelocallyPlaces::VERSION);
-			wp_enqueue_script('wl_register_widget_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_register_widget.js', array('jquery'), WelocallyPlaces::VERSION);
-		
+			wp_enqueue_script('wl_addplace_widget_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_addplace_wp.js', array('jquery'), WelocallyPlaces::VERSION);
+			
 			//styles				
 			wp_enqueue_style( 'tinymce_button', WP_PLUGIN_URL . '/welocally-places/resources/tinymce-button.css' );
 					 	
 			wp_enqueue_style('thickbox');
 			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
 			wp_enqueue_style( 'jquery-ui-style' );	
-			wp_enqueue_style( 'wl_places_finder_style',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_finder.css',array(), WelocallyPlaces::VERSION, 'screen' );				
 			wp_enqueue_style( 'wl_places_addplace_style',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_addplace.css',array(), WelocallyPlaces::VERSION, 'screen' );	
-			wp_enqueue_style( 'wl_places_admin_style',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_admin.css',array(), WelocallyPlaces::VERSION, 'screen' );	
 			wp_enqueue_style( 'wl_places_wp_style',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_wp.css',array(), WelocallyPlaces::VERSION, 'screen' );	
 		}
 		
@@ -248,7 +198,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				
 		public function setOptions( ) {
 			global $wp_query;
-			$display = ( isset( $wp_query->query_vars['placeDisplay'] ) ) ? $wp_query->query_vars['placeDisplay'] : wl_get_option('viewOption','all');
+			
+			$display = "all";
 					
 			switch ( $display ) {			
 				case "all":
@@ -319,37 +270,12 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		public function addPlaceBox( ) {
 			foreach (array('post','page') as $type)
 		    {
-		        add_meta_box( 'wl-place-finder-meta-1', __( 'Welocally Find Places', 'Place_textdomain' ), 
-				                array( $this, 'findPlacesMetaBox' ), $type, 'normal', 'high' );
 		        add_meta_box( 'wl-place-add-meta-2', __( 'Welocally Add Place', 'Place_textdomain' ), 
 				                array( $this, 'addPlaceMetaBox' ), $type, 'normal', 'high' );
 				            
 		    }
  		}
-		
-		public function findPlacesMetaBox() {
-			global $post;
-			
-			$options = '';
-			$style = '';
-			$postId = $post->ID;
-			foreach ( $this->metaTags as $tag ) {
-				if ( $postId ) {
-					$$tag = get_post_meta( $postId, $tag, true );
-				} else {
-					$$tag = '';
-				}
-			}
-			
-			$isWLPlace = get_post_meta( $postId, '_isWLPlace', true );
-			$ShowPlaceAddress = get_post_meta( $postId, '_ShowPlaceAddress', true );
-			
-			$isPlaceChecked		= ( $isWLPlace == 'true' ) ? 'checked' : '';
-			$isNotPlaceChecked		= ( $isWLPlace == 'false' || $isWLPlace == '' || is_null(  $isWLPlace ) ) ? 'checked' : '';
-			$PlaceSelected = get_post_meta( $postId, '_PlaceSelected', true );
-						
-			include( dirname( __FILE__ ) . '/views/finder-meta-box.php' );
-		}
+
 		
 		public function addPlaceMetaBox() {
 			global $post;
@@ -464,12 +390,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
                 }
                 
                 $isCustom = false;
-                $customMapJson = '[  ]';
-                if(wl_get_option('map_custom_style') != ''){
-                 $isCustom = true;
-                 $customMapJson = wl_get_option("map_custom_style");
-                }
-                
+
                 $whereImage=$this->pluginUrl.'/resources/images/here.png';
                 
 
@@ -477,12 +398,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
                 $t = new StdClass();
                 $t->uid = ++$placecount;
                 $t->WPPost = $post->ID;
-                $t->postId = $tag->postId;
                 $t->placeJSON = $place_json;
                 $t->options = array(
                   'showmap' => $showmap,
-                  'isCustom' => $isCustom,                
-                  'map_custom_style' => $customMapJson,
                   'where_image' => $whereImage
                 );
                 
@@ -504,11 +422,27 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 		}
 		
+		
+		public function getPlacesNew($maxElements=25) {
+			
+			global $wpdb;
+			
+			$query = "SELECT * FROM {$wpdb->prefix}wl_places" ;
+			
+			$result = $wpdb->get_results($query, OBJECT);
+			return $result;		
+		
+//			$places = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT place FROM {$wpdb->prefix}wl_places p"));
+//		    
+//		    if ($places) 
+//		        return array_map('json_decode', $places);
+			
+		
+		}
+		
 		public function getPlaces($cat=null, $maxElements=25, $filter=true) {
 			
-			global $post;
-
-			
+			global $post;			
 						
 			static $uid = 0;
 
@@ -585,15 +519,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					
 			//setup options
 			$options = $this->getOptions();
-			$custom_style=null;
-			if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
-				$custom_style = stripslashes($options[ 'map_custom_style' ]);
-			}
 			
 			$marker_image_path = WP_PLUGIN_URL.'/welocally-places/resources/images/marker_all_base.png' ;
-			if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_default_marker' ])  && $options[ 'map_default_marker' ]!=''){
-				$marker_image_path = $options[ 'map_default_marker' ];
-			}
+			
 			 
 			$endpoint = 'https://api.welocally.com';
 			if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
@@ -604,7 +532,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
             
             //we do this so we can provide different style overrides for different template views 
             //while keeping the same controller
-            //syslog(LOG_WARNING, 'count:'.count($t->places).' cat:'.$cat);
             if(count($t->places)>0){
             	if(!isset($template)){
 	            	include(dirname(__FILE__) . '/views/category-map-content-template.php');
@@ -960,8 +887,12 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			return $return;
 		}
 		
-		public function showCategoryMap($category=null, $opts=array()) {
-			
+		public function generatePlaceId($lat,$lng) {
+			//WL_10RyqzlSSjAd gMCImmeXYj_37.801379_-122.263600@1303263345
+			$guid = substr(uniqid().uniqid(), 0, 22);
+			$parts = explode(" ", microtime());
+			$placeId = "WL_".$guid."_".$lat."_".$lng."@".$parts[1];
+			return $placeId;
 		}
 
 		/**

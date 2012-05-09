@@ -1,5 +1,9 @@
 /*
-	copyright 2012 welocally. NO WARRANTIES PROVIDED
+	Derived from Google Utility Library Infobox
+	Code license
+	Apache License 2.0
+	http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/reference.html
+	
 */
 
 /**

@@ -1,13 +1,6 @@
 /*
 	copyright 2012 clay graham. NO WARRANTIES PROVIDED
 */
-/* things we like */
-if (typeof String.prototype.startsWith != 'function') {
-  String.prototype.startsWith = function (str){
-    return this.indexOf(str) == 0;
-  };
-}
-
 if (!window.WELOCALLY) {
     window.WELOCALLY = {
     	env: {
@@ -36,6 +29,28 @@ if (!window.WELOCALLY) {
 		    			}
 		    		});
 		    	}
+    		}
+    	},
+    	ui: {
+    		setStatus : function(statusArea, message, type, showloading){
+    			var _instance  = this;
+    			
+    			jQuery(statusArea).html('');
+    			jQuery(statusArea).removeClass();
+    			jQuery(statusArea).addClass(type);
+    			
+    			if(showloading){
+    				jQuery(statusArea).append(showloading);
+    			}
+    			
+    			jQuery(statusArea).append('<em>'+message+'</em>');
+    			
+    			if(message != ''){
+    				jQuery(statusArea).show();
+    			} else {
+    				jQuery(statusArea).hide();
+    			}	
+    			
     		}
     	},
     	util: {
@@ -157,5 +172,5 @@ if (!window.WELOCALLY) {
 				   }
 			}
     	}    	
-    }
+    };
 }
