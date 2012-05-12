@@ -2,21 +2,15 @@
 global $wlPlaces;
 $options = $wlPlaces->getOptions();
 ?>
-<div class="wrap">
-<div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
-<h2>Welocally Places Options</h2>
 <?php 
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
 include($menubar_include);
-?>
-
+?> 
+<div class="wrap">
+<div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
+<h2>Welocally Places Options</h2>
 <?php
 if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 'welocally_places_general_nonce' ) ) ) { 
-	
-	
-	
-	
-	$options[ 'default_search_addr' ] = $_POST[ 'welocally_default_search_addr' ];
 	
 	//infobox_title_link
 	$options[ 'infobox_title_link' ] = $_POST[ 'welocally_infobox_title_link' ];
@@ -79,14 +73,6 @@ jQuery(document).ready(function() {
 
 <span class="wl_options_heading"><?php _e( 'General Settings' ); ?></span>
 <table class="form-table">
-	<tr valign="top">
-		<th scope="row"><?php _e( 'Default Search City, State' ); ?></th>
-		<td>
-		<input id="welocally_default_search_addr" name="welocally_default_search_addr"  type="text" size="36" value="<?php echo $options[ 'default_search_addr' ]; ?>" />
-		<br/>
-		<span class="description"><?php _e( 'This is the base address you want searches to center from, you can enter a full address or just put the City and State (ie. Oakland, CA)' ); ?></span>
-		</td>
-	</tr>
 	<tr valign="top">
 		<th scope="row"><?php _e('General Map Options' ); ?></th>
 		<td>

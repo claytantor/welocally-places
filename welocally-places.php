@@ -4,7 +4,7 @@
 Plugin Name: Welocally Places
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
 Description: The Welocally Places plugin lets easily associate places from our 16 million US POI database without manual geocoding, hust use our simple tags. The map widget makes it easy for your users to find the places your are writing about on a map.
-Version: 1.1.18
+Version: 1.2.19
 Author: Welocally  
 Author URI: http://welocally.com
 License: GPL2 
@@ -89,7 +89,8 @@ function welocally_save_place() {
 				$wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $placeToSave['_id']) );
 	    }
 	    
-	    echo $place;
+	    echo '{ "id": "'.$placeToSave['_id'].'"}';
+	    
 	} else { //update
 		
 		$placeId = $placeToSave['_id'];
@@ -183,7 +184,6 @@ function welocally_activate() {
 		require_once (dirname(__FILE__) . "/welocally-places-exception.class.php");
 		require_once (dirname(__FILE__) . "/welocally-places-map-widget.class.php");
 		require_once (dirname(__FILE__) . "/template-tags.php");
-		require_once (dirname(__FILE__) . "/mcebutton.php");
 		require_once (dirname(__FILE__) . "/menu.php");
 	
 		global $wlPlaces;
@@ -203,7 +203,6 @@ if (version_compare(phpversion(), "5.1", ">=")) {
 	require_once (dirname(__FILE__) . "/welocally-places-exception.class.php");
 	require_once (dirname(__FILE__) . "/welocally-places-map-widget.class.php");
 	require_once (dirname(__FILE__) . "/template-tags.php");
-	require_once (dirname(__FILE__) . "/mcebutton.php");
 	require_once (dirname(__FILE__) . "/menu.php");	
 }
 

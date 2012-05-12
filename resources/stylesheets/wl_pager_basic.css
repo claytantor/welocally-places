@@ -1,5 +1,5 @@
 ul.pagination li.details{
-   color:#202020;
+   color:#034D96;
 }
 ul.pagination li a
 {
@@ -23,15 +23,14 @@ ul.pagination li a.current
     -moz-box-shadow:0px 1px #EDEDED;
     -webkit-box-shadow:0px 1px #EDEDED;
     text-shadow:0px 1px #3C3C3C;
-    border-color:#202020;
-    background:#525252;
-    background:-moz-linear-gradient(top,#9F9F9F 1px,#6C6C6C 1px,#525252);
-    background:-webkit-gradient(linear,0 0,0 100%,color-stop(0.02,#9F9F9F),color-stop(0.02,#6C6C6C),color-stop(1,#525252));        
+    border-color:#064D80;
+    background:#034D96;
+    background:-moz-linear-gradient(top,#4D9FD6 1px,#62B7F0 1px,#034D96);
+    background:-webkit-gradient(linear,0 0,0 100%,color-stop(0.02,#4D9FD6),color-stop(0.02,#62B7F0),color-stop(1,#034D96));        
 }
 ul.pagination li a
 {
-    color:#444444;
-    border-color:#BEBEBE;
-    background:#f2f2f2;
-}  
- 
+    color:#034D96;
+    border-color:#034D96;
+    background:#E1F6FA;
+}   

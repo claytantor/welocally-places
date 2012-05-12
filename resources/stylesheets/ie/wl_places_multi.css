@@ -1,11 +1,13 @@
 
 .wl_places_multi_widget{
 	width: 98%;
+	max-width: 400px;
 }
 
 .wl_places_multi_selected {
 	border: 1px solid #aaaaaa; 
 	width: 100%;	
+	max-width: 400px;
 	background: #ffffff;
 }
 

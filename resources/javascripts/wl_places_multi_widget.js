@@ -375,7 +375,7 @@ WELOCALLY_PlacesMultiWidget.prototype.makeItemContents = function (item, i, show
 	jQuery(wrapper)
 		.append(jQuery('<div class="selectable_address">'+
 			item.properties.address+' '+item.properties.city+' '+item.properties.province+'</div>'));
-	if(item.distance){
+	if(item.distance && !_instance.cfg.hideDistance ){
 		jQuery(wrapper)
 		.append(jQuery('<div class="selectable_distance">'+
 				item.distance.toFixed(2)+'km </div>'));

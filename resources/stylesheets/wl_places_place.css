@@ -15,7 +15,7 @@
    	border-radius: 4px; 
    	background: #f2f2f2;
    	border:1px solid #999;
-   	padding:5px; }
+   	padding:0px; }
    	
 .wl_places_place {  
 	padding: 10px;
@@ -152,10 +152,10 @@
 	
 	
 .wl_places_place_post_link { 
-	background: url(../images/link_post_bg.png);
+	background: url(../images/grey_post.png);
 	text-align: left; 
 	display: inline-block; 
-	width:70px; height:26px; 
+	width:80px; height:26px; 
 	margin-right: 15px; }	
 	
 .wl_places_place_post_link a { 

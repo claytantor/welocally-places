@@ -1,27 +1,24 @@
-=== Welocally Places ===
+=== Welocally Places Basic For Wordpress ===
 Contributors: claytantor 
 Tags: hyperlocal, geocoding, places, maps, foodie, travel
-Requires at least: 2.8, libCURL installed, jQuery 1.4.1 or greater
+Requires at least: 2.8, jQuery 1.4.1 or greater
 Tested up to: 3.2.1
 Stable tag: trunk
 License: GPL v2 (GNU General Public License v2)
 
-The Welocally Places plugin lets easily associate places with rich maps and place info from our 16M US POI database.
+The Welocally Places Basic plugin lets easily associate places with rich maps and place info with your wordpress content. Simple tags let you put places or category maps anywhere on your site.
 
 == Description ==
 
-Welocally Places For WordPress makes it simple to attach real places to your content effectively making your blog a hyper-local property in minutes. Associating a place with your post is as easy as searching for a keyword, pointing and clicking. Primary features include:
+Welocally Places For WordPress makes it simple to attach real places to your content effectively making your blog a hyper-local property in minutes. With rich maps and location geocoding you can add stylish and interactive maps that help your readers know where you are talking about. Associating a place with your post is as easy as searching for a keyword, pointing and clicking. Primary features include:
 
-* Search geocoded places by keyword from our 16M USA place database
 * Put mutiple places maps on pages and posts.
-* Now we offer free basic service. 
+* No registration required. 
 * No coding required. Plug and play
-* 2 sidebar widgets, Map Widget and Place List Widget
-* Fully customizable maps
-* Google fonts integration, no CSS required for custom fonts
+* Smart sidebar widget associates similar places automatically.
 * Rich place information such as phone number, and website
 * Integrated driving directions
-* Category based map, automatically integrates "featured image" in pop-up (only for supported themes); 
+* Category based map tags help you make directories quickly
 
 Product Overview: http://welocally.com/?page_id=2
 Product Help: http://welocally.com/?page_id=104
@@ -40,7 +37,7 @@ Q:What Browsers Do You Support?
 A:For Publishers we have tested creating places for and recommend versions starting at least Chrome 17.0.963.56, Safari Version 5.1.2 and Firefox 10.0.2. We *do not* reccomend the use of IE for site owners using welocally places, but we have tested site vistors successfully using Welocally Places with IE 5.3.2 or greater. 
  
 Q:What is a POI?
-A:POI stands for Point of Interest, and they are the places that people go to. We aggregate place info from many different providers, and this is the same type of data that location based game companies use when you ‚check in. It is commonly public establishments, parks or venues that people goto such as ‚Uptown Grill.
+A:POI stands for Point of Interest, and they are the places that people go to. We aggregate place info from many different providers, and this is the same type of data that location based game companies use when you ‚check in. It is commonly public establishments, parks or venues that people goto such as ‚ Uptown Grill.
  
 Q:Does the mapping feature work only for places, not for addresses or intersections?
 A:Intersections are not supported. There are over 16 Million Places for you to choose from in our database so we got you covered for most POIs that people go to. Our linkings are based on places, so we really recommend that if a place is not in our database and is important enough for you to talk about it with your readers, then it is probably important enough for you to give it a name and add it to the places database. Doing that is as easy as entering the address. 
@@ -49,10 +46,21 @@ Q:Why do I have to register before I can try your software out?
 A:The plugin itself is free and open source based licensed under GPL2. We provide a basic service that lets you look up places easily, as well as updates and notifications when we have new stuff. 
 
 Q:Is your plugin supported internationally?
-A: NO our places are in the US only. This will change soon but right now we only have about 16 million places in the USA.
+A: It should work, it has not been tested. Please give us feedback about your experiences if you use it internationally.
 
 
 == Changelog ==
+1.2.19
+196	Feature	Remove Registration Requirement	
+195	Feature	Remove any CURL Concepts	
+194 Feature	Pagination	
+192	Feature	Local Category Tag	
+191	Feature	Local Place Tag	
+190	Feature	No key geocoding
+189	Feature	Local Database	
+186	Bug	Refactor options	
+185	Bug	Category and fields showing on add place.
+
 1.1.18
 Feature #56: Welocally Namespace Javascript Refactoring
 Feature #87: Widgetize Place Finder

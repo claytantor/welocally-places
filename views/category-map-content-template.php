@@ -7,12 +7,12 @@ $options = $wlPlaces->getOptions();
       <script type="text/javascript">
 //<![CDATA[
 		
-      	var placeSelected = new WELOCALLY_PlaceWidget({placehoundPath: 'http://placehound.com'}).init();
+      	var placeSelected = new WELOCALLY_PlaceWidget({hidePlaceSectionMap: true}).init();
 	    var cfg = { 
-				id:'multi_<?php echo $t->uid; ?>',	
-				placehoundPath: 'http://placehound.com',			
+				id:'multi_<?php echo $t->uid; ?>',
+				hideDistance: true, 				
 				<?php if($options['show_letters_tag']=='on'):?> showLetters: true,<?php else: ?>showLetters: false,<?php endif;?>
-				<?php if(isset($options['category_selector_override'])):?> overrideSelectableStyle:<?php echo('\''.$options['category_selector_override'].'\''.','); endif;?>
+				overrideSelectableStyle: 'margin: 3px; padding: 2px; float: left; width: 175px; height: 70px;',
 				imagePath:'<?php echo($marker_image_path); ?>',
 		    	endpoint:'<?php echo($endpoint); ?>',
 		    	<?php if($options['show_selection_tag']=='on'):?>showSelection: true,<?php else: ?>showSelection: false,<?php endif;?>

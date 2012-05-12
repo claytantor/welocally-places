@@ -545,7 +545,11 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 		} else if(data != null && data.errors != null) {
 			_instance.setStatus(_instance.statusArea,'Could not save place:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
 		} else {
-			_instance.setStatus(_instance.statusArea,'Your place has been saved!', 'wl_message', false);
+			var response = jQuery.parseJSON(data);
+			var tag = '[welocally id="'+response.id+'"/]';
+			
+			_instance.setStatus(_instance.statusArea,'Your place has been saved! <br/><span class="wl_placemgr_place_tag">'+tag+'</span>', 'wl_message', false);
+			_instance.savedPlace = selectedPlace;
 		}
 	  }
 	});
@@ -819,90 +823,3 @@ WELOCALLY_AddPlaceWidget.prototype.setPlaceForEdit = function(selectedPlace) {
 
 	
 };
-
-
-/*
- * copyright 2012 welocally. NO WARRANTIES PROVIDED
- */
-function WELOCALLY_PlaceManager(cfg) {
-	this.cfg;
-	this.wrapper;
-
-	this.init = function() {
-		return this;
-	};
-
-}
-
-WELOCALLY_PlaceManager.prototype.initCfg = function(cfg) {
-	var errors = [];
-	if (!cfg) {
-		errors.push("Please provide configuration for the widget");
-		cfg = {};
-	}
-
-	if (errors.length > 0)
-		return errors;
-
-	this.cfg = cfg;
-};
-
-WELOCALLY_PlaceManager.prototype.placeActionHandler = function(wl_id, id, action) {
-	
-	var _instance = this;
-
-	var data = {
-			action: action+'_place',
-			wl_id: wl_id,
-			id: id
-	};
-	
-		   
-	_instance.jqxhr = jQuery.ajax({
-	  type: 'POST',		  
-	  url: ajaxurl,
-	  data: data,
-	  beforeSend: function(jqXHR){
-		_instance.jqxhr = jqXHR;
-	  },
-	  error : function(jqXHR, textStatus, errorThrown) {
-		if(textStatus != 'abort'){
-			_instance.setStatus(_instance.statusArea,'ERROR : '+textStatus, 'error', false);
-		}		
-	  },		  
-	  success : function(data, textStatus, jqXHR) {
-		if(data != null && data.errors != null) {
-			_instance.setStatus(_instance.statusArea,'ERROR:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-		} else if(data != null && data.errors != null) {
-			_instance.setStatus(_instance.statusArea,'Could not get place:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-		} else {
-			var placeData = jQuery.parseJSON( data );
-			var id=placeData.id;
-			if(action=='edit'){
-				var place = placeData.places[0];
-				var cfg = { 
-						showShare: true,
-						imagePath:_instance.cfg.imagePath,
-				};
-				var addPlaceWidget = new WELOCALLY_AddPlaceWidget();
-				addPlaceWidget.initCfg(cfg);
-				
-				jQuery('#place-edit-area-'+id).html(addPlaceWidget.makeWrapper());
-				addPlaceWidget.setPlaceForEdit(place);
-				jQuery('#place-edit-area-'+id).show('slow');
-			} else if (action=='delete'){
-				jQuery('#place-all-'+id).hide('slow');
-				jQuery('#place-all-'+id).remove();				
-			}
-					
-			
-		}
-	  }
-	});
-	
-	return false;
-
-};
-
-
-

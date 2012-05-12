@@ -241,8 +241,6 @@ WELOCALLY_WpPager.prototype.paginationInterfaceGenerator = function(instance) {
 		    	jQuery(list).append("<li><a class='current'>Last</a></li>");
 		    }   
 	        
-	        /*jQuery(list).append('<li class="wl_pager_total details">Total '+
-	        	_instance.metadata.total+'</li>');*/
           			          
         }
 
@@ -276,6 +274,7 @@ WELOCALLY_WpPager.prototype.load = function(page) {
 	  data: req,
 	  beforeSend: function(jqXHR){
 		_instance.jqxhr = jqXHR;
+		_instance.setStatus(_instance.statusArea,'Loading...', 'wl_message', false);
 	  },
 	  error : function(jqXHR, textStatus, errorThrown) {
 		if(textStatus != 'abort'){
@@ -283,11 +282,18 @@ WELOCALLY_WpPager.prototype.load = function(page) {
 		}		
 	  },		  
 	  success : function(res, textStatus, jqXHR) {
+		  _instance.setStatus(_instance.statusArea,'', 'wl_message', false);
 		  jQuery(_instance.wrapper).find('.wl_pager_content').html(res);
 		  jQuery(_instance.wrapper).show();	
 	  }
 	});
 
+};
+
+WELOCALLY_WpPager.prototype.updateSearch = function(cfg) {
+	this.initCfg(cfg);
+	this.getMetadata();	
+	this.load(1);	
 };
 
 WELOCALLY_WpPager.prototype.setStatus = function(statusArea, message, type, showloading){

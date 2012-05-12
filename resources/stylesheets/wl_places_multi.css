@@ -122,6 +122,7 @@
 /* infobox title */ 
 .selectable_title{ 
 	font-size: 1.2em;
+	line-height: 1.0em;
  	font-family: 'Carme', verdana, arial, helvetica, sans-serif;
 	font-weight:bold;
 	color: #666; };
