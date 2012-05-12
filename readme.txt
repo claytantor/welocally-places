@@ -36,7 +36,7 @@ A:No you can not. WordPress.com hosted blogs do not allow you to install plugins
 Q:What Browsers Do You Support?
 A:For Publishers we have tested creating places for and recommend versions starting at least Chrome 17.0.963.56, Safari Version 5.1.2 and Firefox 10.0.2. We *do not* reccomend the use of IE for site owners using welocally places, but we have tested site vistors successfully using Welocally Places with IE 5.3.2 or greater. 
  
-Q:What is a POI?
+Q:What is a POI? 
 A:POI stands for Point of Interest, and they are the places that people go to. We aggregate place info from many different providers, and this is the same type of data that location based game companies use when you âcheck in. It is commonly public establishments, parks or venues that people goto such as â Uptown Grill.
  
 Q:Does the mapping feature work only for places, not for addresses or intersections?
@@ -144,6 +144,6 @@ No notices at this time.
 == Screenshots ==
 1. Welocally Places offers a simple way to embed rich place information such as address, phone number, website and driving directions into your post. We also provide interactive map widgets to engage your readers with the places you have written about.
 
-2. The place finder tool lets you easily find or add places from our 16 million US point of interest database and link them to posts or pages. 
+2. Add any place map or category of places as an interactive map to your site with simple shortcodes.
 
 

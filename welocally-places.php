@@ -17,8 +17,8 @@ add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
 add_action('wp_ajax_save_place', 'welocally_save_place');
 add_action('wp_ajax_edit_place', 'welocally_edit_place');
 add_action('wp_ajax_delete_place', 'welocally_delete_place');
-add_action('wp_ajax_getpage', 'wl_pager_getpage');
-add_action('wp_ajax_get_metadata', 'wl_pager_get_metadata');
+add_action('wp_ajax_getpage', 'wl_places_pager_getpage');
+add_action('wp_ajax_get_metadata', 'wl_places_pager_get_metadata');
 
 // add filter's for plugin templates
 add_filter('map_widget_template', 'wl_places_get_template_map_widget',10);
@@ -102,7 +102,7 @@ function welocally_save_place() {
 }
 
 
-function wl_pager_get_metadata() {	
+function wl_places_pager_get_metadata() {	
 	
 	global $wlPager;
 	$fields = $_POST['fields'];
@@ -116,7 +116,7 @@ function wl_pager_get_metadata() {
 	die(); // this is required to return a proper result		
 }
 
-function wl_pager_getpage() {
+function wl_places_pager_getpage() {
 	
 	global $wlPager;
 	$fields = $_POST['fields'];
