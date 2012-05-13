@@ -12,7 +12,7 @@ $options = $wlPlaces->getOptions();
 	    var cfg = { 
 				id:'multi_<?php echo $t->uid; ?>',	
 				<?php if($options['show_letters']=='on'):?> showLetters: true,<?php else: ?>showLetters: false,<?php endif;?>
-				<?php if(isset($options['widget_selection_style'])):?> overrideSelectableStyle:<?php echo('\''.$options['widget_selection_style'].'\''.',');?><?php else: ?>overrideSelectableStyle: 'width:98%;',<?php endif;?>
+				<?php if(!empty($options['widget_selection_style'])):?> overrideSelectableStyle:<?php echo('\''.$options['widget_selection_style'].'\''.',');?><?php else: ?>overrideSelectableStyle: 'width:98%;',<?php endif;?>
 				imagePath:'<?php echo($marker_image_path); ?>',
 		    	endpoint:'<?php echo($endpoint); ?>',
 		    	<?php if($options['show_selection']=='on'):?>showSelection: true,<?php else: ?>showSelection: false,<?php endif;?>
@@ -32,3 +32,4 @@ $options = $wlPlaces->getOptions();
       </script>
     </div>
   </div>
+  <div style="clear:both; margin-bottom:5px;">&nbsp;</div>

@@ -4,71 +4,7 @@
 
 **/
 if( class_exists( 'WelocallyPlaces' ) ) {
-	
-//	/**
-//	 * DELEGATE
-//	 */
-//	function wl_set_general_defaults() {
-//		global $wlPlaces;
-//		
-//		$options = $wlPlaces->getOptions();
-//		
-//		$changed = false;
-//		
-//		$default_search_address = ''; 
-//		$default_marker_icon = plugins_url() . "/welocally-places/resources/images/marker_all_base.png";
-//		$default_api_endpoint = 'https://api.welocally.com'; 
-//		$default_update_places = 'off';
-//		
-//		$default_site_name= bloginfo('name');
-//		$default_site_home= bloginfo('url');
-//		$default_email=  bloginfo('admin_email');
-//		
-//		$default_show_letters = 'on'; 
-//		$default_show_selection = 'on'; 		
-//		$default_infobox_title_link = 'on'; 
-//		
-//		$default_widget_selection_style = 'width: 100%'; 
-//		$default_tag_selection_style = 'margin: 3px; padding: 2px; float: left; width: 150px; height: 60px;'; 
-//
-//		$default_show_letters_tag = 'on'; 
-//		$default_show_selection_tag = 'on'; 		
-//		$default_infobox_title_link_tag = 'on'; 
-//
-//			
-//		// Set current version level. Because this can be used to detect version changes (and to what extent), this
-//		// information may be useful in future upgrades
-//		if ( $options[ 'current_version' ] != $wlPlaces->wl_places_version() ) {
-//			$options[ 'current_version' ] = $wlPlaces->wl_places_version();
-//			$changed = true;
-//		}
-//		
-//		// always check each option - if not set, apply default
-//		if ( !array_key_exists( 'default_search_addr', $options ) ) { $options[ 'default_search_addr' ] = $default_search_address; $changed = true; }
-//		
-//		//widget
-//		if ( !array_key_exists( 'show_letters', $options ) ) { $options[ 'show_letters' ] = $default_show_letters; $changed = true; }
-//		if ( !array_key_exists( 'show_selection', $options ) ) { $options[ 'show_selection' ] = $default_show_selection; $changed = true; }
-//		if ( !array_key_exists( 'infobox_title_link', $options ) ) { $options[ 'infobox_title_link' ] = $default_infobox_title_link; $changed = true; }
-//				
-//		//tag
-//		if ( !array_key_exists( 'show_letters_tag', $options ) ) { $options[ 'show_letters_tag' ] = $default_show_letters_tag; $changed = true; }
-//		if ( !array_key_exists( 'show_selection_tag', $options ) ) { $options[ 'show_selection_tag' ] = $default_show_selection_tag; $changed = true; }
-//		if ( !array_key_exists( 'infobox_title_link_tag', $options ) ) { $options[ 'infobox_title_link_tag' ] = $default_infobox_title_link_tag; $changed = true; }
-//		
-//		//selectable style overrides
-//		if ( !array_key_exists( 'widget_selection_style', $options ) ) { $options[ 'widget_selection_style' ] = $default_widget_selection_style; $changed = true; }
-//		if ( !array_key_exists( 'tag_selection_style', $options ) ) { $options[ 'tag_selection_style' ] = $default_tag_selection_style; $changed = true; }
-//		
-//		//about options
-//		if ( !array_key_exists( 'api_endpoint', $options ) ) { $options[ 'api_endpoint' ] = $default_api_endpoint; $changed = true; }
-//		if ( !array_key_exists( 'update_places', $options ) ) { $options[ 'update_places' ] = $default_update_places; $changed = true; }
-//		
-//	
-//		// Update the options, if changed, and return the result
-//		if ( $changed ) { $wlPlaces->saveOptions($options) ; }
-//		return $options;
-//	}
+
 	
 	function wl_get_options() {
 		global $wlPlaces;
