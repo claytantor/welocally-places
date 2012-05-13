@@ -1,4 +1,4 @@
-=== Welocally Places Basic For Wordpress ===
+=== Welocally Places Basic ===
 Contributors: claytantor 
 Tags: hyperlocal, geocoding, places, maps, foodie, travel
 Requires at least: 2.8, jQuery 1.4.1 or greater
@@ -6,7 +6,7 @@ Tested up to: 3.2.1
 Stable tag: trunk
 License: GPL v2 (GNU General Public License v2)
 
-The Welocally Places Basic plugin lets easily associate places with rich maps and place info with your wordpress content. Simple tags let you put places or category maps anywhere on your site.
+The Welocally Places Basic plugin lets easily associate places with rich maps and place info with your wordpress content. 
 
 == Description ==
 
@@ -40,7 +40,7 @@ Q:What is a POI?
 A:POI stands for Point of Interest, and they are the places that people go to. We aggregate place info from many different providers, and this is the same type of data that location based game companies use when you âcheck in. It is commonly public establishments, parks or venues that people goto such as â Uptown Grill.
  
 Q:Does the mapping feature work only for places, not for addresses or intersections?
-A:Intersections are not supported. There are over 16 Million Places for you to choose from in our database so we got you covered for most POIs that people go to. Our linkings are based on places, so we really recommend that if a place is not in our database and is important enough for you to talk about it with your readers, then it is probably important enough for you to give it a name and add it to the places database. Doing that is as easy as entering the address. 
+A: Geocoding works for intersections.
 
 Q:Why do I have to register before I can try your software out?
 A:The plugin itself is free and open source based licensed under GPL2. We provide a basic service that lets you look up places easily, as well as updates and notifications when we have new stuff. 

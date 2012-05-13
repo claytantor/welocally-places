@@ -8,7 +8,7 @@ function wl_menu_initialise() {
 	wl_add_submenu( 'Welocally Places About', 'About', 'welocally-places-about', 'wl_support_about' );
 	wl_add_submenu( 'Welocally Places Manager', 'Places Manager', 'welocally-places-manager', 'wl_places_manager' );
 
-	add_filter( 'plugin_action_links', 'wl_add_settings_link', 10, 2 );
+	add_filter( 'plugin_action_links', 'wl_places_add_settings_link', 10, 2 );
 		
 }
 add_action( 'admin_menu','wl_menu_initialise' );
@@ -55,7 +55,7 @@ function wl_places_manager() {
 }
 
 
-function wl_add_settings_link( $links, $file ) {
+function wl_places_add_settings_link( $links, $file ) {
 
 	static $this_plugin;
 
