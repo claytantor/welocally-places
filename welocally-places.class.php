@@ -704,7 +704,49 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		//--------------------------------------------
         public function getOptions() {
             $this->latestOptions = get_option(WelocallyPlaces::OPTIONNAME, array());
-            return $this->latestOptions;
+            $options = $this->latestOptions;
+            
+            $changed = false;
+		
+			$default_marker_icon = plugins_url() . "/welocally-places/resources/images/marker_all_base.png";
+			$default_update_places = 'off';
+			
+			$default_show_letters = 'on'; 
+			$default_show_selection = 'on'; 		
+			$default_infobox_title_link = 'on'; 
+			
+			$default_widget_selection_style = 'width: 100%'; 
+			$default_tag_selection_style = 'margin: 3px; padding: 2px; float: left; width: 150px; height: 60px;'; 
+	
+			$default_show_letters_tag = 'on'; 
+			$default_show_selection_tag = 'on'; 		
+			$default_infobox_title_link_tag = 'on'; 
+					
+			// Set current version level. Because this can be used to detect version changes (and to what extent), this
+			// information may be useful in future upgrades
+			if ( $options[ 'current_version' ] != WelocallyPlaces::VERSION ) {
+				$options[ 'current_version' ] = WelocallyPlaces::VERSION;
+				$changed = true;
+			}
+			
+			//widget
+			if ( !array_key_exists( 'show_letters', $options ) ) { $options[ 'show_letters' ] = $default_show_letters; $changed = true; }
+			if ( !array_key_exists( 'show_selection', $options ) ) { $options[ 'show_selection' ] = $default_show_selection; $changed = true; }
+			if ( !array_key_exists( 'infobox_title_link', $options ) ) { $options[ 'infobox_title_link' ] = $default_infobox_title_link; $changed = true; }
+					
+			//tag
+			if ( !array_key_exists( 'show_letters_tag', $options ) ) { $options[ 'show_letters_tag' ] = $default_show_letters_tag; $changed = true; }
+			if ( !array_key_exists( 'show_selection_tag', $options ) ) { $options[ 'show_selection_tag' ] = $default_show_selection_tag; $changed = true; }
+			if ( !array_key_exists( 'infobox_title_link_tag', $options ) ) { $options[ 'infobox_title_link_tag' ] = $default_infobox_title_link_tag; $changed = true; }
+			
+			//selectable style overrides
+			if ( !array_key_exists( 'widget_selection_style', $options ) ) { $options[ 'widget_selection_style' ] = $default_widget_selection_style; $changed = true; }
+			if ( !array_key_exists( 'tag_selection_style', $options ) ) { $options[ 'tag_selection_style' ] = $default_tag_selection_style; $changed = true; }
+					
+			// Update the options, if changed, and return the result
+			if ( $changed ) { $this->saveOptions($options) ; }
+                       
+            return $options;
         }
 
 		public function getSingleOption( $key ) {

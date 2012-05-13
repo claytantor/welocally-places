@@ -12,7 +12,7 @@ $options = $wlPlaces->getOptions();
 				id:'multi_<?php echo $t->uid; ?>',
 				hideDistance: true, 				
 				<?php if($options['show_letters_tag']=='on'):?> showLetters: true,<?php else: ?>showLetters: false,<?php endif;?>
-				overrideSelectableStyle: 'margin: 3px; padding: 2px; float: left; width: 175px; height: 70px;',
+				<?php if(isset($options['tag_selection_style'])):?> overrideSelectableStyle:<?php echo('\''.$options['tag_selection_style'].'\''.',');?><?php else: ?>overrideSelectableStyle: 'margin: 3px; padding: 2px; float: left; width: 150px; height: 60px;',<?php endif;?>
 				imagePath:'<?php echo($marker_image_path); ?>',
 		    	endpoint:'<?php echo($endpoint); ?>',
 		    	<?php if($options['show_selection_tag']=='on'):?>showSelection: true,<?php else: ?>showSelection: false,<?php endif;?>

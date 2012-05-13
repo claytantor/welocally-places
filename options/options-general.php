@@ -32,6 +32,9 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 		$options['show_selection'] = 'off';
 	} 
 	
+	$options[ 'widget_selection_style' ] = $_POST[ 'welocally_widget_selection_style' ];
+	 
+	
 		
 	//welocally_show_letters_tag
 	$options[ 'show_letters_tag' ] = $_POST[ 'welocally_show_letters_tag' ];
@@ -45,10 +48,12 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 		$options['show_selection_tag'] = 'off';
 	} 
 	
-	
+	$options[ 'tag_selection_style' ] = $_POST[ 'welocally_tag_selection_style' ];
+		
 	wl_save_options($options);
 
-	echo '<div class="updated fade"><p><strong>' . __( 'Settings Saved.' ) . "</strong></p></div>\n";
+	echo '<div class="updated fade"><p><strong>' . __( 'Settings Saved.' ) . 
+		"</strong></p></div>\n";
 }
 
 
@@ -87,6 +92,7 @@ jQuery(document).ready(function() {
 			<ul>
 				<li><input type="checkbox" id="welocally_show_letters" name="welocally_show_letters" <?php if($options[ 'show_letters' ]=='on') { echo 'checked';  }  ?>>Show Indexed Markers</li>
 				<li><input type="checkbox" id="welocally_show_selection" name="welocally_show_selection" <?php if($options[ 'show_selection' ]=='on') { echo 'checked';  }  ?>>Show Selection Item List</li>
+				<li>Selection Item Style<br /><input style="width:400px" type="text" id="welocally_widget_selection_style" name="welocally_widget_selection_style" value="<?php echo $options[ 'widget_selection_style' ];?>"></li>
 			</ul>
 		</td>
 	</tr>
@@ -96,6 +102,7 @@ jQuery(document).ready(function() {
 			<ul>
 				<li><input type="checkbox" id="welocally_show_letters_tag" name="welocally_show_letters_tag" <?php if($options[ 'show_letters_tag' ]=='on') { echo 'checked';  }  ?>>Show Indexed Markers</li>
 				<li><input type="checkbox" id="welocally_show_selection_tag" name="welocally_show_selection_tag" <?php if($options[ 'show_selection_tag' ]=='on') { echo 'checked';  }  ?>>Show Selection Item List</li>
+				<li>Selection Item Style<br/><input style="width:400px" type="text" id="welocally_tag_selection_style" name="welocally_tag_selection_style" value="<?php echo $options[ 'tag_selection_style' ];?>"></li>
 			</ul>
 		</td>
 	</tr>
