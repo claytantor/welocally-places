@@ -51,43 +51,45 @@ if (!class_exists('WelocallyWPPagination')) {
 			
 		}
 
-		function handleWlPagerShortcode($attrs, $content = null) {
-			extract(shortcode_atts(array (
-				'table' => null,
-				'fields' => null,
-				'filter' => null,
-				'order_by'=> null,
-				'even'=> null,
-				'odd'=> null,
-				'pagesize'=> WelocallyWPPagination::PAGESIZE,				
-			), $attrs));
-			
-			//strip paragragh tags if exists
-			if ( '</p>' == substr( $content, 0, 4 )
-			and '<p>' == substr( $content, strlen( $content ) - 3 ) )
-				$content = substr( $content, 4, strlen( $content ) - 7 );
-			
-			//template for javscript
-			$t = new StdClass();
-			$t->uid = uniqid();
-			$t->table = $table;
-			$t->fields = $fields;
-			$t->filter = $filter;
-			$t->orderBy = $order_by;
-			$t->odd = $odd;
-			$t->even = $even;			
-			$t->pagesize = $pagesize;
-			$t->content = $content;			
-			
-			ob_start();
-            include(dirname(__FILE__) . '/pager-template.php');
-            $resultContent = ob_get_contents();
-            ob_end_clean();
-            
-            $t = null;
-            
-            return $resultContent;
-	
+		//will only work if pluin is installed
+		function handleWlPagerShortcode($attrs, $content = null) {	
+			if(function_exists('wl_pager_activate' )){
+				extract(shortcode_atts(array (
+					'table' => null,
+					'fields' => null,
+					'filter' => null,
+					'order_by'=> null,
+					'even'=> null,
+					'odd'=> null,
+					'pagesize'=> WelocallyWPPagination::PAGESIZE,				
+				), $attrs));
+				
+				//strip paragragh tags if exists
+				if ( '</p>' == substr( $content, 0, 4 )
+				and '<p>' == substr( $content, strlen( $content ) - 3 ) )
+					$content = substr( $content, 4, strlen( $content ) - 7 );
+				
+				//template for javscript
+				$t = new StdClass();
+				$t->uid = uniqid();
+				$t->table = $table;
+				$t->fields = $fields;
+				$t->filter = $filter;
+				$t->orderBy = $order_by;
+				$t->odd = $odd;
+				$t->even = $even;			
+				$t->pagesize = $pagesize;
+				$t->content = $content;			
+				
+				ob_start();
+	            include( WP_PLUGIN_DIR.'/wl-pager/pager-template.php');
+	            $resultContent = ob_get_contents();
+	            ob_end_clean();
+	            
+	            $t = null;
+	            
+	            return $resultContent;
+			}		
 		}
 				
 		function getMetadata($table=null, $fields=null, $filter=null, $order_by=null, $pagesize=WelocallyWPPagination::PAGESIZE){
@@ -277,10 +279,7 @@ if (!class_exists('WelocallyWPPagination')) {
 		}
 		
 		function onActivate(){			
-			add_shortcode('wlpager', array ($this,'handleWlPagerShortcode'));			
-			add_action( 'init',	array( $this, 'loadDomainStylesScripts' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'loadAdminDomainStylesScripts' ) );
-			
+		
 		}
 		
 		/// OPTIONS DATA
@@ -313,7 +312,12 @@ if (!class_exists('WelocallyWPPagination')) {
             delete_option(WelocallyWPPagination::OPTIONNAME);
         }
 		
-		
+		function hooks(){
+			add_shortcode('wlpager', array ($this,'handleWlPagerShortcode'));			
+			add_action( 'init',	array( $this, 'loadDomainStylesScripts' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'loadAdminDomainStylesScripts' ) );			
+		}
+				
 		
 
 	}
