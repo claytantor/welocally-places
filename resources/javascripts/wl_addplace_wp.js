@@ -349,15 +349,6 @@ WELOCALLY_AddPlaceWidget.prototype.vaidatePlaceForSave = function(selectedPlace)
 	if(!selectedPlace.properties.name){
 		errors.push("A place name is required.");
 	}
-//	if(!selectedPlace.properties.classifiers[0].type){
-//		errors.push("Classification type required for save.");
-//	}
-//	if(!selectedPlace.properties.classifiers[0].category){
-//		errors.push("Classification category required for save.");
-//	}
-//	if(!selectedPlace.properties.classifiers[0].subcategory){
-//		errors.push("Classification subcategory required for save.");
-//	}
 	return errors;
 };
 
@@ -629,7 +620,6 @@ WELOCALLY_AddPlaceWidget.prototype.validGeocodeForSearch = function (geocode) {
 	hasAll = hasAll && _instance.hasType("route", geocode.address_components);
 	hasAll = hasAll && _instance.hasType("locality", geocode.address_components);
 	hasAll = hasAll && _instance.hasType("administrative_area_level_1", geocode.address_components);
-	hasAll = hasAll && _instance.hasType("postal_code", geocode.address_components);
 
 	return hasAll;
 	

@@ -102,7 +102,6 @@ if (!class_exists('WelocallyWPPagination')) {
 			if(!empty($filter))
 				$query = $query.$this->makeFilterSQLFromParts($this->makeFilterFromQuerystring(html_entity_decode ($filter)));
 			
-			syslog(LOG_WARNING,'metadata query:'.$query);
 			
 			$total = $wpdb->get_var( $wpdb->prepare( $query ) );
 			$per_page = $pagesize;
@@ -171,8 +170,7 @@ if (!class_exists('WelocallyWPPagination')) {
 			//now manage the page
 			$start = ($page-1)*$pagesize;  
 			$query = $query.sprintf(" LIMIT %d,%d",$start, $pagesize); 
-			
-			syslog(LOG_WARNING,'content query:'.$query);
+
 				
 			$results = $wpdb->get_results($query, ARRAY_A);
 			$vcontent ="";
@@ -243,7 +241,7 @@ if (!class_exists('WelocallyWPPagination')) {
 		    	$t->filterOperator = " LIKE ";
 		    } else 
 		    	$t->filterOperator = $operator;
-		    syslog(LOG_WARNING,print_r($t,true));
+
 		    return $t;
 		}
 		
