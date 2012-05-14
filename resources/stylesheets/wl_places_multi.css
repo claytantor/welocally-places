@@ -2,6 +2,7 @@
 /* overall styling for multi widget */ 
 .wl_places_multi_widget{
 	width: 98%;
+	max-width: 660px;
 	color: #666;
 	font-family: 'Carme', verdana, arial, helvetica, sans-serif;
 }

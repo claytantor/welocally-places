@@ -124,14 +124,21 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$placesURL = trailingslashit( WP_PLUGIN_URL ) . trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
 			
 			//app stuff, for right now we will embed this key but this should be coming from a web service
-			wp_enqueue_script('jquery' , 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');			
-			wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
+            wp_deregister_script( 'jquery' );
+            wp_register_script('jquery' , 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
+            wp_enqueue_script( 'jquery' );
+            
+            wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
 			
 			if(!empty($options['key1'])){
 				wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?key='.$options['key1'].'&sensor=false&language=en' , false , '3');							
 			} else {
 				wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?sensor=false' , false , '3');							
 			}			
+			
+			//jquery ui
+			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
+			wp_enqueue_style( 'jquery-ui-style' );	
 			
 			//welocally
 			wp_enqueue_script('wl_base_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_base.js', array('jquery'), WelocallyPlaces::VERSION);
@@ -177,8 +184,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_enqueue_script('wl_pager', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_pager_wp.js', array('jquery'), WelocallyPlaces::VERSION);
 					 	
 			wp_enqueue_style('thickbox');
-			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
-			wp_enqueue_style( 'jquery-ui-style' );	
+			
+			//add places
 			wp_enqueue_style( 'wl_places_addplace_style',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_addplace.css',array(), WelocallyPlaces::VERSION, 'screen' );	
 			
 			
