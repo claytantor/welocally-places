@@ -50,6 +50,16 @@ A: It should work, it has not been tested. Please give us feedback about your ex
 
 
 == Changelog ==
+1.2.21
+203	Update documentation to include proper version requirements
+202	JQuery Load Native for 3.3.1
+
+1.2.20
+201	Test localhost setup
+200	Add Place in Places Manager	
+199	De walrus Aalsmeerderdijk 452 1436 BM Aalsmeerderbrug
+198	Clear all floats on tag and widget templates
+
 1.2.19
 196	Feature	Remove Registration Requirement	
 195	Feature	Remove any CURL Concepts	
