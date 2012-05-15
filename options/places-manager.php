@@ -32,8 +32,6 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-manager', 
 
 ?>
 <form method="post" action="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">
-<?php
-if(count($places)>0):?>
 
 <div class="template-wrapper" style="margin-top: 20px;">
 		<div id="wl_places_mgr_wrapper"></div>
@@ -62,23 +60,6 @@ if(count($places)>0):?>
 		</div>
 	</div>
 			
-	<?php
-	
-	/*<tr valign="top">
-		<td colspan="2">
-			<?php wp_nonce_field( 'welocally-places-manager','welocally_places_manager_nonce', true, true ); ?>
-			<p class="submit"><input type="submit" name="Submit" class="button-primary" value="<?php _e( 'Delete Post Places' ); ?>"/></p>		
-		</td>
-	</tr>*/ ?>
-<?php
-else:?>
-	<tr valign="top">
-		<td colspan="2">
-			<span class="wl_options_heading"><?php _e( 'No Places Found' ); ?></span>
-		</td>
-	</tr>
 
-<?php endif;
-?>
 </form>
 </div> 

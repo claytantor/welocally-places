@@ -47,8 +47,10 @@ WELOCALLY_PlaceManager.prototype.makeWrapper = function(){
 	
 	jQuery(wrapper).append(btnAdd);
 		
-	var filterField = jQuery('<div style="margin-bottom: 5px; "><div style="display:inline-block; width: 150px;">Enter Search Term</div><div style="display:inline-block;">'+
+	var filterField = jQuery('<div id="wl_placesmgr_searchterm" style="margin-bottom: 5px; "><div style="display:inline-block; width: 150px;">Enter Search Term</div><div style="display:inline-block;">'+
 			' <input type="text" id="wl_placemgr_filter" style="width:400px"/><a class="wl_placemgr_button" id="wl_placemgr_filter_btn" href="#">search</a></div></div>');	
+	//#wl_placesmgr_searchterm
+	jQuery(filterField).css('display','none');
 	jQuery(filterField).find('a').click(function(event,ui){
 		_instance.pager.cfg.filter= 'place~'+jQuery(filterField).find('input').val();
 		_instance.pager.getMetadata();
@@ -80,6 +82,8 @@ WELOCALLY_PlaceManager.prototype.makeWrapper = function(){
 
 
 WELOCALLY_PlaceManager.prototype.setPlaceRow = function(i, place, row) {
+	
+	jQuery(this.wrapper).find('#wl_placesmgr_searchterm').show();
 	
 	
 	var placeRowContent = jQuery('<div></div>');	
