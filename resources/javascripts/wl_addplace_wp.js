@@ -152,6 +152,15 @@ WELOCALLY_AddPlaceWidget.prototype.setStatus = function(statusArea, message, typ
 		}			
 };
 
+WELOCALLY_AddPlaceWidget.prototype.clearFields = function() {
+	var _instance = this;
+	jQuery('#wl_addplace_form').remove();
+	this.formArea = this.createForm(this.map_canvas);
+	jQuery(_instance.wrapper).append(this.formArea);
+	_instance.setStatus(_instance.statusArea, '','message',true);
+	jQuery(this.map_canvas).css('display','none');
+};
+
 WELOCALLY_AddPlaceWidget.prototype.createForm = function(map_canvas) {
 	var _instance = this;
 	var formArea = jQuery('<div id="wl_addplace_form"></div>');
@@ -608,7 +617,7 @@ WELOCALLY_AddPlaceWidget.prototype.setSelectedPlace = function(selectedPlace) {
 	jQuery(wlSelectedTagArea).append(inputArea);
 	jQuery(selectedPlaceArea).append(wlSelectedTagArea);	
 	
-	_instance.setStatus(_instance.statusArea, selectedPlaceArea,'wl_clear', false);
+	_instance.setStatus(_instance.statusArea, selectedPlaceArea,'wl_clear_both', false);
 	
 };
 

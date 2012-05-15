@@ -72,12 +72,8 @@ jQuery(document).ready(function() {
 </script>
 
 
-<p><?php _e( 'These are the general settings for Welocally Places.' ); ?></p>
-
 <form method="post" action="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-general' ?>">
-
-<span class="wl_options_heading"><?php _e( 'General Settings' ); ?></span>
-<table class="form-table">
+<table class="form-table" style="margin-top:20px;">
 	<tr valign="top">
 		<th scope="row"><?php _e('General Map Options' ); ?></th>
 		<td>

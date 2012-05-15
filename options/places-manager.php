@@ -34,10 +34,8 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-manager', 
 <form method="post" action="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-manager' ?>">
 <?php
 if(count($places)>0):?>
-<span class="wl_options_heading"><?php _e( 'Places' ); ?></span>
-<p/>
 
-<div class="template-wrapper">
+<div class="template-wrapper" style="margin-top: 20px;">
 		<div id="wl_places_mgr_wrapper"></div>
 		<div>
 			<script type="text/javascript" charset="utf-8">

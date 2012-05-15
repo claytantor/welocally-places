@@ -39,9 +39,16 @@ WELOCALLY_PlaceManager.prototype.makeWrapper = function(){
 	this.deleteDialog.css('display','none');
 	jQuery(wrapper).append(this.deleteDialog);
 	
+	//the add place button
+	var btnAdd = jQuery('<div style="margin-bottom: 5px;"><div style="display:inline-block; width: 150px;">Create New Place:</div>'+
+			'<div style="display:inline-block;"><a class="wl_placemgr_button" href="#">add place</a></div></div>');
 	
+	jQuery(btnAdd).bind('click',{instance: this}, this.addHandler);
 	
-	var filterField = jQuery('<div style="margin-bottom: 5px;">Enter Search Term <input type="text" id="wl_placemgr_filter" style="width:400px"/><a class="wl_placemgr_button" id="wl_placemgr_filter_btn" href="#">search</a></div>');	
+	jQuery(wrapper).append(btnAdd);
+		
+	var filterField = jQuery('<div style="margin-bottom: 5px; "><div style="display:inline-block; width: 150px;">Enter Search Term</div><div style="display:inline-block;">'+
+			' <input type="text" id="wl_placemgr_filter" style="width:400px"/><a class="wl_placemgr_button" id="wl_placemgr_filter_btn" href="#">search</a></div></div>');	
 	jQuery(filterField).find('a').click(function(event,ui){
 		_instance.pager.cfg.filter= 'place~'+jQuery(filterField).find('input').val();
 		_instance.pager.getMetadata();
@@ -126,6 +133,38 @@ WELOCALLY_PlaceManager.prototype.editHandler = function(event,ui) {
 	
 	return false;
 		
+};
+
+
+WELOCALLY_PlaceManager.prototype.addHandler = function(event,ui) {
+	var _instance = event.data.instance;
+	_instance.addPlaceWidget.clearFields();
+	
+	jQuery( _instance.addPlaceWrapper).dialog({
+		title: 'add place',
+		position: "top",
+		minWidth: 650,
+		modal: true
+	});
+	
+	jQuery(_instance.addPlaceWrapper).bind('dialogclose', {
+		instance : _instance
+	}, _instance.addDialogClosedHandler);
+
+	
+	return false;
+		
+};
+
+
+WELOCALLY_PlaceManager.prototype.addDialogClosedHandler = function(event,ui) {
+	var _instance = event.data.instance;
+	
+	_instance.pager.getMetadata();	
+	_instance.pager.load(1);	
+	
+	
+	return false;	
 };
 
 WELOCALLY_PlaceManager.prototype.editDialogClosedHandler = function(event,ui) {

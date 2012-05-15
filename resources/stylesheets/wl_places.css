@@ -58,9 +58,7 @@
    	color: #777;
 }
 
-.wl_clear {
-	clear:both;
-}
+.wl_clear_both { clear:both; }
 
 .wl_ajax_loading { width: 32px; height:32px; }
 
@@ -117,7 +115,6 @@
     float:left;
 }
  
-.clear {clear:both}
 
 
 .wl_category_container_tag_empty{ display: none }

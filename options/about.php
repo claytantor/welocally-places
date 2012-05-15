@@ -11,8 +11,7 @@ include($menubar_include);
 
 <div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
 <h2>Welocally Places About</h2>
-
-<span class="wl_options_heading"><?php _e( 'Plugin Info' ); ?></span>
+<div style="margin-top:20px;">
 <table class="form-table">
 	<tr valign="top">
 		<th scope="row"><?php _e( 'Version' ); ?></th>
@@ -32,6 +31,6 @@ include($menubar_include);
 		</td>
 	</tr>		
 </table>
-
+</div>
 				
 </div> <!--wrap end-->
