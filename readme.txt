@@ -1,8 +1,8 @@
 === Welocally Places Basic ===
 Contributors: claytantor 
-Tags: hyperlocal, geocoding, places, maps, foodie, travel
-Requires at least: 2.8, jQuery 1.4.1 or greater
-Tested up to: 3.2.1
+Tags: hyperlocal, geocoding, places, maps, foodie, travel, real estate, business directories
+Requires at least: 3.3.1 with jQuery 1.6.1 or greater
+Tested up to: 3.3.2
 Stable tag: trunk
 License: GPL v2 (GNU General Public License v2)
 

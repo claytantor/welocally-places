@@ -4,7 +4,7 @@
 Plugin Name: Welocally Places Basic
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
 Description: Great maps that link to your content. The Welocally Places plugin lets easily associate places to your content without manual geocoding. Add any place to your database and link it to your posts and categories with simple shortcodes. The map widget makes it easy for your users to find the places your are writing about on a map and is smart enough to automatically relate places by category.
-Version: 1.2.20
+Version: 1.2.21
 Author: Welocally  
 Author URI: http://welocally.com
 License: GPL2 
@@ -12,6 +12,7 @@ License: GPL2
 
 register_activation_hook(__FILE__, 'welocally_activate');
 register_deactivation_hook( __FILE__, 'welocally_deactivate' );
+
 add_action('admin_head', 'welocally_requirements_check');
 add_action('wp_loaded', 'wl_self_deprecating_sidebar_registration');
 add_action('wp_ajax_save_place', 'welocally_save_place');
@@ -189,6 +190,7 @@ function welocally_activate() {
 		$wlPlaces->on_activate();
 	}
 }
+
 
 function welocally_deactivate() {	
 	if(function_exists('wl_customize_deactivate')){		

@@ -9,8 +9,9 @@
 </ul>
 <h2><a name="Requirements"></a>Requirements</h2>
 <ul>
-	<li>Wordpress 2.8 or Greater</li>
-	<li>jQuery 1.4.1 or Greater (included in Wordpress)</li>
+	<li>Wordpress 3.3.1 or Greater</li>
+	<li>jQuery 1.6.1 or Greater (included in Wordpress)</li>
+	<li>jQuery UI 1.8.16 or Greater (enqueued during load via Google CDN)</li>
 </ul>
 <h3>Authoring Browser Support</h3>
 <p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/09/support_author.png"><img class="aligncenter size-full wp-image-1049" title="support_author" src="http://welocally.com/wp-content/uploads/2011/09/support_author.png" alt="" width="356" height="128" /></a></p>

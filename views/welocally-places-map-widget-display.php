@@ -26,7 +26,8 @@ $options = $wlPlaces->getOptions();
 		  		.init();
   		
   		//now register the display for the place
-	    placeSelected.setWrapper(cfg, jQuery(placesMulti._selectedSection));	          
+	    placeSelected.initCfg(cfg);
+		placesMulti.getSelectedArea().append(placeSelected.makeWrapper());           
 	 
       //]]>
       </script>
