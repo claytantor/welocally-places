@@ -156,9 +156,9 @@ function welocally_delete_place() {
 	
 	global $wpdb, $wlPlaces;
 
-	$placeId = $_POST['wl_id'];
+	//$placeId = $_POST['wl_id'];
 	$recordId = $_POST['id'];
-	$wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $placeId));
+	$wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}wl_places WHERE id = %d", $recordId));
 		
 	echo '{ "id":'.$recordId.',"status": "SUCCEED", "action": "DELETE" }';
 

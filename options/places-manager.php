@@ -5,7 +5,8 @@ $places = $wlPlaces->getPlacesNew();
 <script type="text/javascript">
 
 
-function setPlaceRow(i, place){
+function setPlaceRow(i, placeJSON){
+	var place = jQuery.parseJSON(placeJSON);
 	window.wlPlacesManager.setPlaceRow(i, place, jQuery('#wl_placemgr_place_'+i));
 }
 

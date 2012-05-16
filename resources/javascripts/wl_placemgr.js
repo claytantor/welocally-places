@@ -83,38 +83,60 @@ WELOCALLY_PlaceManager.prototype.makeWrapper = function(){
 
 WELOCALLY_PlaceManager.prototype.setPlaceRow = function(i, place, row) {
 	
-	jQuery(this.wrapper).find('#wl_placesmgr_searchterm').show();
-	
-	
-	var placeRowContent = jQuery('<div></div>');	
-	jQuery(placeRowContent).append('<div class="wl_placemgr_place_tag">[welocally id="'+place._id+'" /]</div>');	
-	
-	var placeInfo = jQuery('<div class="wl_placemgr_place_info"></div>');
-
-	jQuery(placeInfo).append('<div class="place_field">'+place.properties.name+'</div>');
-	jQuery(placeInfo).append('<div class="place_field">'+place.properties.address+'</div>');
-	jQuery(placeInfo).append('<div class="place_field">'+place.properties.city+'</div>');
-	jQuery(placeInfo).append('<div class="place_field">'+place.properties.province+'</div>');
-	jQuery(placeInfo).append('<div class="place_field">'+place.properties.postcode+'</div>');
-	if(place.properties.website)
-		jQuery(placeInfo).append('<div class="place_field">'+place.properties.website+'</div>');
-	if(place.properties.phone)
-		jQuery(placeInfo).append('<div class="place_field">'+place.properties.phone+'</div>');
-	jQuery(placeRowContent).append(placeInfo);
-	
-	var actions = jQuery('<div class="wl_placemgr_actions"></div>');
-	var btnEdit = jQuery('<a class="wl_placemgr_button" href="#">edit</a>');
-	jQuery(btnEdit).bind('click',{instance: this, place: place, index: i, row: row}, this.editHandler);
-
-	var btnDelete = jQuery('<a class="wl_placemgr_button" href="#">delete</a>');
-	
-	jQuery(btnDelete).bind('click',{instance: this, place: place, index: i, row: row}, this.deleteDialogHandler);
-	
-	jQuery(actions).append(btnEdit);
-	jQuery(actions).append(btnDelete);		
-	jQuery(placeRowContent).append(actions);
+	if(place){
+		jQuery(this.wrapper).find('#wl_placesmgr_searchterm').show();
 		
-	jQuery(row).html(placeRowContent);
+		
+		var placeRowContent = jQuery('<div></div>');	
+		jQuery(placeRowContent).append('<div class="wl_placemgr_place_tag">[welocally id="'+place._id+'" /]</div>');	
+		
+		var placeInfo = jQuery('<div class="wl_placemgr_place_info"></div>');
+
+		jQuery(placeInfo).append('<div class="place_field">'+place.properties.name+'</div>');
+		jQuery(placeInfo).append('<div class="place_field">'+place.properties.address+'</div>');
+		jQuery(placeInfo).append('<div class="place_field">'+place.properties.city+'</div>');
+		jQuery(placeInfo).append('<div class="place_field">'+place.properties.province+'</div>');
+		jQuery(placeInfo).append('<div class="place_field">'+place.properties.postcode+'</div>');
+		if(place.properties.website)
+			jQuery(placeInfo).append('<div class="place_field">'+place.properties.website+'</div>');
+		if(place.properties.phone)
+			jQuery(placeInfo).append('<div class="place_field">'+place.properties.phone+'</div>');
+		jQuery(placeRowContent).append(placeInfo);
+		
+		var actions = jQuery('<div class="wl_placemgr_actions"></div>');
+		var btnEdit = jQuery('<a class="wl_placemgr_button" href="#">edit</a>');
+		jQuery(btnEdit).bind('click',{instance: this, place: place, index: i, row: row}, this.editHandler);
+
+		var btnDelete = jQuery('<a class="wl_placemgr_button" href="#">delete</a>');
+		
+		jQuery(btnDelete).bind('click',{instance: this, place: place, index: i, row: row}, this.deleteDialogHandler);
+		
+		jQuery(actions).append(btnEdit);
+		jQuery(actions).append(btnDelete);		
+		jQuery(placeRowContent).append(actions);
+			
+		jQuery(row).html(placeRowContent);
+	} else {
+		
+		jQuery(this.wrapper).find('#wl_placesmgr_searchterm').show();
+		
+		
+		var placeRowContent = jQuery('<div></div>');	
+		
+		var placeInfo = jQuery('<div class="wl_placemgr_place_info">PLACE EMPTY PLEASE DELETE AND ADD A NEW ONE</div>');
+		jQuery(placeRowContent).append(placeInfo);
+		
+		var actions = jQuery('<div class="wl_placemgr_actions"></div>');
+		var btnDelete = jQuery('<a class="wl_placemgr_button" href="#">delete</a>');
+		
+		jQuery(btnDelete).bind('click',{instance: this, place: place, index: i, row: row}, this.deleteDialogHandler);
+		
+		jQuery(actions).append(btnDelete);		
+		jQuery(placeRowContent).append(actions);
+			
+		jQuery(row).html(placeRowContent);
+	}
+	
 };
 
 WELOCALLY_PlaceManager.prototype.editHandler = function(event,ui) {
@@ -191,12 +213,19 @@ WELOCALLY_PlaceManager.prototype.deleteDialogHandler = function(event,ui) {
 	jQuery( _instance.deleteDialog).bind('deleteplace',
 			event.data, 
 			_instance.deleteHandler);
-	jQuery( _instance.deleteDialog).html('Please confirm that you would like to delete '+
-			event.data.place.properties.name+' at '+event.data.place.properties.address+
-			'. <strong>This action can not be undone.</strong> You will also need to delete the tag from your post.');
+	var title = 'Delete Place?';
+	if(event.data.place) {
+		jQuery( _instance.deleteDialog).html('Please confirm that you would like to delete '+
+				event.data.place.properties.name+' at '+event.data.place.properties.address+
+				'. <strong>This action can not be undone.</strong> You will also need to delete the tag from your post.');
+		title = 'Delete '+event.data.place.properties.name+'?'
+	} else {
+		jQuery( _instance.deleteDialog).html('The place is missing from this record, you should go ahead and delete it and add a new place');
+	}
+	
 	jQuery( _instance.deleteDialog).dialog({
 		resizable: false,
-		title: 'Delete '+event.data.place.properties.name+'?',
+		title: title,
 		width: 400,
 		height:200,
 		modal: true,
@@ -223,8 +252,7 @@ WELOCALLY_PlaceManager.prototype.deleteHandler = function(event,ui) {
 	
 	var data = {
 			action: 'delete_place',
-			id: event.data.index,
-			wl_id: event.data.place._id
+			id: event.data.index
 	};
 		   
 	_instance.jqxhr = jQuery.ajax({

@@ -39,7 +39,7 @@ function wl_places_manager() {
 	$t->content = '<div class="%ROW_TOGGLE%" style="display:block;">' .
 			'<div class="wl_placemgr_place_id field_inline">%id%</div>'.
 			'<div class="wl_placemgr_place field_inline" id="wl_placemgr_place_%id%"></div>'.
-			'<script type="text/javascript">var pval = %place%;' .
+			'<script type="text/javascript">var pval = \'%place%\';' .
 			'setPlaceRow(%id%, pval);' .
 			'</script>'.
 			'</div>';	
