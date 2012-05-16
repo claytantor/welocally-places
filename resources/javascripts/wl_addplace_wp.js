@@ -625,7 +625,6 @@ WELOCALLY_AddPlaceWidget.prototype.validGeocodeForSearch = function (geocode) {
 	var _instance = this;
 	
 	var hasAll = _instance.hasType("country", geocode.address_components);
-	hasAll = hasAll && _instance.hasType("street_number", geocode.address_components);
 	hasAll = hasAll && _instance.hasType("route", geocode.address_components);
 	hasAll = hasAll && _instance.hasType("locality", geocode.address_components);
 	hasAll = hasAll && _instance.hasType("administrative_area_level_1", geocode.address_components);
