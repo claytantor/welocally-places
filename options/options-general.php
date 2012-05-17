@@ -73,7 +73,7 @@ jQuery(document).ready(function() {
 
 
 <form method="post" action="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-general' ?>">
-<table class="form-table" style="margin-top:20px;">
+<table class="wl-form-table" style="margin-top:20px;">
 	<tr valign="top">
 		<th scope="row"><?php _e('General Map Options' ); ?></th>
 		<td>

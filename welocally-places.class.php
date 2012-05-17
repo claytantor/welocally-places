@@ -252,7 +252,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		}
 		
         /**
-		 * Creates the category and sets up the theme resource folder with sample config files. Calls updateMapPostMeta().
+		 * Creates the category and sets up the theme resource folder with sample 
+		 * config files. Calls updateMapPostMeta(). Does all the hard work of figuring out
+		 * what the database should look like.
 		 * 
 		 * @return void
 		 */
@@ -262,33 +264,126 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$now = time();
 			$firstTime = $now - ($now % 66400);
 			$this->create_category_if_not_exists( );
+						
 			
-			// create places table
-			$db_version = get_option('Welocally_DBVersion');
-			
-			if ($db_version != self::DB_VERSION) {
-                require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+			//never created before
+			if (!$this->tableExists($wpdb->prefix.'wl_places')) {
+				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
                 
                 $sql = "CREATE TABLE {$wpdb->prefix}wl_places (
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     wl_id VARCHAR(255) NOT NULL,
-                    place TEXT NULL,
+                    place TEXT NULL, " .
+                    "likes INT NULL DEFAULT 0, ".
+                    "lat DOUBLE NULL, " .
+                    "lng DOUBLE NULL,
                     created DATETIME NOT NULL
                 );";
-                dbDelta($sql);
-
+                dbDelta($sql);				
+			}
+			
+			if (!$this->tableExists($wpdb->prefix.'wl_places_posts')) {
+				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+                
                 $sql = "CREATE TABLE {$wpdb->prefix}wl_places_posts (
                     id INT PRIMARY KEY AUTO_INCREMENT,
                     place_id INT NOT NULL,
                     post_id MEDIUMINT(9) NOT NULL,
                     created DATETIME NOT NULL
                 );";
-                dbDelta($sql);
+                dbDelta($sql);			
 			}
 			
-			update_option('Welocally_DBVersion', self::DB_VERSION);
+			//version 1.2.21 and earler had places table but not geo
+			if (!$this->columnExists($wpdb->prefix.'wl_places', 'likes')) {
+				
+				$sql = "ALTER TABLE {$wpdb->prefix}wl_places ".
+					"ADD COLUMN likes INT NULL DEFAULT 0 AFTER place";
+
+				$wpdb->query($sql);                
+			}
 			
+			$upgrade_g1 = false;
+			if (!$this->columnExists($wpdb->prefix.'wl_places', 'lat')) {
+				$upgrade_g1 = true;
+                
+                $sql = "ALTER TABLE {$wpdb->prefix}wl_places " .
+                		"ADD COLUMN lat DOUBLE NULL AFTER likes";
+                //syslog(LOG_WARNING,'! column exists: '.$sql);
+                $wpdb->query($sql);   	
+			}
+		
+			if (!$this->columnExists($wpdb->prefix.'wl_places', 'lng')) {
+								
+				$upgrade_g1 = true;
+                
+                $sql = "ALTER TABLE {$wpdb->prefix}wl_places " .
+                		"ADD COLUMN lng DOUBLE NULL AFTER lat";
+                
+                $wpdb->query($sql);
+			}
 			
+			//put the latlng for all the places in the table
+			if(true){
+				$query = "SELECT id,place FROM {$wpdb->prefix}wl_places";
+				$results = $wpdb->get_results($query, ARRAY_A);
+				$count = count($results);
+			    for ($i = 0; $i < $count; $i++) {
+			    	$row = $results[$i];
+			    	//syslog(LOG_WARNING,'row: '.print_r($row,true));
+			    	$place = json_decode($row['place']);
+			    	syslog(LOG_WARNING,'place: '.print_r($place,true));
+			    	$lat = $place->geometry->coordinates[1];
+			    	$lng = $place->geometry->coordinates[0];
+			    	
+			    	//update row
+			    	$wpdb->update( 
+						$wpdb->prefix.'wl_places', 
+						array( 
+							'lat' => $lat,	// float
+							'lng' => $lng	// float 
+						), 
+						array( 'id' => $row['id'] ), 
+						array( 
+							'%s',	// value1
+							'%s'	// value2
+						), 
+						array( '%d' ) 
+					);
+			    				    	
+			    }
+			}
+							
+		}
+		
+		public function tableExists($tableName){
+			global $wpdb;
+			$query = sprintf("SHOW TABLES LIKE '%s' ",$tableName);
+			$result = $wpdb->get_var( $wpdb->prepare( $query ) );
+			
+			if($result == $tableName){
+				//syslog(LOG_WARNING,'table exists: '.print_r($result,true));
+				return true;
+			} else {
+				//syslog(LOG_WARNING,'table NOT exists: '.print_r($result,true));
+				return false;
+			}
+		}
+		
+		public function columnExists($tableName, $columnName){
+
+			global $wpdb;
+			$query = sprintf("SHOW COLUMNS FROM %s LIKE '%s'",$tableName, $columnName);
+			//syslog(LOG_WARNING,'column exists test: '.$query);
+			$result = $wpdb->get_var( $wpdb->prepare( $query ) );
+			//syslog(LOG_WARNING,'result col: '.print_r($result,true));
+			if($result == $columnName){
+				//syslog(LOG_WARNING,'column exists: '.print_r($result,true));
+				return true;
+			} else {
+				//syslog(LOG_WARNING,'column NOT exists: '.print_r($result,true));
+				return false;
+			}
 		}
 
 

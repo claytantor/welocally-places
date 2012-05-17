@@ -12,7 +12,7 @@ include($menubar_include);
 <div class="icon32"><img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/screen_icon.png" alt="" title="" height="32px" width="32px"/><br /></div>
 <h2>Welocally Places About</h2>
 <div style="margin-top:20px;">
-<table class="form-table">
+<table class="wl-form-table">
 	<tr valign="top">
 		<th scope="row"><?php _e( 'Version' ); ?></th>
 		<td><div><?php echo $wlPlaces->wl_places_version();  ?></div></td>

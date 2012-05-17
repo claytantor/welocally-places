@@ -6,7 +6,7 @@
 font-variant: small-caps; font:1.8em;
 text-transform:uppercase}
 
-.form-table {  
+.wl-form-table {  
 	border-collapse: separate;
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
@@ -165,7 +165,7 @@ table.filter_example td {
 font-variant: small-caps; font:1.8em;
 text-transform:uppercase}
 
-.form-table {  
+.wl-form-table {  
 	border-collapse: separate;
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
