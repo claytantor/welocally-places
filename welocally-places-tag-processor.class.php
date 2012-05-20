@@ -30,9 +30,21 @@ if (!class_exists('WelocallyPlaces_TagProcessor')) {
                       
             if ($place == null) {
                 $place_info = $this->queryPlace($tag);
+                
+                $geometry = $place_info->geometry;
+                $lat = $geometry->coodinates[1];
+                $lng = $geometry->coodinates[0];
+                syslog(LOG_WARNING,print_r($geometry,true));
 
-                if ($wpdb->insert("{$wpdb->prefix}wl_places", array('wl_id' => $tag->id,
-                                                                    'place' => json_encode($place_info))) ) {
+                
+
+                if ($wpdb->insert("{$wpdb->prefix}wl_places", 
+                		array('wl_id' => $tag->id,
+                                'place' => json_encode($place_info),
+                                'lat' =>  $lat,
+                                'lng' =>  $lng
+                                  
+                                ))) {
                                                                         
                     $place = $wpdb->get_row( 
                         $wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id) );

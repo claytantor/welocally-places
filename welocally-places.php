@@ -81,10 +81,10 @@ function welocally_save_place() {
 		date_default_timezone_set('UTC');
 		$mysqldate = date( 'Y-m-d H:i:s', time() );
 		$placeToSave['_id'] = $wlPlaces->generatePlaceId($placeToSave['geometry']['coordinates'][1],$placeToSave['geometry']['coordinates'][0]); 
-	
+	                
 			//save to places table
 		if ($wpdb->insert("{$wpdb->prefix}wl_places", 
-			array('wl_id' => $placeToSave['_id'], 'place' => json_encode($placeToSave), 'created' =>$mysqldate )) ) {
+			array('wl_id' => $placeToSave['_id'], 'place' => json_encode($placeToSave), 'lat' =>  $placeToSave['geometry']['coordinates'][1], 'lng' =>  $placeToSave['geometry']['coordinates'][0], 'created' =>$mysqldate )) ) {
 				$place = $wpdb->get_row(
 				$wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $placeToSave['_id']) );
 	    }

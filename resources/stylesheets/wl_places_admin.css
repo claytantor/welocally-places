@@ -165,15 +165,6 @@ table.filter_example td {
 font-variant: small-caps; font:1.8em;
 text-transform:uppercase}
 
-.wl-form-table {  
-	border-collapse: separate;
-	-webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px;
-   	padding: 4px;
-	width:98%; margin-bottom:10px;  
-	border: 1px solid #034D96; 
-	background: #DFEFF2; padding: 5px; } 
 		
 .rollover {
 	display: inline-block;
