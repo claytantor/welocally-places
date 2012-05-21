@@ -15,7 +15,19 @@ text-transform:uppercase}
 	width:98%; margin-bottom:10px;  
 	border: 1px solid #034D96; 
 	background: #DFEFF2; padding: 5px; } 
-		
+	
+table.wl-form-table	tr  > td {
+	padding-bottom: 1.2em;
+}
+	
+table.wl-form-table	tr  > th {
+	vertical-align: top;
+	text-align: right;
+	padding-right: 5px;
+	width: 250px;
+}
+	
+			
 .rollover {
 	display: inline-block;
 }

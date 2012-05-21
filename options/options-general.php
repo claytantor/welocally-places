@@ -25,6 +25,7 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	if(!isset($options['show_letters']) || $options['show_letters'] == ''){
 		$options['show_letters'] = 'off';
 	} 
+	$options[ 'widget_post_type' ] = $_POST[ 'welocally_widget_post_type' ];
 	
 	//welocally_show_letters
 	$options[ 'show_selection' ] = $_POST[ 'welocally_show_selection' ];
@@ -89,6 +90,7 @@ jQuery(document).ready(function() {
 				<li><input type="checkbox" id="welocally_show_letters" name="welocally_show_letters" <?php if($options[ 'show_letters' ]=='on') { echo 'checked';  }  ?>>Show Indexed Markers</li>
 				<li><input type="checkbox" id="welocally_show_selection" name="welocally_show_selection" <?php if($options[ 'show_selection' ]=='on') { echo 'checked';  }  ?>>Show Selection Item List</li>
 				<li>Selection Item Style<br /><input style="width:400px" type="text" id="welocally_widget_selection_style" name="welocally_widget_selection_style" value="<?php echo $options[ 'widget_selection_style' ];?>"></li>
+				<li>Post Type<br /><input style="width:400px" type="text" id="welocally_widget_post_type" name="welocally_widget_post_type" value="<?php echo $options[ 'widget_post_type' ];?>"></li>
 			</ul>
 		</td>
 	</tr>

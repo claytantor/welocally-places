@@ -18,10 +18,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		global $wlPlaces;
 		$wlPlaces->saveOptions($options);
 		
-		//update places
-		if ( array_key_exists( 'update_places', $options )) {
-			update_places();
-		}
 	}
 	
 	function delete_post_places($post_place_id=null) {
@@ -82,32 +78,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 	}
 	
 	
-	function update_places(){
-		global $wlPlaces;
-		$cat_ID = $wlPlaces->placeCategory();		
-		$places_in_category_posts = $wlPlaces->getPlacePostsInCategory($cat_ID, null);
-		
-		$index = 0;
-		foreach( $places_in_category_posts as $post ) {	
-			
-			
-			$placeJsonRaw = str_replace(
-						"\'", "", 
-						get_post_meta( $post->ID, '_PlaceSelected', true ));		
-											
-			$placeJson = 
-				json_decode($placeJsonRaw, true); 
-			
-			$pname = str_replace("\\'", "'", $placeJson{'name'});
-			
-			if($pname != null){
-				$newPlaceJson = convert_legacy_place($placeJsonRaw);
-				update_post_meta( $post->ID, '_PlaceSelected',  $newPlaceJson);
-			}
-					
-		}		
-		
-	}
+
 	
 	/**
 	 * 	
@@ -234,26 +205,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		global $wlPlaces;
 		return $wlPlaces->getPlacePostsInCategory($categoryId, 'post');
 	}
-	
-	
-	/*function get_places_for_category($categoryId){
-		global $wlPlaces;
-		$options = $wlPlaces->getOptions();
-		$result = array();
-		$places_in_category_posts = $wlPlaces->getPlacePostsInCategory($categoryId, 'post');
-		foreach( $places_in_category_posts as $post ){
-			$places = get_post_places($post->ID);  
-    		foreach ($places as $place){
-   				if($options['infobox_title_link']=='on'){
-   					$place->properties->titlelink=get_permalink( $post->ID ) ;	
-   				}   						
-	   			array_push($result, $place);
-    		}
-		}		
-		return json_encode($result);		
-	}*/
-	
-		
+			
 	function get_legacy_place_by_post_id( $postId = null) {
 		global $wpdb;
 			
@@ -287,49 +239,6 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		wl_save_options($options);
 
 	}
-	
-	
-	/*function wl_get_post_excerpt( $postId = null) {
-		global $wpdb;
-		
-		$query = "
-			SELECT $wpdb->posts.*
-			 	FROM $wpdb->posts 
-			WHERE $wpdb->posts.post_status = 'publish'
-			AND $wpdb->posts.ID = $postId
-			GROUP BY $wpdb->posts.ID LIMIT 1";
-			
-		$queryResult = $wpdb->get_results($query, OBJECT);
-		
-		$excerpt = wl_trim_excerpt($queryResult[0]->post_content, $queryResult[0]->post_excerpt);	
-		$excerpt = WelocallyPlaces_Tag::searchAndReplace($excerpt, create_function('$tag,$tag_str', 'return "";'));
-		$excerpt = str_replace( '\'', '', $excerpt );
-		$excerpt = trim( preg_replace( '/\s+/', ' ', $excerpt ) );
-		
-		return $excerpt;
-	}*/
-	
-	/*function wl_trim_excerpt($text, $excerpt)
-	{
-		if ($excerpt) return $excerpt;
-	
-		$text = strip_shortcodes( $text );
-	
-		$text = str_replace(']]>', ']]&gt;', $text);
-		$text = strip_tags($text);
-		$excerpt_length = apply_filters('excerpt_length', 55);
-		$excerpt_more = apply_filters('excerpt_more', ' ' . '[...]');
-		$words = preg_split("/[\n\r\t ]+/", $text, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
-		if ( count($words) > $excerpt_length ) {
-				array_pop($words);
-				$text = implode(' ', $words);
-				$text = $text . $excerpt_more;
-		} else {
-				$text = implode(' ', $words);
-		}
-	
-		return apply_filters('wp_trim_excerpt', $text, $raw_excerpt);
-	}*/
 	
 	function places_get_mapview_link( ) {
 		global $wlPlaces;

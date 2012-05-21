@@ -67,6 +67,9 @@ function wl_self_deprecating_sidebar_registration() {
 	wp_set_sidebars_widgets($new_widgets);
 }
 
+/**
+ * consider moving core impl to the class
+ */
 function welocally_save_place() {
 	
 	global $wpdb, $wlPlaces;

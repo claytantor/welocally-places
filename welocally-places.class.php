@@ -8,7 +8,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	 */
 	class WelocallyPlaces {
 		
-		const VERSION 				= '1.2.21';
+		const VERSION 				= '1.2.22';
 		const DB_VERSION			= '2.0';
 		const WLERROROPT			= '_welocally_errors';
 		const CATEGORYNAME	 		= 'Place';
@@ -24,12 +24,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		public $pluginUrl;
 		public $pluginDomain = 'welocallyPlaces';
 		
-		public $metaTags = array(
-					'_isWLPlace',
-					'_PlaceSelected',
-					'_ShowPlaceAddress',
-					self::WLERROROPT
-					);
+		//public $metaTags = array();
 		
 		
 		/**
@@ -61,15 +56,16 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			add_action( 'pre_get_posts',	array( $this, 'setOptions' ) );
 			add_action( 'admin_enqueue_scripts', 		array( $this, 'loadAdminDomainStylesScripts' ) );
 			add_action( 'admin_menu', 		array( $this, 'addPlaceBox' ) );
-			add_action( 'save_post',        array( $this, 'tagHandling'));
+			add_action( 'save_post',        array( $this, 'handlePublish'));
 			
 			add_action( 'sp_places_post_errors', array( 'WLPLACES_Post_Exception', 'displayMessage' ) );
 			add_action( 'sp_places_options_top', array( 'WLPLACES_Options_Exception', 'displayMessage') );
 
-            add_filter( 'the_content', array( $this, 'replaceTagsInContent') );
-           
+            //add_filter( 'the_content', array( $this, 'replaceTagsInContent') );
             
-                       
+            add_shortcode('welocally', array ($this,'handleWelocallyPlacesShortcode'));
+           
+                           
 		}
 		
 		
@@ -218,6 +214,88 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 		}
 		
+		public function handleWelocallyPlacesShortcode($attrs,$content = null) {
+			
+			global $post;
+			
+			extract(shortcode_atts(array (
+				'categories' => null,
+				'category' => null,
+				'id' => null,
+				'post_type'=> null				
+			), $attrs));			
+			
+			//strip paragragh tags if exists this is required
+			if ( '</p>' == substr( $content, 0, 4 )
+			and '<p>' == substr( $content, strlen( $content ) - 3 ) )
+				$content = substr( $content, 4, strlen( $content ) - 7 );
+			
+			//template for javscript
+			$t = new StdClass();
+			$t->uid = uniqid();
+			
+			if(!empty($id)) {
+				//this is a place
+				$t->wl_id = $id;
+				
+				$this->processPlaceTag($t, $post->ID);
+				
+				if(isset($t->place)){
+					ob_start();
+	                include(dirname(__FILE__) . '/views/place-content-template.php');
+	                $resultContent = ob_get_contents();
+	                ob_end_clean();			            
+		            $t = null;			      
+		            return $resultContent;						
+				} else {
+					return false;
+				}					
+			}
+			
+			//right now only one is supported
+			$catsSlug = array();						
+			if(!empty($categories)) 
+				$catsSlug = explode(",", $categories);
+			else if(!empty($category))
+				$catsSlug = explode(",", $category);
+				
+			$string = preg_replace('/&(?!amp;)/', '&amp;', $catsSlug[0]);
+			$string = preg_replace('/#038;/', '', $string);
+		
+			$term = get_term_by('name',$string,'category');
+			if(!isset($post_type))
+				$post_type = 'post';
+
+			return $this->getCategoryMapMarkup($term->term_id, null, null, 25, $post_type);		
+
+		}
+		
+		
+		public function processPlaceTag($tag, $postId=0) {
+        	
+            global $wpdb;
+            global $wlPlaces;
+                       
+            if (!$tag->wl_id)
+                return false;
+                
+            $postId = intval($postId);
+            
+            $place = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->wl_id));
+            
+            //there is a problem
+            if (!$place)
+                return false;
+            else {
+            	$tag->place = $place;
+            	$tag->placeJSON = $place->place;
+            	
+            }
+            
+            return $place;
+
+        }
+		
 		public function makeUniqueGoogleFontList($fontList){
 		
 			$resultFonts = '';
@@ -309,7 +387,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
                 
                 $sql = "ALTER TABLE {$wpdb->prefix}wl_places " .
                 		"ADD COLUMN lat DOUBLE NULL AFTER likes";
-                //syslog(LOG_WARNING,'! column exists: '.$sql);
                 $wpdb->query($sql);   	
 			}
 		
@@ -330,9 +407,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				$count = count($results);
 			    for ($i = 0; $i < $count; $i++) {
 			    	$row = $results[$i];
-			    	//syslog(LOG_WARNING,'row: '.print_r($row,true));
 			    	$place = json_decode($row['place']);
-			    	syslog(LOG_WARNING,'place: '.print_r($place,true));
+			    	
 			    	$lat = $place->geometry->coordinates[1];
 			    	$lng = $place->geometry->coordinates[0];
 			    	
@@ -362,10 +438,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$result = $wpdb->get_var( $wpdb->prepare( $query ) );
 			
 			if($result == $tableName){
-				//syslog(LOG_WARNING,'table exists: '.print_r($result,true));
 				return true;
 			} else {
-				//syslog(LOG_WARNING,'table NOT exists: '.print_r($result,true));
 				return false;
 			}
 		}
@@ -374,14 +448,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 
 			global $wpdb;
 			$query = sprintf("SHOW COLUMNS FROM %s LIKE '%s'",$tableName, $columnName);
-			//syslog(LOG_WARNING,'column exists test: '.$query);
 			$result = $wpdb->get_var( $wpdb->prepare( $query ) );
-			//syslog(LOG_WARNING,'result col: '.print_r($result,true));
 			if($result == $columnName){
-				//syslog(LOG_WARNING,'column exists: '.print_r($result,true));
 				return true;
 			} else {
-				//syslog(LOG_WARNING,'column NOT exists: '.print_r($result,true));
 				return false;
 			}
 		}
@@ -414,78 +484,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		
 		public function addPlaceMetaBox() {
 			global $post;
-			
-			$options = '';
-			$style = '';
-			$postId = $post->ID;
-			foreach ( $this->metaTags as $tag ) {
-				if ( $postId ) {
-					$$tag = get_post_meta( $postId, $tag, true );
-				} else {
-					$$tag = '';
-				}
-			}
-			
-			$isWLPlace = get_post_meta( $postId, '_isWLPlace', true );
-			$ShowPlaceAddress = get_post_meta( $postId, '_ShowPlaceAddress', true );
-			
-			$isPlaceChecked		= ( $isWLPlace == 'true' ) ? 'checked' : '';
-			$isNotPlaceChecked		= ( $isWLPlace == 'false' || $isWLPlace == '' || is_null(  $isWLPlace ) ) ? 'checked' : '';
-			$PlaceSelected = get_post_meta( $postId, '_PlaceSelected', true );
-						
 			include( dirname( __FILE__ ) . '/views/addplace-meta-box.php' );
 		}
 
-		public function replaceTagsInContent($content) {
-            return WelocallyPlaces_Tag::searchAndReplace($content, array($this, 'addTagMarkup'));
-		}
-
-		public function addTagMarkup($tag, $str) {
-			switch ($tag->type) {
-				case 'post':
-				default:
-					/* handle [welocally id="..." /] tags */
-					if (!$tag->id) return $str;
-
-					return $this->getPlaceMapMarkup($tag);
-					break;
-				case 'category':
-					/* handle [welocally categories="..." /] tag */
-
-					$categoryIds = array();
-
-					if (!$tag->categories):
-						$categoryIds = array(get_query_var('cat')); // fetch category from request
-					else:
-						$newcats = array();
-						//required for special chars
-						foreach ( $tag->categories as $cat ) {
-
-							//this seems rediculous to have to do
-							$string = preg_replace('/&(?!amp;)/', '&amp;', $cat);
-							$string = preg_replace('/#038;/', '', $string);
-
-							array_push($categoryIds, get_cat_ID($string));
-						}					
-
-					endif;
-
-					if (!$categoryIds) return $str;
-
-					$html = '';
-					foreach ($categoryIds as $cat)
-						$html .= $this->getCategoryMapMarkup(
-							$cat,
-							dirname(__FILE__) . '/views/category-map-content-template.php',
-							false,
-							25
-							);
-
-					return $html;
-
-					break;
-			}
-		}
 
 		/**
 		 * Builds a place map for a given tag.
@@ -496,9 +497,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		    global $post;
 		    global $wpdb;
 		    static $placecount = 0;
-		    
-		    //$place = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wl_places WHERE wl_id = %s", $tag->id));
-			
+		    			
 			//changing this to join so it actually must be in post places, someone please
 			//use your sprintf magic!
 			$place = $wpdb->get_row($wpdb->prepare(
@@ -567,15 +566,14 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$result = $wpdb->get_results($query, OBJECT);
 			return $result;		
 		
-//			$places = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT place FROM {$wpdb->prefix}wl_places p"));
-//		    
-//		    if ($places) 
-//		        return array_map('json_decode', $places);
-			
-		
 		}
 		
-		public function getPlaces($cat=null, $maxElements=25, $filter=true) {
+		
+		/**
+		 * this takes the category name, consider consolidating getplacesnew and this
+		 */
+		public function getPlaces($cat=null, $maxElements=25, $filter=true, $post_type='post') {
+			
 			
 			global $post;			
 						
@@ -588,8 +586,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			elseif (isset($post) && !(is_home() || is_front_page())){
 				//try to get category for post if possible
 				$post_categories = wp_get_post_categories( $post->ID );
-				if($post_categories){
-		
+				if($post_categories){		
 					foreach ($post_categories as $postCatId) {
 						$catObj = get_category( $postCatId );
 						if($catObj->name != 'Uncategorized' && $catObj->name != 'Place'){
@@ -598,8 +595,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					}
 				}
 			}
-
-			$posts = $this->getPlacePostsInCategory($cat);
+					
+			$posts = $this->getPlacePostsInCategory($cat,$post_type);
 
 			$t = new StdClass();
 			$t->uid = ++$uid;
@@ -616,6 +613,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				$post_places = $this->getPostPlaces($postlocal->ID);
 
 				foreach ($post_places as $place) {
+					
 					
 					//determin if we are filtering
 					if(!$filter || !in_array($place->_id, $pids)){
@@ -637,7 +635,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					break;
 				}
 			}	
-								
+					
 			return $t;
 		}
 
@@ -647,10 +645,11 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website.
 		 */
 		public function getCategoryMapMarkup(
-			$cat=null, $template=null, $showIfEmpty=null, $maxElements=25) {
+			$cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post') {
 			
 			
-			$t = $this->getPlaces($cat, $maxElements);		
+			$t = $this->getPlaces($cat, $maxElements, $post_type);	
+				
 					
 			//setup options
 			$options = $this->getOptions();
@@ -677,7 +676,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
             	
             	//this is being done so we can show all places if none are found in the cat
             	if($showIfEmpty && ($cat != $this->placeCategory())){
-            		return $this->getCategoryMapMarkup($this->placeCategory(), $template, false);           		
+            		return $this->getCategoryMapMarkup($this->placeCategory(), $template, false, $post_type);           		
             	} else {
             		include(dirname(__FILE__) . '/views/category-map-content-empty.php');
             	}
@@ -777,10 +776,13 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				update_post_meta( $postId, '_isWLPlace', 'false' );
 			}
 			
-	
 		}
-		
-        public function tagHandling($post_id) {
+
+	    /**
+	     * we do this instead of using the shortcode handler because if we didnt
+	     * we would have an extra database call on every tag hit
+	     */
+        public function handlePublish($post_id) {       	
             if (!wp_is_post_revision($post_id)) {
                 $post = get_post($post_id);
                 
@@ -790,6 +792,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
                 $result = $proc->processTags($tags, $post_id);
             }
         }
+		
 		
 		
 		/* gets the data from a URL */
@@ -815,7 +818,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
             $changed = false;
 		
 			$default_marker_icon = plugins_url() . "/welocally-places/resources/images/marker_all_base.png";
-			$default_update_places = 'off';
 			
 			$default_show_letters = 'on'; 
 			$default_show_selection = 'on'; 		
@@ -827,6 +829,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$default_show_letters_tag = 'on'; 
 			$default_show_selection_tag = 'on'; 		
 			$default_infobox_title_link_tag = 'on'; 
+			
+			$default_widget_post_type = 'post'; 
+						
 					
 			// Set current version level. Because this can be used to detect version changes (and to what extent), this
 			// information may be useful in future upgrades
@@ -839,6 +844,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			if ( !array_key_exists( 'show_letters', $options ) ) { $options[ 'show_letters' ] = $default_show_letters; $changed = true; }
 			if ( !array_key_exists( 'show_selection', $options ) ) { $options[ 'show_selection' ] = $default_show_selection; $changed = true; }
 			if ( !array_key_exists( 'infobox_title_link', $options ) ) { $options[ 'infobox_title_link' ] = $default_infobox_title_link; $changed = true; }
+			if ( !array_key_exists( 'widget_post_type', $options ) ) { $options[ 'widget_post_type' ] = $default_widget_post_type; $changed = true; }
 					
 			//tag
 			if ( !array_key_exists( 'show_letters_tag', $options ) ) { $options[ 'show_letters_tag' ] = $default_show_letters_tag; $changed = true; }
@@ -1065,7 +1071,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		}
 		
 		public function generatePlaceId($lat,$lng) {
-			//WL_10RyqzlSSjAd gMCImmeXYj_37.801379_-122.263600@1303263345
 			$guid = substr(uniqid().uniqid(), 0, 22);
 			$parts = explode(" ", microtime());
 			$placeId = "WL_".$guid."_".$lat."_".$lng."@".$parts[1];

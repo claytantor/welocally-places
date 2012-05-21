@@ -24,65 +24,63 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 					$widget_ops, $control_ops );
 			}
 		
+		
+			/**
+			 * needs to be refactored
+			 * 
+			 */
 			function widget( $args, $instance ) {
-				global $wp_query,$wlPlaces;
+				
+				global $wlPlaces;
 				$options = $wlPlaces->getOptions();
 				extract( $args );
 
-				/* User-selected settings. */
-				$title = $instance['title'];
-				$limit = $instance['limit'];
+	
+				$post_type = $options['widget_post_type'];					
 				
-				if( function_exists( 'get_places' ) ) {
-					$old_display = $wp_query->get('placeMapDisplay');
-					$wp_query->set('placeMapDisplay', 'places');
-					$posts = get_places($limit, null, null);
-				}
+				$cat = $wlPlaces->placeCategory();
 				
-				if( $posts ) {
-					/* Display list of places. */
-						if( function_exists( 'get_places' ) ) {
-							//$templateLoc = apply_filters('map_widget_template','');
-							//view
-							//include( $templateLoc );
-							
-							$currentCat = get_query_var( 'cat' );
-							
-							if(!$currentCat){
-								$currentCat = $wlPlaces->placeCategory();
+				$cat_var = get_query_var('cat');
+				
+				
+				if (!empty($cat_var) && !(is_home() || is_front_page())) {			
+					$cat = get_category(intval($cat_var));
+				}					
+				elseif (isset($post) && !(is_home() || is_front_page())){
+					//try to get category for post if possible
+					$post_categories = wp_get_post_categories( $post->ID );
+					if($post_categories){		
+						foreach ($post_categories as $postCatId) {
+							$catObj = get_category( $postCatId );
+							if($catObj->name != 'Uncategorized' && $catObj->name != 'Place'){
+								$cat = $postCatId;
 							}
-							echo($wlPlaces->getCategoryMapMarkup(
-								$currentCat, 
-								dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php',
-								true));
-							
-							
-							
-							$wp_query->set('placeMapDisplay', $old_display);
 						}
+					}
+				}				
 					
-						
-				} else if( !$posts ) _e('There are no places.', $this->pluginDomain);
-
+				
+				if(!isset($post_type))
+					$post_type = 'post';
+	
+				//add support for custom post type
+				echo $wlPlaces->getCategoryMapMarkup(
+					$cat, 
+					dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php',
+					true, 
+					25, 
+					$post_type);	
 				
 			}	
 		
 			function update( $new_instance, $old_instance ) {
-					$instance = $old_instance;
-
-					/* Strip tags (if needed) and update the widget settings. */
-					$instance['title'] = strip_tags( $new_instance['title'] );					
-					$instance['limit'] = strip_tags( $new_instance['limit'] );
-					/*if(eval($instance['limit'])>25)
-						$instance['limit'] = '25';*/
-					
-
+					$instance = $old_instance;					
 					return $instance;
 			}
 		
 			function form( $instance ) {
 				/* Set up default widget settings. */
-				$defaults = array( 'style'=>'aside', 'title' => 'Published Places', 'limit' => '25');
+				$defaults = array( 'style'=>'aside', 'title' => 'Published Places', 'limit' => '25', 'post_type'=>'post');
 				$instance = wp_parse_args( (array) $instance, $defaults );			
 				include( dirname( __FILE__ ) . '/views/welocally-places-map-widget-admin.php' );
 			}
