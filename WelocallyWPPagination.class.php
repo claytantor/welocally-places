@@ -271,7 +271,16 @@ if (!class_exists('WelocallyWPPagination')) {
 							
 			foreach($fields as $field){
 				$field = trim($field);
-				$content = str_replace("%$field%", $row[$field], $content);
+				
+				
+				if($field == "place"){
+					$val = str_replace("'", "\'", $row[$field]);
+					$content = str_replace("%$field%", "'".$val."'", $content);
+				} else {
+					$content = str_replace("%$field%", $row[$field], $content);
+				}
+				
+				
 			}
 			return $content; 
 		}

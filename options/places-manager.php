@@ -55,7 +55,8 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-manager', 
 				  new WELOCALLY_PlaceManager();			
 			window.wlPlacesManager.initCfg(cfg);
 			jQuery('#wl_places_mgr_wrapper' ).html(window.wlPlacesManager.makeWrapper());
-			    		
+//			window.wlPlacesManager.getMetadata();	
+//			window.wlPlacesManager.load(1);	     		
 		 
 	 		 </script>
 		</div>

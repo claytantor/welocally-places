@@ -267,7 +267,9 @@ WELOCALLY_WpPager.prototype.load = function(page) {
 		page: page,
 		content: _instance.cfg.content
 	};
-		   
+	
+	jQuery(_instance.wrapper).show();	
+	
 	_instance.jqxhr = jQuery.ajax({
 	  type: 'POST',		  
 	  url: _instance.cfg.ajaxurl,
@@ -284,7 +286,6 @@ WELOCALLY_WpPager.prototype.load = function(page) {
 	  success : function(res, textStatus, jqXHR) {
 		  _instance.setStatus(_instance.statusArea,'', 'wl_message', false);
 		  jQuery(_instance.wrapper).find('.wl_pager_content').html(res);
-		  jQuery(_instance.wrapper).show();	
 	  }
 	});
 
