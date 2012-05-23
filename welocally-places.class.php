@@ -648,7 +648,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post') {
 			
 			
-			$t = $this->getPlaces($cat, $maxElements, $post_type);	
+			$t = $this->getPlaces($cat, $maxElements, true, $post_type);
 				
 					
 			//setup options
@@ -1065,6 +1065,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	                                FROM $wpdb->posts INNER JOIN {$wpdb->prefix}wl_places_posts
 	                                ON $wpdb->posts.ID = {$wpdb->prefix}wl_places_posts.post_id
 	                                GROUP BY $wpdb->posts.ID)";
+	        
 
 			$return = $wpdb->get_results($categories_query, OBJECT);
 			return $return;

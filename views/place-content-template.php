@@ -19,35 +19,24 @@ if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
 }
 
 ?>
-
-<script type="text/javascript">
-jQuery(document).ready(function() {	
-	
-
-});
-</script>
-
 <div id="wl-place-content-<?php echo $t->uid; ?>" class="wl-place-content">
 	<div class="template-wrapper">
 		<div>
-		<script type="text/javascript" charset="utf-8">
-		var place<?php echo $t->uid; ?> = <?php echo $t->placeJSON; ?>;
-		var cfg = { 
-			id:  place<?php echo $t->uid; ?>._id, 
-			imagePath:'<?php echo($marker_image_path); ?>', 
-			endpoint:'<?php echo($endpoint); ?>', 
-			<?php if(isset($custom_style)):?> styles:<?php echo($custom_style.','); endif;?>
-			showShare: false,
-			placehoundPath: 'http://placehound.com'
-		};
-			    		
-		var placeWidget<?php echo $t->uid; ?> = 
-			  new WELOCALLY_PlaceWidget(cfg)
-		  		.init();
-		
-		placeWidget<?php echo $t->uid; ?>.load(place<?php echo $t->uid; ?>); 	 
-		
-		</script>
+<script type="text/javascript" charset="utf-8">
+var place<?php echo $t->uid; ?> = <?php echo $t->placeJSON; ?>;
+var cfg = { 
+	id:  place<?php echo $t->uid; ?>._id, 
+	imagePath:'<?php echo($marker_image_path); ?>', 
+	endpoint:'<?php echo($endpoint); ?>', 
+	<?php if(isset($custom_style)):?> styles:<?php echo($custom_style.','); endif;?>
+	showShare: false,
+	placehoundPath: 'http://placehound.com'
+};
+var placeWidget<?php echo $t->uid; ?> = 
+	  new WELOCALLY_PlaceWidget(cfg)
+		.init();
+placeWidget<?php echo $t->uid; ?>.load(place<?php echo $t->uid; ?>); 	 		
+</script>
 		</div>
 	</div>
 
