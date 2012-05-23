@@ -1044,6 +1044,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		public function getPlacePostsInCategory($categoryId, $post_type='post') {
 			global $wpdb, $wlPlaces;
 			$wlPlaces->setOptions();
+			
+			$post_type = explode(",",$post_type);
 
 			$post_type_and = '1=1';
 			if (is_array($post_type) && !empty($post_type)) {
