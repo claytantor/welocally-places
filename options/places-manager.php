@@ -1,15 +1,12 @@
 <?php
-global $wlPlaces; 
+global $wlPlaces,$wpdb; 
 $places = $wlPlaces->getPlacesNew();
 ?>  
 <script type="text/javascript">
-
-
 function setPlaceRow(i, placeJSON){
 	var place = jQuery.parseJSON(placeJSON);
 	window.wlPlacesManager.setPlaceRow(i, place, jQuery('#wl_placemgr_place_'+i));
 }
-
 </script>
 <?php 
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
@@ -54,9 +51,7 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-manager', 
 			window.wlPlacesManager = 
 				  new WELOCALLY_PlaceManager();			
 			window.wlPlacesManager.initCfg(cfg);
-			jQuery('#wl_places_mgr_wrapper' ).html(window.wlPlacesManager.makeWrapper());
-//			window.wlPlacesManager.getMetadata();	
-//			window.wlPlacesManager.load(1);	     		
+			jQuery('#wl_places_mgr_wrapper' ).html(window.wlPlacesManager.makeWrapper());  		
 		 
 	 		 </script>
 		</div>

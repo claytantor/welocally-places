@@ -1,4 +1,4 @@
-<h1>Welocally Places Basic For Wordpress Guide</h1>
+<h1>Welocally Places Core For Wordpress Guide</h1>
 <a title="welocally places wordpress" href="http://wordpress.org/extend/plugins/welocally-places/">Welocally Places Plugin</a> for wordpress is intended to help site authors link real places to their content quickly, and then help their readers find those places quickly. This document is intended to help the blog owner or wordpress developer install, configure and use the plugin. It is structured by the administrative and user components associated with the plugin.
 
 <strong>PLEASE NOTE:</strong> This is software, we need your help to make the product, the documentation, and the community better. Here are some helpful links so that you can get involved.

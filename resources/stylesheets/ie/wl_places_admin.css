@@ -23,7 +23,8 @@ text-transform:uppercase}
    outline: transparent solid 0px;
 }
 
-#action_bar {  width:100%; text-align:right; }
+#wl_action_bar {  width:100%; text-align:right; }
+#wl_info_bar {  width:95%;  text-align:center; padding:10px; }
  
 #btn_support a{ 
 width: 80px; height: 30px; 

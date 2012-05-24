@@ -8,7 +8,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	 */
 	class WelocallyPlaces {
 		
-		const VERSION 				= '1.2.22.DEV2';
+		const VERSION 				= '1.2.22';
 		const DB_VERSION			= '2.0';
 		const WLERROROPT			= '_welocally_errors';
 		const CATEGORYNAME	 		= 'Place';
@@ -23,9 +23,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		public $pluginDir;
 		public $pluginUrl;
 		public $pluginDomain = 'welocallyPlaces';
-		
-		//public $metaTags = array();
-		
 		
 		/**
 	     * Gets the Category id to use for a Place
@@ -61,8 +58,6 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			add_action( 'sp_places_post_errors', array( 'WLPLACES_Post_Exception', 'displayMessage' ) );
 			add_action( 'sp_places_options_top', array( 'WLPLACES_Options_Exception', 'displayMessage') );
 
-            //add_filter( 'the_content', array( $this, 'replaceTagsInContent') );
-            
             add_shortcode('welocally', array ($this,'handleWelocallyPlacesShortcode'));
            
                            
@@ -75,21 +70,17 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		
 		function wl_admin_message($message='empty message', $error = false) {
 			echo '<div class="updated fade"><p>'.$message.'</p></div>';
-
 		}
-		
-				
+						
 		/**
 		 * @return 
 		 */
-		public function in_category() {
-			
+		public function in_category() {			
 			$cat_id = get_query_var( 'cat' );
 			
 			if( !is_singular() && $cat_id ) {
 				return true;
 			}
-
 		}
 		
 		/**
@@ -124,12 +115,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 			wp_enqueue_script( 'jquery' ); 
             wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
-                      			
-					
-			//jquery ui
-			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
-			wp_enqueue_style( 'jquery-ui-style' );	
-			
+                      								
 			//welocally
 			wp_enqueue_script('wl_base_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_base.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_place_widget_script',  WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_place_widget.js', array('jquery'), WelocallyPlaces::VERSION);
@@ -171,11 +157,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_enqueue_script( 'jquery' ); 
             wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
                       								
-			//jquery ui
-			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
-			wp_enqueue_style( 'jquery-ui-style' );	
-			
-									
+												
 			wp_enqueue_script('media-upload');
 			wp_enqueue_script('thickbox');
 			//welocally
@@ -187,8 +169,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			
 			//add places
 			wp_enqueue_style( 'wl_places_addplace_style',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_addplace.css',array(), WelocallyPlaces::VERSION, 'screen' );	
-			
-			
+						
 			global $wp_styles;
 		
 			wp_enqueue_style( 'wl_pager',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_pager.css', array(), WelocallyWPPagination::VERSION, 'screen' );
@@ -430,6 +411,50 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			    }
 			}
 							
+		}
+		
+		//checks all schema changes and makes sure all is ok.
+		public function databaseRequirementsMissing(){
+			global $wpdb;
+			$reqs = array();
+			if(!$this->tableExists($wpdb->prefix.'wl_places'))
+				array_push($reqs,'table missing '.$wpdb->prefix.'wl_places');
+			if(!$this->tableExists($wpdb->prefix.'wl_places_posts'))
+				array_push($reqs,'table missing '.$wpdb->prefix.'wl_places_posts');
+			if(!$this->columnExists($wpdb->prefix.'wl_places', 'likes'))
+				array_push($reqs,'column missing '.$wpdb->prefix.'wl_places.likes');
+			if(!$this->columnExists($wpdb->prefix.'wl_places', 'lat'))
+				array_push($reqs,'column missing '.$wpdb->prefix.'wl_places.lat');
+			if(!$this->columnExists($wpdb->prefix.'wl_places', 'lng'))
+				array_push($reqs,'column missing '.$wpdb->prefix.'wl_places.lng');
+				
+
+			return $reqs;
+						
+		}
+		
+		function showTables() {
+			global $wpdb;
+			$return = $wpdb->get_results("show tables", ARRAY_A);
+			foreach ( $return as $row ) {
+				echo("<div><pre>");
+				echo($row["Tables_in_wordpress"]);  
+				echo("</pre></div>");    
+			}
+			return $return;
+		}
+		
+		function describeTable($table_name) {
+			global $wpdb;
+			$return = $wpdb->get_results(sprintf("describe %s",$table_name), ARRAY_A);
+			foreach ( $return as $row ) {
+				echo("<div><pre>");
+				echo($row["Field"]);
+				echo("\t");  
+				echo($row["Type"]); 
+				echo("</pre></div>");    
+			}
+			return $return;
 		}
 		
 		public function tableExists($tableName){

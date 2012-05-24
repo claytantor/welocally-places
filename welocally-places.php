@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name: Welocally Places Basic
+Plugin Name: Welocally Places Core
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
-Description: Great maps that link to your content. The Welocally Places plugin lets easily associate places to your content without manual geocoding. Add any place to your database and link it to your posts and categories with simple shortcodes. The map widget makes it easy for your users to find the places your are writing about on a map and is smart enough to automatically relate places by category.
-Version: 1.2.22.DEV2
+Description: Great maps that link to your content. The Welocally Places plugin lets easily associate places to your content without manual geocoding. Add any place to your database and link it to your posts and categories with simple shortcodes. The map widget makes it easy for your users to find the places your are writing about on a map and is smart enough to automatically relate places by category. If you are upgrading and an install this manually make sure to re-activate the plugin, activation does important database updates. 
+Version: 1.2.22
 Author: Welocally  
 Author URI: http://welocally.com
 License: GPL2 
@@ -97,8 +97,12 @@ function welocally_save_place() {
 	} else { //update
 		
 		$placeId = $placeToSave['_id'];
-		$statement = "UPDATE {$wpdb->prefix}wl_places SET place='".json_encode($placeToSave)."' WHERE wl_id = '".$placeId."'";
+		$placeJSON = addslashes(json_encode($placeToSave));
+		
+		$statement = "UPDATE {$wpdb->prefix}wl_places SET place='".$placeJSON."' WHERE wl_id = '".$placeId."'";
 		$wpdb->query($wpdb->prepare($statement));
+		
+		echo '{ "id": "'.$placeToSave['_id'].'"}';
 	}	
 
 	die(); // this is required to return a proper result

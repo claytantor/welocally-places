@@ -530,6 +530,7 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 	_instance.jqxhr = jQuery.ajax({
 	  type: 'POST',		  
 	  url: ajaxurl,
+	  datatype: 'json',
 	  data: data,
 	  beforeSend: function(jqXHR){
 		_instance.jqxhr = jqXHR;
@@ -539,17 +540,23 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 			_instance.setStatus(_instance.statusArea,'ERROR : '+textStatus, 'error', false);
 		}		
 	  },		  
-	  success : function(data, textStatus, jqXHR) {
+	  success : function(data, textStatus, jqXHR, dataType) {
 		if(data != null && data.errors != null) {
 			_instance.setStatus(_instance.statusArea,'ERROR:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
 		} else if(data != null && data.errors != null) {
 			_instance.setStatus(_instance.statusArea,'Could not save place:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
 		} else {
-			var response = jQuery.parseJSON(data);
-			var tag = '[welocally id="'+response.id+'"/]';
+			try{
+				var response = jQuery.parseJSON(data);
+				var tag = '[welocally id="'+response.id+'"/]';				
+				_instance.setStatus(_instance.statusArea,'Your place has been saved! <br/><span class="wl_placemgr_place_tag">'+tag+'</span>', 'wl_message', false);
+				_instance.savedPlace = selectedPlace;
+			} catch(e) {
+				_instance.setStatus(_instance.statusArea,'ERROR: Can Not Parse Response.'+data, 'wl_error', false);
+			}
 			
-			_instance.setStatus(_instance.statusArea,'Your place has been saved! <br/><span class="wl_placemgr_place_tag">'+tag+'</span>', 'wl_message', false);
-			_instance.savedPlace = selectedPlace;
+			
+			
 		}
 	  }
 	});

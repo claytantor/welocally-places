@@ -1,19 +1,34 @@
 <?php
+/**
+ * this stuff should all be moved into the class.
+ * 
+ */
+
 function wl_menu_initialise() {
+	
+	//jquery ui
+	wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
 
 	$main_slug = add_menu_page( 'Welocally Places Options', 'Welocally Places', 'manage_options', 'welocally-places-general', 'wl_general_options', WP_PLUGIN_URL . '/welocally-places/resources/images/welocally_places_button_color.png' );
 	$main_content =  file_get_contents(dirname( __FILE__ ) . '/help/options-general-help.php');
 	add_contextual_help( $main_slug, __( $main_content ) );
 	
-	wl_add_submenu( 'Welocally Places About', 'About', 'welocally-places-about', 'wl_support_about' );
-	wl_add_submenu( 'Welocally Places Manager', 'Places Manager', 'welocally-places-manager', 'wl_places_manager' );
+	$about_slug = wl_add_submenu( 'Welocally Places About', 'About', 'welocally-places-about', 'wl_support_about' );
+	$placesmgr_slug = wl_add_submenu( 'Welocally Places Manager', 'Places Manager', 'welocally-places-manager', 'wl_places_manager' );
 
 	add_filter( 'plugin_action_links', 'wl_places_add_settings_link', 10, 2 );
+	
+	//hook so only the admin placemgr screen get jquery ui, conflicts were occurring
+	add_action( 'admin_print_styles-' . $placesmgr_slug, 'wl_placesmgr_plugin_admin_styles' );
 		
 }
+
 add_action( 'admin_menu','wl_menu_initialise' );
 add_filter( 'plugin_row_meta', 'wl_set_plugin_meta', 10, 2 );
 
+function wl_placesmgr_plugin_admin_styles() {	
+	wp_enqueue_style( 'jquery-ui-style' );		
+}
 
 function wl_general_options() {
 	include_once( WP_PLUGIN_DIR . "/welocally-places/options/options-general.php" );
@@ -95,7 +110,7 @@ function wl_add_submenu( $page_title, $menu_title, $menu_slug, $function ) {
 	
 	add_contextual_help( $profile_slug, __( $help_text ) );
 
-	return;
+	return $profile_slug;
 }
 
 ?>

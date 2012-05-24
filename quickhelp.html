@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Welocally Places Basic Quick Help</title>
+	<title>Welocally Places Core Quick Help</title>
 	<meta name="author" content="Welocally">
 	<link rel="stylesheet" href="css/wl_pager_admin.css" media="all">	
 	<style>
@@ -17,12 +17,12 @@
 <body>
 <div class="wrap wl_pager_admin">
 	<div class="header section">
-		<div class="header-title">Welocally Places Basic Quick Help</div>
+		<div class="header-title">Welocally Places Core For Wordpress Quick Help</div>
 		<div class="header-subtitle">Quick Help Guide</div>
-		<div>version 1.2.19</div>				
-		<div>Last Updated May 7, 2012</div>		
+		<div>version 1.2.22</div>				
+		<div>Last Updated May 21, 2012</div>		
 	</div>
-<h1>Welocally Places Basic For Wordpress Guide</h1>
+<h1>Welocally Places Core For Wordpress Guide</h1>
 <a title="welocally places wordpress" href="http://wordpress.org/extend/plugins/welocally-places/">Welocally Places Plugin</a> for wordpress is intended to help site authors link real places to their content quickly, and then help their readers find those places quickly. This document is intended to help the blog owner or wordpress developer install, configure and use the plugin. It is structured by the administrative and user components associated with the plugin.
 
 <strong>PLEASE NOTE:</strong> This is software, we need your help to make the product, the documentation, and the community better. Here are some helpful links so that you can get involved.
@@ -59,6 +59,9 @@ To install the Welocally Places plugin, the following are the general directions
 </ol>
 </li>
 </ol>
+<h3>Manual Upgrading</h3>
+If you are upgrading and an install this manually make sure to re-activate the plugin, activation does important database updates. 
+
 <h2><a name="User_Components"></a>User Components</h2>
 <h3>Basics</h3>
 Throughoutthe plugin there are basic components that are used in multiple places, for example the Map Info Box, is used in the same way in the Map Widget, The Category Map and in the Single Post info pages.
@@ -70,11 +73,11 @@ The place tag is the foundation of welocally places and it is what allows the pl
 The Places Map Widget is a custom widget that is installed with the plugin. Every time you add a place to a post the Places Map widget will show it, as well as all the other places you have posted, on a single map. It can be used in any theme sidebar on the site. It will attempt to show related places to the category page or post that your user has navigated to, that is it automatically filters places on the map based on context.
 
 It acts identically like the Category Tag Map by making a map with selectable markers and a list which can also be selected. When a user selects either a marker or a list item an infobox will pop up at the location of the selected item on the map.
-
-<span style="font-size: 15px; font-weight: bold; clear: both;">Category Map Tag</span>
-
-<a href="http://welocally.com/wp-content/uploads/2011/07/Screen-Shot-2012-04-09-at-4.06.56-PM.png"><img class="alignleft size-full wp-image-1029" style="margin-top: 10px;" title="Screen Shot 2012-04-09 at 4.06.56 PM" src="http://welocally.com/wp-content/uploads/2011/07/Screen-Shot-2012-04-09-at-4.06.56-PM.png" alt="" width="207" height="354" /></a>
+<div style="clear: both;">&nbsp;</div>
+<h4>Category Map Tag</h4>
 The category map allows your users to filter the posts associated with specific categories on a single map, just like the Map Widget. This is helpful if you want to segment different places by type and show them to your readers on a page. making a directory? Just insert the tag "Shopping" or "Bars &amp; Pubs" on a page and you have a simple map for a shopping guide of all the places you have written about.
+<div style="clear: both;">&nbsp;</div>
+<p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/07/Screen-Shot-2012-04-09-at-4.06.56-PM.png"><img class="aligncenter size-full wp-image-1029" style="margin-top: 10px;" title="Screen Shot 2012-04-09 at 4.06.56 PM" src="http://welocally.com/wp-content/uploads/2011/07/Screen-Shot-2012-04-09-at-4.06.56-PM.png" alt="" width="207" height="354" /></a></p>
 <p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2012/04/Screen-Shot-2012-04-09-at-5.37.34-PM.png"><img class="aligncenter size-full wp-image-1064" title="Screen Shot 2012-04-09 at 5.37.34 PM" src="http://welocally.com/wp-content/uploads/2012/04/Screen-Shot-2012-04-09-at-5.37.34-PM.png" alt="" width="354" height="24" /></a></p>
 For example; if you had a pizza blog you might assign The Ugly Duck Pizza with the "Thin Cust" and "Rustic Wood Oven" categories. When your reader was looking for the pizzas of the New York Style only the pizza restaurants that had thin crust pizzas would show as ordered markers, and it would link the places back to the posts where you wrote about them. When a user selects a specific post excerpt, an info box identifying that place on the map will appear.
 <h3 style="clear: both; margin-top: 10px;">Associating A Place to A Post</h3>
@@ -89,6 +92,13 @@ While there are are very many places in our database it is possible that a very 
 <p style="text-align: left;">Now you are ready to add the place, just press the "Add Place" button and it will be added to our database and will become searchable. You can then select the new tag for the place you created then copy and paste it into your post.</p>
 <p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-12-at-11.52.38-AM.png"><img class="aligncenter size-full wp-image-1263" title="Screen Shot 2012-05-12 at 11.52.38 AM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-12-at-11.52.38-AM.png" alt="" width="482" height="43" /></a></p>
 
+<h4>Custom Post Types</h4>
+<p>Many wordpress themes such as <a href="http://themeforest.net/item/swagmag-wordpress-magazinereview-theme/1576310">SwagMag - WordPress Magazine/Review Theme</a> use the concept of custom post types to manage an maintain posts. Welocally Places supports one or many custom post types, but you must use the post type name in the database for it to work properly. <strong>Multiple custom post types are supported byt they must be comma delimitated no spaces.</strong></p>
+<p><a href="http://welocally.com/wp-content/uploads/2011/09/tag_custom_post.png"><img class="aligncenter size-full wp-image-1323" title="tag_custom_post" src="http://welocally.com/wp-content/uploads/2011/09/tag_custom_post.png" alt="" width="500" height="30" /></a></p>
+<p style="text-align: left;">You can configure the widget to use custom post types in the same way using the options.</p>
+<p style="text-align: center;"><img class="aligncenter size-full wp-image-1324" title="Screen Shot 2012-05-23 at 7.13.51 PM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-23-at-7.13.51-PM.png" alt="" width="618" height="344" /></p>
+
+
 <h2>Administration</h2>
 Options allow you to control the plugin, and we have created a custom option. We have a custom sidebar options tab, so in setting up welocally places just select the side tab item.
 <p style="text-align: center;"><a href="http://www.welocally.com/wordpress/wp-content/uploads/2011/09/options_01.png"><img class="aligncenter size-medium wp-image-316" style="border-style: initial; border-color: initial; border-width: 0px;" title="options_01" src="http://www.welocally.com/wordpress/wp-content/uploads/2011/09/options_01-211x300.png" alt="" width="211" height="300" /></a></p>
@@ -100,7 +110,7 @@ Options allow you to control the plugin, and we have created a custom option. We
 	<li><strong><a href="admin.php?page=welocally-places-manager">Places Manager</a></strong> - A simple places manager that lets you see all your post places in on UI, you can also delete place posts if you want to.</li>
 </ul>
 <h3><strong>Welocally Places General Options</strong></h3>
-<p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-12-at-11.33.10-AM.png"><img class="aligncenter size-full wp-image-1259" title="Screen Shot 2012-05-12 at 11.33.10 AM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-12-at-11.33.10-AM.png" alt="" width="602" height="255" /></a></p>
+<p style="text-align: center;"><img class="aligncenter size-full wp-image-1324" title="Screen Shot 2012-05-23 at 7.13.51 PM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-23-at-7.13.51-PM.png" alt="" width="618" height="344" /></p>
 
 <h4 style="text-align: left;">General Map Options, Infobox Place Links</h4>
 <p style="text-align: left;">This option, if checked, will make the title of the place in the map infobox, or in the list selector a link back to the post in which it was placed.</p>

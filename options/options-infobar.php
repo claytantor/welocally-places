@@ -2,7 +2,7 @@
 global $wlPlaces;
 $options = $wlPlaces->getOptions();
 ?>
-<div id="action_bar">
+<div id="wl_action_bar">
 	<div class="rollover" id="btn_support">
 	<a href="http://support.welocally.com/categories/welocally-places-wp-basic" target="_new">
 		<img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/btn_spacer.png">
@@ -22,3 +22,10 @@ $options = $wlPlaces->getOptions();
 		<img src="<?php echo WP_PLUGIN_URL; ?>/welocally-places/resources/images/quick-help.png">
 	</div>									
 </div>
+<?php
+$reqsMissing = $wlPlaces->databaseRequirementsMissing();
+if (count($reqsMissing)>0) {
+	$showReqsMissing = print_r($reqsMissing,true);
+	echo ('<div id="wl_info_bar"><div class="wl_error" style="margin 10px;">Reactivation is required to properly support required database changes for version '.WelocallyPlaces::VERSION.'. Please deactivate and re-activate now. '.$showReqsMissing.'</div></div>');             
+}
+?>	

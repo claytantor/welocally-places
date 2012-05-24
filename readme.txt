@@ -1,4 +1,4 @@
-=== Welocally Places Basic ===
+=== Welocally Places Core ===
 Contributors: claytantor 
 Tags: hyperlocal, geocoding, places, maps, foodie, travel, real estate, business directories
 Requires at least: 3.3.1 with jQuery 1.6.1 or greater
@@ -6,7 +6,7 @@ Tested up to: 3.3.2
 Stable tag: trunk
 License: GPL v2 (GNU General Public License v2)
 
-The Welocally Places Basic plugin lets easily associate places with rich maps and place info with your wordpress content. 
+The Welocally Places Core plugin lets easily associate places with rich maps and place info with your wordpress content. 
 
 == Description ==
 
@@ -19,6 +19,7 @@ Welocally Places For WordPress makes it simple to attach real places to your con
 * Rich place information such as phone number, and website
 * Integrated driving directions
 * Category based map tags help you make directories quickly
+* Support for custom post types
 
 Product Overview: http://welocally.com/?page_id=2
 Product Help: http://welocally.com/?page_id=104
@@ -34,7 +35,7 @@ Q:Can I use Welocally Places for a blog hosted on wordpress.com?
 A:No you can not. WordPress.com hosted blogs do not allow you to install plugins. Hosting your own blog gives you flexibility and allows you to monetize in new ways, so just take it to the next step and host your own blog. Consumer Rankings did a review of low priced hosting providers for WordPress. Check it out.
 
 Q:What Browsers Do You Support?
-A:For Publishers we have tested creating places for and recommend versions starting at least Chrome 17.0.963.56, Safari Version 5.1.2 and Firefox 10.0.2. We *do not* reccomend the use of IE for site owners using welocally places, but we have tested site vistors successfully using Welocally Places with IE 5.3.2 or greater. 
+A:For Publishers we have tested creating places for and recommend versions starting at least Chrome 17.0.963.56, Safari Version 5.1.2 and Firefox 10.0.2. We *do not* recommend the use of IE for site owners using welocally places, but we have tested site vistors successfully using Welocally Places with IE 5.3.2 or greater. 
  
 Q:What is a POI? 
 A:POI stands for Point of Interest, and they are the places that people go to. We aggregate place info from many different providers, and this is the same type of data that location based game companies use when you âcheck in. It is commonly public establishments, parks or venues that people goto such as â Uptown Grill.
@@ -50,6 +51,18 @@ A: It should work, it has not been tested. Please give us feedback about your ex
 
 
 == Changelog ==
+1.2.22
+222	Add activation notice if missing 1.2.22 fields	
+221	jQuery UI override	
+220	Change Name To Welocally Places Core	
+219	Support for Multiple Custom Post Types	
+218	Edit broken	
+217	Apostrophe in place json causes places manager to fail.	
+213	Refactor shortcode handler	
+209	Custom post types	
+208	University Offices, Wellington Square, Oxford, OX1 2JD, United Kingdom	
+206	Places manager breaks on null place	
+
 1.2.21
 203	Update documentation to include proper version requirements
 202	JQuery Load Native for 3.3.1
@@ -61,95 +74,54 @@ A: It should work, it has not been tested. Please give us feedback about your ex
 198	Clear all floats on tag and widget templates
 
 1.2.19
-196	Feature	Remove Registration Requirement	
-195	Feature	Remove any CURL Concepts	
-194 Feature	Pagination	
-192	Feature	Local Category Tag	
-191	Feature	Local Place Tag	
-190	Feature	No key geocoding
-189	Feature	Local Database	
-186	Bug	Refactor options	
-185	Bug	Category and fields showing on add place.
+196	Remove Registration Requirement	
+195	Remove any CURL Concepts	
+194 Pagination	
+192	Local Category Tag	
+191	Local Place Tag	
+190	No key geocoding
+189	Local Database	
+186	Refactor options	
+185	Category and fields showing on add place.
 
 1.1.18
-Feature #56: Welocally Namespace Javascript Refactoring
-Feature #87: Widgetize Place Finder
-Feature #100: Refactor wp_postmeta to remove obsolete concepts
-Feature #128: Category Map Tag Support
-Feature #140: API Keys incorporated into web services
-Feature #152: Widgetize Places
-Feature #154: Remove Font Customization
-Feature #156: Support for post links as title anchors
-Feature #160: Multi widget support for style overrides
-Feature #161: Use sprited markers
-Feature #169: Widgetize Registration
-Feature #170: Multisite licensing
-Feature #171: Map selector improvements
-Feature #174: Catgerory map widget should be context aware
+56: Welocally Namespace Javascript Refactoring
+87: Widgetize Place Finder
+100: Refactor wp_postmeta to remove obsolete concepts
+128: Category Map Tag Support
+140: API Keys incorporated into web services
+152: Widgetize Places
+154: Remove Font Customization
+156: Support for post links as title anchors
+160: Multi widget support for style overrides
+161: Use sprited markers
+169: Widgetize Registration
+170: Multisite licensing
+171: Map selector improvements
+174: Catgerory map widget should be context aware
 
 1.1.17
 147 "Excerpts not working"
 
 1.1.16
-99	"Places DB Tool In Options"
-94	"Place Finder for Pages"
-71	"Share Tag Support"
-54	"Refactor Metadata Approach for Place Persistence"
-53	"Extended Tag Support"
-43	"Places Support On Pages"
-42	"Transform Post Save Approach to Tags and Place Metadata"
-41	"Custom Theme Support For List Widget"
-40	"Custom Theme Support For Map Widget"
-38	"Add Custom Theme Options Settings"
-36	"iFeature Theme Support"
-34	"zBench Theme Support"
-21	"Add Change Login/Key Support"
-10	"Theme Support for Delicate "
-3	"Integrate New Add Place Workflow"
-
-1.0.13
-361	Options settings to suppress the display of the the "sele...	
-360	Infobox close deselects peer infoboxes.	
-363	Support Thumbnails in Map Infobox
-364	Sight Theme Support	
-
-1.0.12
-354	critical	P1	Archive summaries are showing javascript for theme.
-353	critical	P1	Setting "Yes" to place with no selection should not persist on Update
-352	enhancement	P1	Picman still broken in some themes
-351	enhancement	P2	Improve theme support in About options
-
-1.0.11
-349	maj	P1	Map is Showing Up On Category Archive	1.0.11
-346	maj	P2	Add Place Appends Extra to website prefix	---
-344	cri	P1	Place Name Links To Incorrect Post	1.0.11
-343	enh	P1	Bypass Filter When No Category Hits	1.0.11
-341	enh	P2	Some theme img css effects map tiles	1.0.11
-
-1.0.10
-333	FIXE	1.0.9	Need to quote templated javascript
-334	FIXE	1.0.9	Where marker not showing up on non custom maps
-336	FIXE	1.0.9	HTTPS support for all ajax calls
-337	FIXE	1.0.9	Url and Website Confusion
-338	WORK	1.0.9	Cannot exit add place mode
-340	FIXE	1.0.9	Plugin causes problem when inserting images
-
-1.0.9
-332	FIXE	1.0.8	Jquery version < 1.4 is not parsing JSON
-304	WONT	1.0.7	Seachability for Simple Geo Store
-327	FIXE	1.0.7	Improve subscription prompting and workflow
-331	LATE	1.0.8	Post excerpts are not full text
-
-1.0.8  
-320	FIXE	Post map not showing up on new posts	
-321	FIXE	Infobox missing URL link for places
-327	FIXE	Improve subscription prompting and workflow
-
-1.0.7 Initial version. Includes: Places List Widget, Places Map Widget and  
-Category Browser for supported themes
+99	Places DB Tool In Options
+94	Place Finder for Pages
+71	Share Tag Support
+54	Refactor Metadata Approach for Place Persistence
+53	Extended Tag Support
+43	Places Support On Pages
+42	Transform Post Save Approach to Tags and Place Metadata
+41	Custom Theme Support For List Widget
+40	Custom Theme Support For Map Widget
+38	Add Custom Theme Options Settings
+36	iFeature Theme Support
+34	zBench Theme Support
+21	Add Change Login/Key Support
+10	Theme Support for Delicate 
+3	Integrate New Add Place Workflow
 
 == Upgrade Notice ==
-No notices at this time.
+If you are upgrading and an install this manually make sure to re-activate the plugin, activation does important database updates. 
 
 == Screenshots ==
 1. Welocally Places offers a simple way to embed rich place information such as address, phone number, website and driving directions into your post. We also provide interactive map widgets to engage your readers with the places you have written about.
