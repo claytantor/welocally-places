@@ -82,7 +82,7 @@ jQuery(document).ready(function() {
 				<li><input type="checkbox" id="welocally_infobox_title_link" name="welocally_infobox_title_link" <?php if($options[ 'infobox_title_link' ]=='on') { echo 'checked';  }  ?>>Infobox Link Place Name To Post</li>
 			</ul>
 		</td>
-	</tr
+	</tr>
 	<tr valign="top">
 		<th scope="row"><?php _e('Category Widget Map Options' ); ?></th>
 		<td>

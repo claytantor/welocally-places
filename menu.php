@@ -13,8 +13,11 @@ function wl_menu_initialise() {
 	$main_content =  file_get_contents(dirname( __FILE__ ) . '/help/options-general-help.php');
 	add_contextual_help( $main_slug, __( $main_content ) );
 	
-	$about_slug = wl_add_submenu( 'Welocally Places About', 'About', 'welocally-places-about', 'wl_support_about' );
-	$placesmgr_slug = wl_add_submenu( 'Welocally Places Manager', 'Places Manager', 'welocally-places-manager', 'wl_places_manager' );
+	$about_help = file_get_contents(dirname( __FILE__ ) . '/help/options-general-help.php');
+	$about_slug = wl_places_core_add_submenu( 'Welocally Places About', 'About', 'welocally-places-about', 'wl_support_about',$about_help );
+	
+	$placemgr_help = file_get_contents(dirname( __FILE__ ) . '/help/manager-help.php');
+	$placesmgr_slug = wl_places_core_add_submenu( 'Welocally Places Manager', 'Places Manager', 'welocally-places-manager', 'wl_places_manager',$placemgr_help );
 
 	add_filter( 'plugin_action_links', 'wl_places_add_settings_link', 10, 2 );
 	
@@ -98,18 +101,9 @@ function wl_set_plugin_meta( $links, $file ) {
 }
 
 
-function wl_add_submenu( $page_title, $menu_title, $menu_slug, $function ) {
-
-	$profile_slug = add_submenu_page( 'welocally-places-general', $page_title, $menu_title, 'manage_options', $menu_slug, $function );
-
-	if ( $menu_slug == "welocally-places-general" ) { $help_text = file_get_contents(dirname( __FILE__ ) . '/help/options-general-help.php'); }
-	
-	if ( $menu_slug == "welocally-places-about" ) { $help_text = file_get_contents(dirname( __FILE__ ) . '/help/about-help.php'); } 
-	
-	if ( $menu_slug == "welocally-places-manager" ) { $help_text = file_get_contents(dirname( __FILE__ ) . '/help/manager-help.php'); } 
-	
+function wl_places_core_add_submenu( $page_title, $menu_title, $menu_slug, $function, $help_text ) {
+	$profile_slug = add_submenu_page( 'welocally-places-general', $page_title, $menu_title, 'manage_options', $menu_slug, $function );	
 	add_contextual_help( $profile_slug, __( $help_text ) );
-
 	return $profile_slug;
 }
 

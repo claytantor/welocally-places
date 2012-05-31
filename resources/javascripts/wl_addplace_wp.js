@@ -462,7 +462,8 @@ WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 	jQuery(_instance._selectedSection).hide();
 	
 	_instance.geocoder.geocode( { 'address': addressValue}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK &&  _instance.validGeocodeForSearch(results[0])) {
+		var validGeo = _instance.validGeocodeForSearch(results[0]);
+		if (status == google.maps.GeocoderStatus.OK &&  validGeo) {
 			
 			jQuery(_field).val(results[0].formatted_address);
 						
@@ -629,15 +630,7 @@ WELOCALLY_AddPlaceWidget.prototype.setSelectedPlace = function(selectedPlace) {
 };
 
 WELOCALLY_AddPlaceWidget.prototype.validGeocodeForSearch = function (geocode) {	
-	var _instance = this;
-	
-	var hasAll = _instance.hasType("country", geocode.address_components);
-	hasAll = hasAll && _instance.hasType("route", geocode.address_components);
-	hasAll = hasAll && _instance.hasType("locality", geocode.address_components);
-	hasAll = hasAll && _instance.hasType("administrative_area_level_1", geocode.address_components);
-
-	return hasAll;
-	
+	return geocode.address_components.length >3;
 };
 
 WELOCALLY_AddPlaceWidget.prototype.loadWithWrapper = function(cfg, map_canvas, wrapper) {

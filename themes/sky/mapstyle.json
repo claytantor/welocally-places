@@ -1,0 +1,31 @@
+[{
+	stylers: [
+	  { saturation: -37 }
+	]
+  },{
+	featureType: "road.highway",
+	stylers: [
+		{ saturation: -40 },
+		{ hue: "#CCD66F" }
+	]
+  },{
+	featureType: "water",
+	stylers: [
+	  { hue: "#00ff80" },
+	  { lightness: -33 }
+	]
+  },{
+	featureType: "road.arterial",
+	stylers: [
+	  { saturation: -61 },
+	  { lightness: -27 },
+	  { hue: "#88A374" }
+	]
+  },{
+	featureType: "road.local",
+	stylers: [
+	  { saturation: -69 },
+	  { lightness: -25 }
+	]
+  }
+]
