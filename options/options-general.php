@@ -2,7 +2,6 @@
 global $wlPlaces;
 $options = $wlPlaces->getOptions();
 $themes = $wlPlaces->getThemes();
-print_r($themes);
 ?>
 <?php 
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';

@@ -628,7 +628,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * this takes the category name, consider consolidating getplacesnew and this
 		 * 10.0, '37.8261015_-122.20913'
 		 */
-		public function getPlaces($cat=null, $maxElements=25, $filter=true, $post_type='post', $radius=10.0, $location='37.8261015_-122.20913') {
+		public function getPlaces($cat=null, $maxElements=25, $filter=true, $post_type='post', $distance=10.0, $location='37.8068958_-122.2693737') {
 			
 			
 			global $post;			
@@ -659,10 +659,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			/*
 			 * this approach needs to be refactored 
 			 */
-			if($radius != null && $location!= null && $cat != $this->placeCategory()){
-				$posts = $this->geoSearchWithCategory('km', 25, $cat, $post_type, $radius, $location);				
-			} else if($radius != null && $location!= null && $cat == $this->placeCategory()){
-				$posts = $this->geoSearch('km', 25, $post_type, $radius, $location);				
+			if(isset( $distance ) && isset( $location ) && $cat != $this->placeCategory()){
+				$posts = $this->geoSearchWithCategory('km', 25, $cat, $post_type, $distance, $location);				
+			} else if(isset( $distance ) && isset( $location ) && $cat == $this->placeCategory()){
+				$posts = $this->geoSearch('km', 25, $post_type, $distance, $location);				
 			} else {
 				$posts = $this->getPlacePostsInCategory($cat, $post_type);
 			}
@@ -713,10 +713,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * @param int|object $cat the category object or category ID (optional). defaults to the query category (if any).
 		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website. 10.0, '37.8261015_-122.20913'
 		 */
-		public function getCategoryMapMarkup($cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post', $radius=10.0, $location='37.8261015_-122.20913') {
+		public function getCategoryMapMarkup($cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post', $distance=10.0, $location='37.8068958_-122.2693737') {
 			
 	
-			$t = $this->getPlaces($cat, $maxElements, true, $post_type, $radius, $location);
+			$t = $this->getPlaces($cat, $maxElements, true, $post_type, $distance, $location);
 
 							
 			//setup options
@@ -1057,7 +1057,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * 
 		 * 1 LAT/LNG = 111KM = 68.9722023 mi
 		 */
-		public function geoSearchWithCategory($units='km', $max=10, $cat, $post_type='post', $dist=10.0, $location='37.8261015_-122.20913'){
+		public function geoSearchWithCategory($units='km', $max=10, $cat, $post_type='post', $dist=10.0, $location='37.8068958_-122.2693737'){
 			global $wpdb,$wlPlaces;
 			
 			if(!isset($cat))
@@ -1081,6 +1081,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 				
 			$nv = explode('_',$location);
+			syslog(LOG_WARNING,print_r($nv,true));
 			$loc = array('lat'=>$nv[0],'lng' =>$nv[1]);
 			
 			$lng1 = $loc['lng']-$dist/abs(cos(deg2rad($loc['lat']))*$cvrt);
@@ -1160,7 +1161,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * 
 		 * 1 LAT/LNG = 111KM = 68.9722023 mi
 		 */
-		public function geoSearch($units='km', $max=10, $post_type='post', $dist=10.0, $location='37.8261015_-122.20913'){
+		public function geoSearch($units='km', $max=10, $post_type='post', $dist=10.0, $location='37.8068958_-122.2693737'){
 			global $wpdb,$wlPlaces;
 						
 			//units
@@ -1181,6 +1182,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			}
 
 			$nv = explode('_',$location);
+			syslog(LOG_WARNING,print_r($nv,true));
 			$loc = array('lat'=>$nv[0],'lng' =>$nv[1]);
 			
 			$lng1 = $loc['lng']-$dist/abs(cos(deg2rad($loc['lat']))*$cvrt);

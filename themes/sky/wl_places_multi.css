@@ -52,12 +52,13 @@
 	text-align:left;
 	padding: 0.4em; 
 	font-size: 0.8em; 
-	border: 1px solid #3A6D87; 
+	border: 1px solid #4A8D94; 
+	color: #4A8D94,
 	display: inline-block; 	
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
    	border-radius: 4px; 
-   	background: #AEE2FC;
+   	background: #DCECF2;
 	/*cursor: pointer;*/
    	cursor: pointer;
    	}
