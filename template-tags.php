@@ -275,7 +275,7 @@ if( class_exists( 'WelocallyPlaces' ) ) {
 		echo($wlPlaces->getCategoryMapMarkup(
 			$currentCat, 
 			dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php',
-			true));
+			true,10.0, '37.8261015_-122.20913'));
 	}
 
 	function the_category_map($category=null) {

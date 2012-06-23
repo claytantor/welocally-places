@@ -202,6 +202,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				'categories' => null,
 				'category' => null,
 				'id' => null,
+				'distance' => null,
+				'location' => null,				
 				'post_type'=> null				
 			), $attrs));			
 			
@@ -245,8 +247,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$term = get_term_by('name',$string,'category');
 			if(!isset($post_type))
 				$post_type = 'post';
-
-			return $this->getCategoryMapMarkup($term->term_id, null, null, 25, $post_type);		
+				
+			//$cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post', $radius, $location
+			return $this->getCategoryMapMarkup($term->term_id, null, null, 25, $post_type, $distance, $location);		
 
 		}
 		
@@ -623,8 +626,9 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		
 		/**
 		 * this takes the category name, consider consolidating getplacesnew and this
+		 * 10.0, '37.8261015_-122.20913'
 		 */
-		public function getPlaces($cat=null, $maxElements=25, $filter=true, $post_type='post') {
+		public function getPlaces($cat=null, $maxElements=25, $filter=true, $post_type='post', $radius=10.0, $location='37.8261015_-122.20913') {
 			
 			
 			global $post;			
@@ -647,9 +651,22 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					}
 				}
 			}
+			
+			//37.8261015_-122.2091333
+			$nv = explode('_',$location);
+			$loc = array('lat'=>$nv[0],'lng' =>$nv[1]);
+			
+			/*
+			 * this approach needs to be refactored 
+			 */
+			if($radius != null && $location!= null && $cat != $this->placeCategory()){
+				$posts = $this->geoSearchWithCategory('km', 25, $cat, $post_type, $radius, $location);				
+			} else if($radius != null && $location!= null && $cat == $this->placeCategory()){
+				$posts = $this->geoSearch('km', 25, $post_type, $radius, $location);				
+			} else {
+				$posts = $this->getPlacePostsInCategory($cat, $post_type);
+			}
 					
-			$posts = $this->getPlacePostsInCategory($cat,$post_type);
-
 			$t = new StdClass();
 			$t->uid = ++$uid;
 			$t->category = get_category($cat);
@@ -694,15 +711,14 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		/**
 		 * Builds a category map for a given category.
 		 * @param int|object $cat the category object or category ID (optional). defaults to the query category (if any).
-		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website.
+		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website. 10.0, '37.8261015_-122.20913'
 		 */
-		public function getCategoryMapMarkup(
-			$cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post') {
+		public function getCategoryMapMarkup($cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post', $radius=10.0, $location='37.8261015_-122.20913') {
 			
-			
-			$t = $this->getPlaces($cat, $maxElements, true, $post_type);
-				
-					
+	
+			$t = $this->getPlaces($cat, $maxElements, true, $post_type, $radius, $location);
+
+							
 			//setup options
 			$options = $this->getOptions();
 			
@@ -1026,15 +1042,208 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					DELETE FROM {$wpdb->prefix}wl_places_posts 
 					WHERE id = ".$idsObject->places_post_id. "
 					"
-					);	
-					
-					
+					);										
 		            
 		    }
-
 		}
 		
 		
+		
+		/**
+		 * location = the location for the search using haversine
+		 * radius = radius of search
+		 * 
+		 * mean radius of 6,366.56 km (Å3,956 mi).
+		 * 
+		 * 1 LAT/LNG = 111KM = 68.9722023 mi
+		 */
+		public function geoSearchWithCategory($units='km', $max=10, $cat, $post_type='post', $dist=10.0, $location='37.8261015_-122.20913'){
+			global $wpdb,$wlPlaces;
+			
+			if(!isset($cat))
+				$cat = $this->placeCategory();
+						
+			//units
+			$r= 6366.56;
+			$cvrt = 111.0;
+			if($units=='mi'){
+				$r= 3956.00;
+				$cvrt = 69;
+			}
+			
+			$post_type = explode(",",$post_type);
+
+			$post_type_and = '1=1';
+			if (is_array($post_type) && !empty($post_type)) {
+				$post_type_and = "{$wpdb->posts}.post_type IN ('" . implode('\',\'', $post_type) . "') ";
+			} elseif (is_string($post_type)) {
+				$post_type_and = "{$wpdb->posts}.post_type = '" . $wpdb->escape($post_type) . "' ";
+			}
+				
+			$nv = explode('_',$location);
+			$loc = array('lat'=>$nv[0],'lng' =>$nv[1]);
+			
+			$lng1 = $loc['lng']-$dist/abs(cos(deg2rad($loc['lat']))*$cvrt);
+			$lng2 = $loc['lng']+$dist/abs(cos(deg2rad($loc['lat']))*$cvrt);
+			$lat1 = $loc['lat']-($dist/$cvrt);
+			$lat2 = $loc['lat']+($dist/$cvrt);
+						
+			//"AND ".$wpdb->prefix."posts.post_status = 'publish' AND " . $post_type_and . 
+			//this is a pretty complex query, we try to make it as fast as possible by making
+			//a bounding though, alas this is the best way to do geo, maybe index the lat,lng fields?
+			$querygeo = sprintf("SELECT ".
+					$wpdb->prefix."posts.*, ".
+					$wpdb->prefix."wl_places.id, ".
+					$wpdb->prefix."wl_places.place, ".
+					$wpdb->prefix."wl_places.wl_id, ".
+					$wpdb->prefix."wl_places.lat, ".
+					$wpdb->prefix."wl_places.lng, " .
+					"%s * 2 * ASIN(SQRT( POWER(SIN((lat - %s) * ". 
+			  "pi()/180 / 2), 2) + COS(lat * pi()/180) * COS(%s * pi()/180) * ". 
+			  "POWER(SIN((lng - %s) * pi()/180 / 2), 2) )) rawgeosearchdistance ".  
+			  "FROM $wpdb->terms, $wpdb->term_taxonomy, $wpdb->term_relationships, ".$wpdb->prefix."wl_places,".$wpdb->prefix."wl_places_posts,".$wpdb->prefix."posts " .
+			  "WHERE ".$wpdb->prefix."wl_places_posts.place_id = ".$wpdb->prefix."wl_places.id ".   
+			  "AND ".$wpdb->prefix."wl_places_posts.post_id = ".$wpdb->prefix."posts.ID ". 
+			  "AND ".$wpdb->prefix."posts.post_status = 'publish' AND " . $post_type_and .  
+			  "AND ( lat between %s and %s ) ".  
+			  "AND ( lng between %s and %s ) ". 
+			  "and $wpdb->term_taxonomy.term_taxonomy_id = $wpdb->term_relationships.term_taxonomy_id ".
+	            "AND $wpdb->term_taxonomy.term_id = $wpdb->terms.term_id ".
+	            "AND $wpdb->posts.id = $wpdb->term_relationships.object_id ".
+	            "AND $wpdb->term_taxonomy.term_id = $cat ".
+	            "AND $wpdb->term_taxonomy.taxonomy = 'category' ". 
+			  "HAVING rawgeosearchdistance < %s ". 
+			  "ORDER BY rawgeosearchdistance ASC LIMIT 0,%d", 
+			    $r,
+			  	$loc['lat'],
+			  	$loc['lat'],
+			  	$loc['lng'],
+			  	$lat1,
+			  	$lat2,
+			  	$lng1,
+			  	$lng2,
+			  	$dist,
+			  	$max); 
+			  	
+			syslog(LOG_WARNING,print_r($querygeo,true));
+					  								
+			$results = $wpdb->get_results($querygeo, OBJECT);
+			foreach ( $results as $post ) {
+       			//$post->permalink = get_permalink( $post->post_id );
+       			
+       			$cat_ids = wp_get_post_categories( $post->ID );
+       			$cats_filtered = array();
+       			foreach ( $cat_ids as $term_id ) {
+       				if($term_id != $wlPlaces->placeCategory()){
+       					$term = get_term( $term_id, 'category');
+       					array_push( $cats_filtered, $term->name);
+       				}
+       				
+       			}
+       			      			
+       			$post->categories = $cats_filtered;
+       			$placeJSON = $post->place;
+       			$post_place = json_decode($placeJSON);   
+       			$post->place_name= $post_place->properties->name;   			
+			}
+		
+						
+			return $results;
+			
+		}	
+		
+		/**
+		 * location = the location for the search using haversine
+		 * radius = radius of search
+		 * 
+		 * mean radius of 6,366.56 km (Å3,956 mi).
+		 * 
+		 * 1 LAT/LNG = 111KM = 68.9722023 mi
+		 */
+		public function geoSearch($units='km', $max=10, $post_type='post', $dist=10.0, $location='37.8261015_-122.20913'){
+			global $wpdb,$wlPlaces;
+						
+			//units
+			$r= 6366.56;
+			$cvrt = 111.0;
+			if($units=='mi'){
+				$r= 3956.00;
+				$cvrt = 69;
+			}
+			
+			$post_type = explode(",",$post_type);
+
+			$post_type_and = '1=1';
+			if (is_array($post_type) && !empty($post_type)) {
+				$post_type_and = "{$wpdb->posts}.post_type IN ('" . implode('\',\'', $post_type) . "') ";
+			} elseif (is_string($post_type)) {
+				$post_type_and = "{$wpdb->posts}.post_type = '" . $wpdb->escape($post_type) . "' ";
+			}
+
+			$nv = explode('_',$location);
+			$loc = array('lat'=>$nv[0],'lng' =>$nv[1]);
+			
+			$lng1 = $loc['lng']-$dist/abs(cos(deg2rad($loc['lat']))*$cvrt);
+			$lng2 = $loc['lng']+$dist/abs(cos(deg2rad($loc['lat']))*$cvrt);
+			$lat1 = $loc['lat']-($dist/$cvrt);
+			$lat2 = $loc['lat']+($dist/$cvrt);
+						
+			//"AND ".$wpdb->prefix."posts.post_status = 'publish' AND " . $post_type_and . 
+			//this is a pretty complex query, we try to make it as fast as possible by making
+			//a bounding though, alas this is the best way to do geo, maybe index the lat,lng fields?
+			$querygeo = sprintf("SELECT ".
+					$wpdb->prefix."posts.*, ".
+					$wpdb->prefix."wl_places.id, ".
+					$wpdb->prefix."wl_places.place, ".
+					$wpdb->prefix."wl_places.wl_id, ".
+					$wpdb->prefix."wl_places.lat, ".
+					$wpdb->prefix."wl_places.lng, " .
+					"%s * 2 * ASIN(SQRT( POWER(SIN((lat - %s) * ". 
+			  "pi()/180 / 2), 2) + COS(lat * pi()/180) * COS(%s * pi()/180) * ". 
+			  "POWER(SIN((lng - %s) * pi()/180 / 2), 2) )) rawgeosearchdistance ".  
+			  "FROM ".$wpdb->prefix."wl_places,".$wpdb->prefix."wl_places_posts,".$wpdb->prefix."posts " .
+			  "WHERE ".$wpdb->prefix."wl_places_posts.place_id = ".$wpdb->prefix."wl_places.id ".   
+			  "AND ".$wpdb->prefix."wl_places_posts.post_id = ".$wpdb->prefix."posts.ID ". 
+			  "AND ".$wpdb->prefix."posts.post_status = 'publish' AND " . $post_type_and .  
+			  "AND ( lat between %s and %s ) ".  
+			  "AND ( lng between %s and %s ) ". 
+			  "HAVING rawgeosearchdistance < %s ". 
+			  "ORDER BY rawgeosearchdistance ASC LIMIT 0,%d", 
+			    $r,
+			  	$loc['lat'],
+			  	$loc['lat'],
+			  	$loc['lng'],
+			  	$lat1,
+			  	$lat2,
+			  	$lng1,
+			  	$lng2,
+			  	$dist,
+			  	$max); 
+			  	
+			syslog(LOG_WARNING,print_r($querygeo,true));
+					  								
+			$results = $wpdb->get_results($querygeo, OBJECT);
+			foreach ( $results as $post ) {
+       			$cat_ids = wp_get_post_categories( $post->ID );
+       			$cats_filtered = array();
+       			foreach ( $cat_ids as $term_id ) {
+       				if($term_id != $wlPlaces->placeCategory()){
+       					$term = get_term( $term_id, 'category');
+       					array_push( $cats_filtered, $term->name);
+       				}
+       				
+       			}
+       			      			
+       			$post->categories = $cats_filtered;
+       			$placeJSON = $post->place;
+       			$post_place = json_decode($placeJSON);   
+       			$post->place_name= $post_place->properties->name;   			
+			}
+		
+						
+			return $results;
+			
+		}		
 		
 		
 		public function getPostPlaces($postId) {
@@ -1127,7 +1336,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 	                                ON $wpdb->posts.ID = {$wpdb->prefix}wl_places_posts.post_id
 	                                GROUP BY $wpdb->posts.ID)";
 	        
-
+			syslog(LOG_WARNING,print_r($categories_query,true));
 			$return = $wpdb->get_results($categories_query, OBJECT);
 			return $return;
 		}
