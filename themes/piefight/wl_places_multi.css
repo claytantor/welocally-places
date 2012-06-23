@@ -1,20 +1,14 @@
 .selectable_title a { 
-	color: #349134;
+	color: #993C3C;
 	font-weight: bold; 
 }
-
 .wl_places_multi_widget{
 	width: 98%;
-	font-family: 'Oxygen', verdana, arial, helvetica, sans-serif;
+	color: #993C3C
 }
 
 .wl_places_multi_selected {
-	/*border: 1px solid #aaaaaa; 
-	-webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px; 
 	width: 100%;	
-	background:  #586B49;*/
 }
 
 .wl_places_place_wrapper{margin: 5px;}
@@ -23,12 +17,13 @@
 	width: 100%;
 	margin:5px auto;
 	height: 340px;
-	border: 1px solid #aaaaaa; 
+	border: 1px solid #96093B; 
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
    	border-radius: 4px; 
 }
 
+   	
 .wl_places_multi_map_canvas img {
 	max-width: none;
 }
@@ -36,31 +31,22 @@
 #wl_places_mutli_selectable { 
 	list-style-type: none; margin: 0; padding: 0; display: inline; 
 }
-#wl_places_mutli_selectable .ui-selecting { background: #7AF0B3; }
-#wl_places_mutli_selectable .ui-selected { background: #D0F7D0;  }
+#wl_places_mutli_selectable .ui-selecting { background: #CC908D; }
+#wl_places_mutli_selectable .ui-selected { background: #FFDEDE;  }
 #wl_places_mutli_selectable ol {  display: inline; }
 #wl_places_mutli_selectable li { 
-	margin-right: 3px; 
-	margin-bottom: 3px; 
-	text-align:left;
+	margin: 3px; 
 	padding: 0.4em; 
 	font-size: 0.8em; 
-	border: 1px solid #217A21; 
+	border:2px solid #CCA327;
 	display: inline-block; 	
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
    	border-radius: 4px; 
-   	background: #A7D1A7;
-   	cursor: pointer;
+   	background: #F0EAC9;
+   	cursor: hand;
    	}
 
-.wl_selected_tag { 
-	color: #999999;
-	border: 1px solid #aaaaaa; 
-	-webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px; 
-   	font-size: 0.8em; font-family: Fixed, monospace; font-weight:bold; text-align:center; margin-top:5px; }
    	
 .wl_places_multi {  
 	padding: 10px;
@@ -102,28 +88,63 @@
 	font-weight:bold;
 	font-size: 1.0em;
 	font-family: Fixed, monospace;  }
+
+.wl_places_multi_name { 
+	font-size: 1.4em;
+	font-weight:bold;
+	color: #444444; }
 	
+.wl_places_multi_web_link { 
+	background: url(images/icon_web.png);
+	text-align: left;  
+	display: inline-block; 
+	width:120px; 
+	height:32px; 
+	margin-right: 20px; }
+	
+.wl_places_multi_web_link a { 
+	margin-left: 35px; 
+	color: #993C3C;
+	}
+	
+.wl_places_multi_driving_link { 
+	background: url(images/icon_driving.png);
+	text-align: left; 
+	display: inline-block; 
+	width:120px; height:32px; 
+	margin-right: 15px; }
+
+.wl_places_multi_driving_link a { 
+	color: #993C3C;
+	margin-left: 35px; }
+
+.wl_places_multi_post_link { 
+	background: url(images/icon_post.png);
+	text-align: left; 
+	display: inline-block; 
+	width:120px; height:32px; 
+	margin-right: 15px; }	
+	
+.wl_places_multi_post_link a { 
+	color: #993C3C;
+	margin-left: 35px; }
+ 
 .wl_places_multi_infobox { 
 	font-size: 0.8em;
-	color: #586B49;
 	list-style-type:none; 
-	background: #DFEBA7; padding:5px;
-	border: 1px solid #5D754F; 
+	background: #f2f2f2; padding:5px;
+	border: 1px solid #aaaaaa; 
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
    	border-radius: 4px;  
  }
- 
 .wl_places_multi_infobox li { 
 	list-style-type:none; 
 	width: 160px; 
-	color: 586B49;
  }
+ 
  .wl_selectable_marker { float: left }
  
- .selectable_title{ 
- 	font-family: 'Della Respira', verdana, arial, helvetica, sans-serif;
-	font-weight:bold;
-	color: #586B49; };
-
+ .selectable_distance{ display:none }
+ 
  

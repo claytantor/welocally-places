@@ -1,6 +1,8 @@
 <?php
 global $wlPlaces; 
 $options = $wlPlaces->getOptions();
+$custom_style=$wlPlaces->getThemeMapStyle();
+$marker_image_path = WP_PLUGIN_URL.'/welocally-places/themes/'.$options[ 'places_theme' ].'/images/marker_all_base.png' ;
 ?> 
 <div class="widget-title"></div>
  <div class="wl_category_container_widget">  

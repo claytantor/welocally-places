@@ -1,31 +1,32 @@
-[{
-	stylers: [
-	  { saturation: -37 }
-	]
+[
+  {
+    stylers: [
+      { saturation: -56 }
+    ]
   },{
-	featureType: "road.highway",
-	stylers: [
-		{ saturation: -40 },
-		{ hue: "#CCD66F" }
-	]
+    featureType: "road",
+    stylers: [
+      { hue: "#00aaff" }
+    ]
   },{
-	featureType: "water",
-	stylers: [
-	  { hue: "#00ff80" },
-	  { lightness: -33 }
-	]
+    featureType: "water",
+    stylers: [
+      { lightness: -46 }
+    ]
   },{
-	featureType: "road.arterial",
-	stylers: [
-	  { saturation: -61 },
-	  { lightness: -27 },
-	  { hue: "#88A374" }
-	]
+    featureType: "road.local",
+    stylers: [
+      { invert_lightness: true },
+      { saturation: 49 },
+      { hue: "#ffc300" },
+      { lightness: 52 }
+    ]
   },{
-	featureType: "road.local",
-	stylers: [
-	  { saturation: -69 },
-	  { lightness: -25 }
-	]
+    featureType: "poi.park",
+    stylers: [
+      { hue: "#00ff99" },
+      { saturation: 24 },
+      { lightness: -25 }
+    ]
   }
 ]

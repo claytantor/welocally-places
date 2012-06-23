@@ -121,21 +121,22 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_enqueue_script('wl_place_widget_script',  WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_place_widget.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_infobox_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_infobox.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_places_multi_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_places_multi_widget.js', array('jquery'), WelocallyPlaces::VERSION);
+		
 			
 			global $wp_styles;
 		
-			wp_enqueue_style( 'wl_places',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
-			wp_register_style('wl_places-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places.css');
+			wp_enqueue_style( 'wl_places',WP_PLUGIN_URL.'/welocally-places/themes/'.$options['places_theme'].'/wl_places.css', array(), WelocallyPlaces::VERSION, 'screen' );
+			wp_register_style('wl_places-ie-only', WP_PLUGIN_URL.'/welocally-places/themes/'.$options['places_theme'].'/ie/wl_places.css');
 			$wp_styles->add_data('wl_places-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_places-ie-only');
 						
-			wp_enqueue_style( 'wl_places_place',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
-			wp_register_style('wl_places_place-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_place.css');
+			wp_enqueue_style( 'wl_places_place',WP_PLUGIN_URL.'/welocally-places/themes/'.$options['places_theme'].'/wl_places_place.css', array(), WelocallyPlaces::VERSION, 'screen' );
+			wp_register_style('wl_places_place-ie-only', WP_PLUGIN_URL.'/welocally-places/themes/'.$options['places_theme'].'/ie/wl_places_place.css');
 			$wp_styles->add_data('wl_places_place-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_places_place-ie-only');
 			
-			wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );			
-			wp_register_style('wl_places_multi-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_multi.css');
+			wp_enqueue_style( 'wl_places_multi',WP_PLUGIN_URL.'/welocally-places/themes/'.$options['places_theme'].'/wl_places_multi.css', array(), WelocallyPlaces::VERSION, 'screen' );			
+			wp_register_style('wl_places_multi-ie-only', WP_PLUGIN_URL.'/welocally-places/themes/'.$options['places_theme'].'/ie/wl_places_multi.css');
 			$wp_styles->add_data('wl_places_multi-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_places_multi-ie-only');		
 			
@@ -145,38 +146,36 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$wp_styles->add_data('wl_places_wp-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_places_wp-ie-only');	
 			
-
-			
 		}
 		
 		public function loadAdminDomainStylesScripts() {
-					
+
 			$placesURL = trailingslashit( WP_PLUGIN_URL ) 
 				. trailingslashit( plugin_basename( dirname( __FILE__ ) ) ) . 'resources/';
-			
+
 			wp_enqueue_script( 'jquery' ); 
             wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
                       								
-												
+
 			wp_enqueue_script('media-upload');
 			wp_enqueue_script('thickbox');
 			//welocally
 			wp_enqueue_script('wl_addplace_widget_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_addplace_wp.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_placesmgr_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_placemgr.js', array('jquery'), WelocallyPlaces::VERSION);
 			wp_enqueue_script('wl_pager', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_pager_wp.js', array('jquery'), WelocallyPlaces::VERSION);
-					 	
+
 			wp_enqueue_style('thickbox');
-			
+
 			//add places
 			wp_enqueue_style( 'wl_places_addplace_style',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_addplace.css',array(), WelocallyPlaces::VERSION, 'screen' );	
-						
+
 			global $wp_styles;
-		
+
 			wp_enqueue_style( 'wl_pager',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_pager.css', array(), WelocallyWPPagination::VERSION, 'screen' );
 			wp_register_style('wl_pager-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_pager.css');
 			$wp_styles->add_data('wl_pager-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_pager-ie-only');
-			
+
 			$options = $this->getOptions();
 			if(empty($options['pager_theme']))
 				$options['pager_theme'] = 'basic'; 
@@ -185,14 +184,14 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			wp_register_style('wl_pager_'.$options['pager_theme'].'-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_pager_'.$options['pager_theme'].'.css');
 			$wp_styles->add_data('wl_pager_'.$options['pager_theme'].'-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_pager_'.$options['pager_theme'].'-ie-only');
-			
+
 			//admin specific
 			wp_enqueue_style( 'wl_places_admin',WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/wl_places_admin.css', array(), WelocallyPlaces::VERSION, 'screen' );
 			wp_register_style('wl_places_admin-ie-only', WP_PLUGIN_URL.'/welocally-places/resources/stylesheets/ie/wl_places_admin.css');
 			$wp_styles->add_data('wl_places_admin-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_places_admin-ie-only');	
-			
-			
+
+
 		}
 		
 		public function handleWelocallyPlacesShortcode($attrs,$content = null) {
@@ -380,6 +379,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
                 
                 $wpdb->query($sql);
 			}
+						
 			
 			//put the latlng for all the places in the table
 			if(true){
@@ -498,11 +498,15 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * @return void
 		 */
 		public function addPlaceBox( ) {
+			
+			//jquery ui
+			wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
+			wp_enqueue_style('jquery-ui-style');				
+			
 			foreach (array('post','page') as $type)
 		    {
 		        add_meta_box( 'wl-place-add-meta-2', __( 'Welocally Add Place', 'Place_textdomain' ), 
-				                array( $this, 'addPlaceMetaBox' ), $type, 'normal', 'high' );
-				            
+				                array( $this, 'addPlaceMetaBox' ), $type, 'normal', 'high' );				            
 		    }
  		}
 
@@ -577,9 +581,32 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
             return null;
 		}
 		
-		public function getId($filtervalue){
-			
+		public function getThemes() {
+			$themes = scandir(WP_PLUGIN_DIR . '/' .$this->pluginDir . '/themes' );
+			$themes_filtered = array();
+			foreach ( $themes as $theme ) {
+				if($theme != '.' && $theme != '..'){
+					array_push($themes_filtered, $theme);
+				}      			
+			}
+			return $themes_filtered;
 		}
+		
+		public function getThemeMapStyle() {
+			
+			$options = $this->getOptions();
+			
+			//map style
+			$mapstyle_json=null;
+			$mapstyle = dirname( __FILE__ ) . '/themes/'.$options['places_theme' ].
+				'/mapstyle.json';				
+			if (file_exists($mapstyle)) {
+				$mapstyle_json = file_get_contents($mapstyle);		    
+			} 
+			
+			return $mapstyle_json;
+		}
+		
 		
 		
 		public function getPlacesNew($maxElements=25) {
@@ -855,7 +882,10 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			$default_show_selection_tag = 'on'; 		
 			$default_infobox_title_link_tag = 'on'; 
 			
-			$default_widget_post_type = 'post'; 
+			$default_widget_post_type = 'post';
+			
+			$default_places_theme = 'welocally';
+			 
 						
 					
 			// Set current version level. Because this can be used to detect version changes (and to what extent), this
@@ -879,7 +909,11 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			//selectable style overrides
 			if ( !array_key_exists( 'widget_selection_style', $options ) ) { $options[ 'widget_selection_style' ] = $default_widget_selection_style; $changed = true; }
 			if ( !array_key_exists( 'tag_selection_style', $options ) ) { $options[ 'tag_selection_style' ] = $default_tag_selection_style; $changed = true; }
-					
+			
+			//theme	
+			if ( !array_key_exists( 'places_theme', $options ) ) { $options[ 'places_theme' ] = $default_places_theme; $changed = true; }
+				
+								
 			// Update the options, if changed, and return the result
 			if ( $changed ) { $this->saveOptions($options) ; }
                        

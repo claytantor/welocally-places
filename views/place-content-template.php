@@ -2,16 +2,19 @@
 global $wlPlaces;
 $options = $wlPlaces->getOptions();
 
-$custom_style=null;
-if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
-	$custom_style = stripslashes($options[ 'map_custom_style' ]);
-}
- 
+$custom_style=$wlPlaces->getThemeMapStyle();
 
-$marker_image_path = WP_PLUGIN_URL.'/welocally-places/resources/images/marker_all_base.png' ;
-if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_default_marker' ])  && $options[ 'map_default_marker' ]!=''){
-	$marker_image_path = $options[ 'map_default_marker' ];
-}
+//if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_custom_style' ])  && $options[ 'map_custom_style' ]!=''){
+//	$custom_style = stripslashes($options[ 'map_custom_style' ]);
+//}
+// 
+
+$marker_image_path = WP_PLUGIN_URL.'/welocally-places/themes/'.$options[ 'places_theme' ].'/images/marker_all_base.png' ;
+
+
+//if(class_exists('WelocallyPlacesCustomize' ) && isset($options[ 'map_default_marker' ])  && $options[ 'map_default_marker' ]!=''){
+//	$marker_image_path = $options[ 'map_default_marker' ];
+//}
 
 $endpoint = 'https://api.welocally.com';
 if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){

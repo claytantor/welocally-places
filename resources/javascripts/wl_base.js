@@ -75,6 +75,16 @@ if (!window.WELOCALLY) {
 				}
 				return str.join("&");
 			},
+    		hashCode: function(val){
+    		    var hash = 0;
+    		    if (val.length == 0) return hash;
+    		    for (i = 0; i < val.length; i++) {
+    		        char = val.charCodeAt(i);
+    		        hash = ((hash<<5)-hash)+char;
+    		        hash = hash & hash; 
+    		    }
+    		    return hash;
+    		},				
 			trim: function (str) { 
 	    			return WELOCALLY.util.ltrim(WELOCALLY.util.rtrim(str), ' '); 
 			}, 
@@ -148,7 +158,13 @@ if (!window.WELOCALLY) {
 			},
 			startsWith: function(sourceString, startsWith) {
 				  return sourceString.indexOf(startsWith) == 0;
-			},
+			},			
+			urlify: function(text) {
+			    var urlRegex = /(https?:\/\/[^\s]+)/g;
+			    return text.replace(urlRegex, function(url) {
+			        return '<a href="' + url + '">' + url + '</a>';
+			    });
+			},			
 			getParameter: function ( queryString, parameterName ) {
 				   // Add "=" to the parameter name (i.e. parameterName=value)
 				   var parameterName = parameterName + "=";

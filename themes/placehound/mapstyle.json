@@ -1,31 +1,25 @@
-[{
+[
+  {
 	stylers: [
-	  { saturation: -37 }
+	  { saturation: -45 }
 	]
   },{
-	featureType: "road.highway",
+	featureType: "road",
 	stylers: [
-		{ saturation: -40 },
-		{ hue: "#CCD66F" }
+	  { hue: "#ff5500" }
 	]
   },{
 	featureType: "water",
 	stylers: [
-	  { hue: "#00ff80" },
-	  { lightness: -33 }
+	  { hue: "#ffa200" },
+	  { lightness: -55 }
 	]
   },{
-	featureType: "road.arterial",
+	featureType: "poi.park",
 	stylers: [
-	  { saturation: -61 },
-	  { lightness: -27 },
-	  { hue: "#88A374" }
-	]
-  },{
-	featureType: "road.local",
-	stylers: [
-	  { saturation: -69 },
-	  { lightness: -25 }
+	  { hue: "#ffc300" },
+	  { lightness: 14 },
+	  { saturation: 21 }
 	]
   }
 ]

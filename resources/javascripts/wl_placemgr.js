@@ -146,7 +146,8 @@ WELOCALLY_PlaceManager.prototype.editHandler = function(event,ui) {
 	_instance.addPlaceWidget.show(place);
 	jQuery( _instance.addPlaceWrapper).dialog({
 		title: 'edit place',
-		minWidth: 600,
+		position: 'top',
+		minWidth: 750,
 		modal: true
 	});	
 	
@@ -226,8 +227,8 @@ WELOCALLY_PlaceManager.prototype.deleteDialogHandler = function(event,ui) {
 	jQuery( _instance.deleteDialog).dialog({
 		resizable: false,
 		title: title,
-		width: 400,
-		height:200,
+		width: 650,
+		height:'auto',
 		modal: true,
 		buttons: {
 			"Delete": function() {				

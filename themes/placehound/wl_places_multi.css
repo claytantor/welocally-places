@@ -1,3 +1,13 @@
+.selectable_title a { 
+	color: #962020;
+	font-weight: bold; 
+}
+
+.selectable_title a:hover { 
+	color: #E3BC66;
+	font-weight: bold; 
+}
+
 
 .wl_places_multi_widget{
 	width: 98%;
@@ -25,20 +35,21 @@
 
 #wl_places_mutli_selectable { 
 	list-style-type: none; margin: 0; padding: 0; display: inline; 
+	color: #856728;
 }
-#wl_places_mutli_selectable .ui-selecting { background: #FEFEFE; }
-#wl_places_mutli_selectable .ui-selected { background: #e2e2e2;  }
+#wl_places_mutli_selectable .ui-selecting { background: #FF825C; }
+#wl_places_mutli_selectable .ui-selected { background: #FCF2A7;  }
 #wl_places_mutli_selectable ol {  display: inline; }
 #wl_places_mutli_selectable li { 
 	margin: 3px; 
 	padding: 0.4em; 
 	font-size: 0.8em; 
-	border: 1px solid #aaaaaa; 
+	border: 1px solid #856728; 
 	display: inline-block; 	
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
    	border-radius: 4px; 
-   	background: #FEFEFE;
+   	background: #F5E3BC;
    	cursor: hand;
    	}
 

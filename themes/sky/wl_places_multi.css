@@ -1,3 +1,12 @@
+.selectable_title a { 
+	color: #2D6096;
+	font-weight: bold; 
+}
+
+.selectable_title a:hover { 
+	color: #B89B27;
+	font-weight: bold; 
+}
 
 /* overall styling for multi widget */ 
 .wl_places_multi_widget{
@@ -34,8 +43,8 @@
 #wl_places_mutli_selectable { 
 	list-style-type: none; margin: 0; padding: 0; display: inline; 
 }
-#wl_places_mutli_selectable .ui-selecting { background: #FEFEFE; }
-#wl_places_mutli_selectable .ui-selected { background: #e2e2e2;  }
+#wl_places_mutli_selectable .ui-selecting { background: #5EDAFF; }
+#wl_places_mutli_selectable .ui-selected { background: #FAF79B; border: 1px solid #A68324; }
 #wl_places_mutli_selectable ol {  display: inline; }
 #wl_places_mutli_selectable li { 
 	margin-right: 3px; 
@@ -43,12 +52,12 @@
 	text-align:left;
 	padding: 0.4em; 
 	font-size: 0.8em; 
-	border: 1px solid #aaaaaa; 
+	border: 1px solid #3A6D87; 
 	display: inline-block; 	
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
    	border-radius: 4px; 
-   	background: #FEFEFE;
+   	background: #AEE2FC;
 	/*cursor: pointer;*/
    	cursor: pointer;
    	}

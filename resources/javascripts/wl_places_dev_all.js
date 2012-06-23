@@ -75,6 +75,16 @@ if (!window.WELOCALLY) {
 				}
 				return str.join("&");
 			},
+    		hashCode: function(val){
+    		    var hash = 0;
+    		    if (val.length == 0) return hash;
+    		    for (i = 0; i < val.length; i++) {
+    		        char = val.charCodeAt(i);
+    		        hash = ((hash<<5)-hash)+char;
+    		        hash = hash & hash; 
+    		    }
+    		    return hash;
+    		},				
 			trim: function (str) { 
 	    			return WELOCALLY.util.ltrim(WELOCALLY.util.rtrim(str), ' '); 
 			}, 
@@ -148,7 +158,13 @@ if (!window.WELOCALLY) {
 			},
 			startsWith: function(sourceString, startsWith) {
 				  return sourceString.indexOf(startsWith) == 0;
-			},
+			},			
+			urlify: function(text) {
+			    var urlRegex = /(https?:\/\/[^\s]+)/g;
+			    return text.replace(urlRegex, function(url) {
+			        return '<a href="' + url + '">' + url + '</a>';
+			    });
+			},			
 			getParameter: function ( queryString, parameterName ) {
 				   // Add "=" to the parameter name (i.e. parameterName=value)
 				   var parameterName = parameterName + "=";
@@ -1483,14 +1499,32 @@ WELOCALLY_PlaceWidget.prototype.makePlaceContent = function(selectedPlace, cfg) 
 				qVal+'" target="_new">Directions</a></div>');		
 	}
 	
-	//embed wrapper
-	var embed = jQuery('<div id="wl_place_embed" class="wl_place_embed"></div>');
-	if(!cfg.showShare){
-		jQuery(embed).hide();
-	}
-
-	
 	jQuery(placeWrapper).append(links);
+	
+	//userdata wrapper
+	if(selectedPlace.properties.userdata != null && selectedPlace.properties.userdata.length>0){
+		var embed = jQuery('<div id="wl_place_userdata" class="wl_place_userdata"></div>');
+
+		jQuery.each(selectedPlace.properties.userdata, function(i,item){
+			if(/^http:\/\//.test(item.value)) {
+				jQuery(embed).append('<div class="wl_place_userdata_item"><a href="'+item.value+'">'+item.name+'</a></div>');
+			} else if(/^https:\/\//.test(item.value)) {
+				jQuery(embed).append('<div class="wl_place_userdata_item"><a href="'+item.value+'">'+item.name+'</a></div>');
+			} else if(/^mailto:/.test(item.value)) {
+				jQuery(embed).append('<div class="wl_place_userdata_item"><a href="'+item.value+'">'+item.name+'</a></div>');
+			} else if(/^tel:/.test(item.value)) {
+				jQuery(embed).append('<div class="wl_place_userdata_item"><a href="'+item.value+'">'+item.name+'</a></div>');
+			} else {
+				jQuery(embed).append('<div class="wl_place_userdata_item">'+item.name+': '+item.value+'</div>');
+			}
+			
+		});
+		
+		jQuery(placeWrapper).append(embed);
+	}
+			
+		
+	
 		
 	
 	return placeWrapper;

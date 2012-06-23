@@ -4,6 +4,12 @@
  * 
  */
 
+function wl_edit_post_initialise() {
+	//jquery ui
+	wp_register_style( 'jquery-ui-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css' );
+	wp_enqueue_style('media-upload');	
+}
+
 function wl_menu_initialise() {
 	
 	//jquery ui
@@ -25,7 +31,8 @@ function wl_menu_initialise() {
 	add_action( 'admin_print_styles-' . $placesmgr_slug, 'wl_placesmgr_plugin_admin_styles' );
 		
 }
-
+//edit_post 
+add_action( 'edit_post','wl_edit_post_initialise' );
 add_action( 'admin_menu','wl_menu_initialise' );
 add_filter( 'plugin_row_meta', 'wl_set_plugin_meta', 10, 2 );
 

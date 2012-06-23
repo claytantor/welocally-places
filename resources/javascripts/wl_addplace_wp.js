@@ -267,23 +267,152 @@ WELOCALLY_AddPlaceWidget.prototype.addOptionalFieldsToForm = function(formArea, 
 		jQuery(webField).find('input').val(selectedPlace.properties.website);	
 	jQuery(optionalAll).append(webField);
 	
+	//metadata add
+	
+	//web
+	jQuery(optionalAll)
+	.append('<div class="wl_field_description">Enter custom information items you would like displayed related to the place. Links to web sites or email addresses will automatically be clickable.</div>');
+
+	var placeMetadataAdd = jQuery('<div class="wl_field_area">item name:<input id="wl_addplace_userdata_name" type="text" name="wl_addplace_userdata_name" class="wl_userdata_field wl_addplace_userdata_name"/>&nbsp; item value:<input id="wl_addplace_userdata_value" type="text" name="wl_addplace_userdata_value" class="wl_userdata_field wl_addplace_userdata_value"/><a href="#" id="wl_add_userdata_nv" class="wl_button wl_add_userdata_nv">add user data</a></div>');
+	jQuery(placeMetadataAdd).find('a').button();
+	jQuery(optionalAll).append(placeMetadataAdd);
+	
+	//metadata tags add
+	var placeMetadataTags = jQuery('<div class="wl_userdata_tags"></div>');
+	jQuery(optionalAll).append(placeMetadataTags);
+	
+	
+	//metadata
+	var placeMetadata = jQuery('<div class="wl_field_area"><textarea rows="5" id="wl_addplace_userdata" type="text" name="wl_addplace_userdata" class="wl_widget_field wl_addplace_userdata"></textarea></div>');
+	jQuery(optionalAll).append(placeMetadata);
+		
 	jQuery(formArea).append(optionalAll);
 	
+	//actions
+	jQuery(placeMetadataAdd).find('a').click(function() {
+		//parse contents
+		var contents = jQuery.parseJSON(jQuery('#wl_addplace_userdata').val());
+		
+		
+		var name = jQuery('#wl_addplace_userdata_name').val();
+		var val = jQuery('#wl_addplace_userdata_value').val();
+		var userdata_id = WELOCALLY.util.hashCode(name);
+		
+		if(contents==null){
+			jQuery('#wl_addplace_userdata').val('[{ "name":"'+
+					name+'", "value":"'+
+					val+'" }]');
+			_instance.appendAnnotationDiv(placeMetadataTags, userdata_id, name, val);
+			jQuery(placeMetadataTags).show();
+			
+		} else {
+			var found = false;
+			//replace or add
+			jQuery.each(contents, function(i,item){
+				if(item.name == name){
+					found = true;
+					item.value = val;
+					_instance.replaceAnnotationDiv(placeMetadataTags, userdata_id, name, val);
+				} 
+			})
+			
+			if(!found){
+				contents.push(jQuery.parseJSON('{ "name":"'+
+						name+'", "value":"'+
+						val+'" }'));
+				
+				
+				_instance.appendAnnotationDiv(placeMetadataTags, userdata_id, name, val);
+				jQuery(placeMetadataTags).show();
+				
+			}
 
+			jQuery('#wl_addplace_userdata').val(JSON.stringify(contents));
+		}
+			
+		
+		
+		//bind the close
+		jQuery(placeMetadataTags)
+			.find('#wl_place_userdata_close_'+userdata_id)
+			.bind('click' , 
+					{ instance: _instance, anchor: this, dataid: userdata_id }, 
+					_instance.closeUserdataItemHandler);  
+		
+		return false;
+	});
+};
+
+WELOCALLY_AddPlaceWidget.prototype.appendAnnotationDiv = function(placeMetadataTags, userdata_id, name, val) {
+	//add the annotation
+	if(/^http:\/\//.test(val)) {
+		jQuery(placeMetadataTags).append('<div id="wl_place_userdata_item_'+userdata_id+'" class="wl_place_userdata_item"><div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div><a href="'+val+'">'+name+'</a></div>');
+	} else if(/^https:\/\//.test(val)) {
+		jQuery(placeMetadataTags).append('<div id="wl_place_userdata_item_'+userdata_id+'" class="wl_place_userdata_item"><div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div><a href="'+val+'">'+name+'</a></div>');
+	} else if(/^mailto:/.test(val)) {
+		jQuery(placeMetadataTags).append('<div id="wl_place_userdata_item_'+userdata_id+'" class="wl_place_userdata_item"><div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div><a href="'+val+'">'+name+'</a></div>');
+	} else if(/^tel:/.test(val)) {
+		jQuery(placeMetadataTags).append('<div id="wl_place_userdata_item_'+userdata_id+'" class="wl_place_userdata_item"><div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div><a href="'+val+'">'+name+'</a></div>');
+	} else {
+		jQuery(placeMetadataTags).append('<div id="wl_place_userdata_item_'+userdata_id+'" class="wl_place_userdata_item"><div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div>'+name+': '+val+'</div>');
+	}	
+}
+
+WELOCALLY_AddPlaceWidget.prototype.replaceAnnotationDiv = function(placeMetadataTags, userdata_id, name, val) {
+	var item = jQuery(placeMetadataTags).find('#wl_place_userdata_item_'+userdata_id);
+	
+	//add the annotation
+	if(/^http:\/\//.test(val)) {
+		jQuery(item).html('<div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div><a href="'+val+'">'+name+'</a>');
+	} else if(/^https:\/\//.test(val)) {
+		jQuery(item).html('<div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div><a href="'+val+'">'+name+'</a>');
+	} else if(/^mailto:/.test(val)) {
+		jQuery(item).html('<div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div><a href="'+val+'">'+name+'</a>');
+	} else if(/^tel:/.test(val)) {
+		jQuery(item).html('<div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div><a href="'+val+'">'+name+'</a>');
+	} else {
+		jQuery(item).html('<div href="#" id="wl_place_userdata_close_'+userdata_id+'" class="wl_place_userdata_close">&nbsp;</div>'+name+': '+val);
+	}	
+}
+
+WELOCALLY_AddPlaceWidget.prototype.closeUserdataItemHandler = function(event,ui) {
+	
+	var _instance = event.data.instance;
+	var id = event.data.dataid;
+	
+	WELOCALLY.util.log('close user data '+event.data.dataid);
+	
+	//get contents from form field
+	var contents = jQuery.parseJSON(jQuery(_instance.wrapper).find('#wl_addplace_userdata').val());
+	
+	//remove item
+	var idx = 0;  
+	var fidx = -1;  
+	jQuery.each(contents, function(i,item){
+		var userdata_id = WELOCALLY.util.hashCode(item.name);
+		if(userdata_id == id){
+			fidx = idx;		
+		} 
+		idx++;
+	});
+	if(fidx!=-1) contents.splice(fidx, 1); 
+		
+	//update form field
+	jQuery(_instance.wrapper).find('#wl_addplace_userdata').val(JSON.stringify(contents));
+	
+	//remove annotation tag
+	jQuery(_instance.wrapper).find('#wl_place_userdata_item_'+event.data.dataid).hide('slow');
+	jQuery(_instance.wrapper).find('#wl_place_userdata_item_'+event.data.dataid).remove();
+	
 };
 
 WELOCALLY_AddPlaceWidget.prototype.addSaveButtonToForm = function(formArea, selectedPlace) {	
 	//the save button
 	var buttonDiv = jQuery('<div id="wl_addplace_buttons" style="display:none"></div>'); 		
-	var addPlaceButton = jQuery('<a id="wl_addplace_button_add" href="#">add place</a>');
+	var addPlaceButton = jQuery('<a id="wl_addplace_button_add" style="font-size: 1.4em; font-weight: bold; margin-top:10px;" class="wl_addplace_button_add" href="#">add place</a>');
 	jQuery(addPlaceButton).button();	
 	jQuery(addPlaceButton).bind('click' , {form: formArea, _instance: this}, this.savePlaceFromFormHandler);  	
 	jQuery(buttonDiv).append(addPlaceButton);
-	
-	//same as dialog close but whatever
-	/*jQuery(buttonDiv).append('<a id="wl_addplace_cancel" class="actions wl_addplace_button" href="#">cancel</a>');	
-	jQuery(buttonDiv).find('#wl_addplace_cancel').button().click(function(){ return false; });*/
-	
 	
 	jQuery(formArea).append(buttonDiv);
 };
@@ -323,6 +452,9 @@ WELOCALLY_AddPlaceWidget.prototype.savePlaceFromFormHandler = function(event,ui)
 	selectedPlace.properties.province = jQuery(formArea).find('#wl_addplace_adminl1').val();
 	selectedPlace.properties.postcode = jQuery(formArea).find('#wl_addplace_postal_code').val();	
 	selectedPlace.properties.country = jQuery(formArea).find('#wl_addplace_country').val();	
+	selectedPlace.properties.userdata = jQuery(formArea).find('#wl_addplace_country').val();	
+	
+	
 	selectedPlace.geometry.coordinates = jQuery(formArea).find('#wl_addplace_location_val').val().split('_');
 	
 	//phone wl_addplace_phone & website wl_addplace_web
@@ -333,6 +465,9 @@ WELOCALLY_AddPlaceWidget.prototype.savePlaceFromFormHandler = function(event,ui)
 	selectedPlace.properties.classifiers[0].type = jQuery(formArea).find('#wl_addplace_classifier_type').val();
 	selectedPlace.properties.classifiers[0].category = jQuery(formArea).find('#wl_addplace_classifier_category').val();
 	
+	//userdata
+	selectedPlace.properties.userdata = jQuery.parseJSON( jQuery(formArea).find('#wl_addplace_userdata').val() ); 
+		
 	if(jQuery(formArea).find('#wl_addplace_classifier_subcategory').val())
 		selectedPlace.properties.classifiers[0].subcategory = jQuery(formArea).find('#wl_addplace_classifier_subcategory').val();
 	else
@@ -800,14 +935,16 @@ WELOCALLY_AddPlaceWidget.prototype.setPlaceForEdit = function(selectedPlace) {
 			selectedPlace.properties.city+
 			' '+selectedPlace.properties.province+
 			' '+selectedPlace.properties.postcode);
-	jQuery(this.locationField).find('input').trigger('change' , {form: _instance.formArea, _instance: this}, this.locationChangeHandler);  
+	jQuery(this.locationField).find('input')
+		.trigger('change' , 
+				{form: _instance.formArea, _instance: this}, 
+				this.locationChangeHandler);  
 	
 	
 	if(selectedPlace.properties.classifiers.type){
 		_instance.setSelectedPlaceClassfiers(selectedPlace);			
 		jQuery(_instance.formArea).find('.wl_addplace_selected_classifiers').show();
 	}
-
 		
 	jQuery(_instance.formArea).find('#wl_addplace_phone').val(selectedPlace.properties.phone);		
 	jQuery(_instance.formArea).find('#wl_addplace_web').val(selectedPlace.properties.website);	

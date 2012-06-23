@@ -34,7 +34,8 @@
    } 
    
 .wl_selected_tag_add { 
-	font-family: Fixed, monospace; font-weight:bold; text-align:center; margin-top:5px; }  
+	font-family: Fixed, monospace; font-weight:bold; text-align:center; margin-top:5px; } 
+
    	
 .wl_addplace_selected_classifiers {
 	margin-top: 10px;
@@ -79,3 +80,14 @@
    	border-radius: 4px; 
    	background: #fefefe;
 }
+
+.wl_userdata_tags { display: inline;}
+.wl_userdata_tag_item { display: inline-block;}
+.wl_addplace_userdata { display: none; }
+.wl_add_userdata_nv { margin-bottom: 5px; }
+.wl_place_userdata_item { margin: 5px; padding: 5px;  }
+.wl_place_userdata_close { background: url(../images/monotone_close.png) no-repeat left top; width: 18px; height: 18px; display: inline-block; margin-right: 3px;  }
+
+.wl_userdata_field { width: 200px; display: inline-block;}
+
+.wl_addplace_button_add {width: 100%; font-size: 1.4em; font-weight: bold; } 

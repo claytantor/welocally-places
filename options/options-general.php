@@ -1,6 +1,8 @@
 <?php
 global $wlPlaces;
 $options = $wlPlaces->getOptions();
+$themes = $wlPlaces->getThemes();
+print_r($themes);
 ?>
 <?php 
 $menubar_include = WP_PLUGIN_DIR . '/' .$wlPlaces->pluginDir . '/options/options-infobar.php';
@@ -17,6 +19,9 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-general', 
 	if(!isset($options['infobox_title_link']) || $options['infobox_title_link'] == ''){
 		$options['infobox_title_link'] = 'off';
 	} 
+	
+	//theme
+	$options[ 'places_theme' ] = strtolower($_POST[ 'places_theme' ]);
 	
 	
 	//widget
@@ -102,6 +107,29 @@ jQuery(document).ready(function() {
 				<li><input type="checkbox" id="welocally_show_selection_tag" name="welocally_show_selection_tag" <?php if($options[ 'show_selection_tag' ]=='on') { echo 'checked';  }  ?>>Show Selection Item List</li>
 				<li>Selection Item Style<br/><input style="width:400px" type="text" id="welocally_tag_selection_style" name="welocally_tag_selection_style" value="<?php echo $options[ 'tag_selection_style' ];?>"></li>
 			</ul>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row"><?php _e('Theme Control' ); ?></th>
+		<td>
+			<ul>
+				<li>Maps Theme<br/>
+					<select name="places_theme" id="places_theme">
+					<?php
+						foreach ( $themes as $theme ) {
+							$content =
+								'<option value="%value%" %selected%>%label%</option>';
+							$content = str_replace("%value%", $theme, $content);
+							$content = str_replace("%label%", $theme, $content);
+							if($options[ 'places_theme' ]==$theme) { $content = str_replace("%selected%", 'selected', $content);}
+							else {$content = str_replace("%selected%", '', $content);} 
+							echo $content;								
+						}     
+					?>
+					</select>
+				</li>				
+			</ul>
+			<div id="wl_mobile_swatch_image"></div>
 		</td>
 	</tr>
 	
