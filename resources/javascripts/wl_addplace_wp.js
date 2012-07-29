@@ -180,21 +180,59 @@ WELOCALLY_AddPlaceWidget.prototype.createForm = function(map_canvas) {
 	jQuery(formArea).append('<input id="wl_addplace_classifier_type" type="hidden" name="classifierType"/>');
 	jQuery(formArea).append('<input id="wl_addplace_classifier_category" type="hidden" name="classifierCategory"/>');
 	jQuery(formArea).append('<input id="wl_addplace_classifier_subcategory" type="hidden" name="classifierSubcategory"/>');
-	
-	
-	this.placeNameField = jQuery('<div class="wl_field_area"><input id="wl_addplace_name_field" type="text" name="placeName" class="wl_widget_field wl_addplace_name"/></div>');
-	jQuery(this.placeNameField).find('input').bind('change' , {form: formArea, _instance: this}, this.nameChangeHandler);  
+		
+	_instance.placeNameField = jQuery('<div class="wl_field_area"><input id="wl_addplace_name_field" type="text" name="placeName" class="wl_widget_field wl_addplace_name"/></div>');
+	jQuery(_instance.placeNameField).find('input').bind('change' , {form: formArea, _instance: this}, this.nameChangeHandler);  
 	
 	jQuery(formArea).append(this.placeNameField);
+		
 	
+	//geocoded location
 	var locFieldArea = jQuery('<div class="wl_addplace_loc_field_area" style="display:none;"></div>');
 	jQuery(locFieldArea)
-	.append('<div class="wl_field_description">Enter the most exact address of the place, such as 1234 Mullberry Rd Oakland CA 94612</div>');
-	
-	this.locationField = jQuery('<div class="wl_field_area"><input id="wl_addplace_location_field" type="text" name="placeLocation" class="wl_widget_field wl_addplace_location"/></div>');
-	jQuery(_instance.locationField).find('input').bind('change' , {form: formArea, _instance: this}, this.locationChangeHandler);  
-	
+	.append('<div class="wl_field_description">Enter the most exact address of the place, such as 1234 Mullberry Rd Oakland CA 94612</div>');	
+	_instance.locationField = jQuery('<div class="wl_field_area"><input id="wl_addplace_location_field" type="text" name="placeLocation" class="wl_widget_field wl_addplace_location"/></div>');
+	jQuery(_instance.locationField).find('input').bind('change' , {form: formArea, _instance: this}, this.locationChangeHandler);  	
 	jQuery(locFieldArea).append(this.locationField);
+	var custom_field = jQuery('<div id="wl_custom_field"><input type="checkbox" name="custom_location" value="custom_location"> Use Custom Location</div>');
+	
+	jQuery(custom_field).append('<div id="wl_custom_latlng" style="display:none;"><span class="wl_label">lat:</span><input id="wl_custom_lat" type="text" name="custom_lat" class="wl_widget_field" style="width:100px"/><span class="wl_label">lng:</span><input id="wl_custom_lng" type="text" name="custom_lng" class="wl_widget_field" style="width:100px"/><a href="#" id="action_set_location" style="margin-left:5px;">Set Location</a></div>')
+	jQuery(custom_field).find('a')
+		.button()
+		.click(function() {
+			WELOCALLY.util.log('click');			
+			_instance.customLocation(
+					eval(WELOCALLY.util.trim(jQuery('#wl_custom_lat').val())),
+					eval(WELOCALLY.util.trim(jQuery('#wl_custom_lng').val())), 
+					jQuery(_instance.locationField).find('input').val(),
+					_instance); 
+								
+			return false;
+		});
+
+	
+	jQuery(custom_field).find('input[type=checkbox]').change(function(){
+		WELOCALLY.util.log(jQuery('#wl_custom_field').find('input[type=checkbox]:checked'));
+		if(jQuery('#wl_custom_field').find('input[type=checkbox]:checked').length>0){
+			WELOCALLY.util.log('unbind');
+			jQuery(_instance.locationField).find('input').unbind('change');	
+			jQuery('#wl_custom_latlng').css('display','inline-block');
+			jQuery('#wl_custom_latlng').show('slow');
+						
+		} else {
+			WELOCALLY.util.log('bind');
+			jQuery('#wl_custom_latlng').hide();
+			jQuery(_instance.locationField).find('input').bind('change' , {form: formArea, _instance: _instance}, _instance.locationChangeHandler);  					
+		}
+	});
+	
+	jQuery(locFieldArea).append(custom_field);
+	
+	
+	//manual location
+	var clocFieldArea = jQuery('<div class="wl_addplace_cloc_field_area" style="display:none;"></div>');
+	jQuery(clocFieldArea)
+	.append('<div class="wl_field_description">Enter the custom Latitute and Longitude of the place</div>');	
 	
 	
 	//bind focus
@@ -444,6 +482,7 @@ WELOCALLY_AddPlaceWidget.prototype.savePlaceFromFormHandler = function(event,ui)
 	}
 	
 	selectedPlace.properties.name = jQuery(_instance.placeNameField).find('input').val();
+	
 	selectedPlace.properties.address =  
 		jQuery(formArea).find('#wl_addplace_street_number').val()+' '+ 
 		jQuery(formArea).find('#wl_addplace_route').val();	
@@ -585,6 +624,40 @@ WELOCALLY_AddPlaceWidget.prototype.nameChangeHandler = function(event, ui) {
 	return false;
 };
 
+WELOCALLY_AddPlaceWidget.prototype.customLocation = function(lat,lng, address, instance) {
+	
+	var _instance = instance;
+	var valid = WELOCALLY.util.isNumber(lat) && WELOCALLY.util.isNumber(lng);
+	if (valid) {
+		///lnglat like the place model
+		//limit precision 7 decimals	
+		jQuery(_instance.formArea).find('#wl_addplace_route').val(address);
+		
+		jQuery(_instance.formArea).find('#wl_addplace_location_val')
+			.val(lng.toFixed(7)+'_'+lat.toFixed(7));
+											
+
+		_instance.map.setZoom(14);
+
+		_instance.setStatus(_instance.statusArea, '','message',true);
+		
+		var location = new google.maps.LatLng(
+			lat.toFixed(7), 
+			lng.toFixed(7));
+		_instance.setLocation(location);
+					
+				
+		jQuery(_instance.map_canvas).show();
+		google.maps.event.trigger(_instance.map, 'resize');
+		_instance.map.setCenter(location);	
+		
+		jQuery(_instance.formArea).find('#wl_addplace_optional').show();
+		jQuery(_instance.formArea).find('#wl_addplace_buttons').show();
+	}
+	
+};
+
+
 WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 	
 	var addressValue = jQuery(this).val();
@@ -617,8 +690,9 @@ WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 				.val(_instance.getShortNameForType("country", results[0].address_components));
 			
 			///lnglat like the place model
+			//limit precision 7 decimals			
 			jQuery(_instance.formArea).find('#wl_addplace_location_val')
-				.val(results[0].geometry.location.lng()+'_'+results[0].geometry.location.lat());
+				.val(results[0].geometry.location.lng().toFixed(7)+'_'+results[0].geometry.location.lat().toFixed(7));
 												
 			if(results[0].address_components.length<=5){
 				_instance.map.setZoom(14);
@@ -629,8 +703,8 @@ WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 			_instance.setStatus(_instance.statusArea, '','message',true);
 			
 			var location = new google.maps.LatLng(
-				results[0].geometry.location.lat(), 
-				results[0].geometry.location.lng());
+				results[0].geometry.location.lat().toFixed(7), 
+				results[0].geometry.location.lng().toFixed(7));
 			_instance.setLocation(location);
 						
 					
@@ -656,7 +730,7 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 
 	var _instance = this;
 	
-	_instance.setStatus(_instance.statusArea,'Saving Place...', 'wl_message', true);
+	_instance.setStatus(_instance.statusArea,'Saving Place...', 'wl_admin_message', true);
 	
 	var data = {
 			action: 'save_place',
@@ -685,7 +759,7 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 			try{
 				var response = jQuery.parseJSON(data);
 				var tag = '[welocally id="'+response.id+'"/]';				
-				_instance.setStatus(_instance.statusArea,'Your place has been saved! <br/><span class="wl_placemgr_place_tag">'+tag+'</span>', 'wl_message', false);
+				_instance.setStatus(_instance.statusArea,'Your place has been saved! <br/><span class="wl_placemgr_place_tag">'+tag+'</span>', 'wl_admin_message', false);
 				_instance.savedPlace = selectedPlace;
 			} catch(e) {
 				_instance.setStatus(_instance.statusArea,'ERROR: Can Not Parse Response.'+data, 'wl_error', false);
@@ -768,6 +842,13 @@ WELOCALLY_AddPlaceWidget.prototype.validGeocodeForSearch = function (geocode) {
 	return geocode.address_components.length >3;
 };
 
+//WELOCALLY_AddPlaceWidget.prototype.validCustomLocation = function (lat,lng) {	
+//	var pattLatLng=new RegExp("^[+-]?\d+\.\d+, ?[+-]?\d+\.\d+$");	
+//	return pattLatLng.test(WELOCALLY.util.trim(lat)+","+WELOCALLY.util.trim(lng));
+//};
+
+
+
 WELOCALLY_AddPlaceWidget.prototype.loadWithWrapper = function(cfg, map_canvas, wrapper) {
 	this.cfg = cfg;
 	this.wrapper = wrapper;
@@ -833,7 +914,7 @@ WELOCALLY_AddPlaceWidget.prototype.getCategories = function(type, category) {
 	
 	var _instance = this;
 	
-	_instance.setStatus(_instance.statusArea, 'Loading categories...','wl_message',true);
+	_instance.setStatus(_instance.statusArea, 'Loading categories...','wl_admin_message',true);
 			    
 	var options = { };
 	
@@ -895,7 +976,7 @@ WELOCALLY_AddPlaceWidget.prototype.getCategories = function(type, category) {
 	  },		  
 	  success : function(data, textStatus, jqXHR) {
 		
-		_instance.setStatus(_instance.statusArea,'','wl_message',false);
+		_instance.setStatus(_instance.statusArea,'','wl_admin_message',false);
 		
 		if(data != null && data.errors != null) {
 			_instance.setStatus(_instance.statusArea, 'no data','wl_error',false);		

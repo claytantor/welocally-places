@@ -1,3 +1,4 @@
+/* wtf */
 .selectable_title a { 
 	color: #962020;
 	font-weight: bold; 
@@ -34,7 +35,7 @@
 }
 
 #wl_places_mutli_selectable { 
-	list-style-type: none; margin: 0; padding: 0; display: inline; 
+	list-style-type: none; margin: 0; padding: 0; display: inline; line-height: 1.0em;
 	color: #856728;
 }
 #wl_places_mutli_selectable .ui-selecting { background: #FF825C; }
@@ -160,6 +161,7 @@
 	margin-left: 35px; }
  
 .wl_places_multi_infobox { 
+	line-height: 1.0em;
 	font-size: 0.8em;
 	list-style-type:none; 
 	background: #f2f2f2; padding:5px;
@@ -169,6 +171,7 @@
    	border-radius: 4px;  
  }
 .wl_places_multi_infobox li { 
+	line-height: 1.0em;
 	list-style-type:none; 
 	width: 160px; 
  }

@@ -270,6 +270,9 @@ WELOCALLY_PlaceWidget.prototype.makePlaceContent = function(selectedPlace, cfg) 
 	
 	jQuery(placeWrapper).append(links);
 	
+	if(selectedPlace.properties.userdata == "null")
+		selectedPlace.properties.userdata = null;
+	
 	//userdata wrapper
 	if(selectedPlace.properties.userdata != null && selectedPlace.properties.userdata.length>0){
 		var embed = jQuery('<div id="wl_place_userdata" class="wl_place_userdata"></div>');

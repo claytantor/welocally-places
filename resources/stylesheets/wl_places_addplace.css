@@ -90,4 +90,6 @@
 
 .wl_userdata_field { width: 200px; display: inline-block;}
 
-.wl_addplace_button_add {width: 100%; font-size: 1.4em; font-weight: bold; } 
+.wl_addplace_button_add {width: 100%; font-size: 1.4em; font-weight: bold; }
+
+.wl_label { margin-left:10px; }

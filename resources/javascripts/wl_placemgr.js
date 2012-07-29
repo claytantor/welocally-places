@@ -169,8 +169,8 @@ WELOCALLY_PlaceManager.prototype.addHandler = function(event,ui) {
 	
 	jQuery( _instance.addPlaceWrapper).dialog({
 		title: 'add place',
-		position: "top",
-		minWidth: 650,
+		position: [200,30],
+		minWidth: 720,
 		modal: true
 	});
 	
@@ -249,7 +249,7 @@ WELOCALLY_PlaceManager.prototype.deleteDialogHandler = function(event,ui) {
 
 WELOCALLY_PlaceManager.prototype.deleteHandler = function(event,ui) {
 	var _instance = event.data.instance;
-	WELOCALLY.ui.setStatus(_instance.statusArea,'Deleting Place...', 'wl_message', true);
+	WELOCALLY.ui.setStatus(_instance.statusArea,'Deleting Place...', 'wl_admin_message', true);
 	
 	var data = {
 			action: 'delete_place',
@@ -274,7 +274,7 @@ WELOCALLY_PlaceManager.prototype.deleteHandler = function(event,ui) {
 		} else if(data != null && data.errors != null) {
 			WELOCALLY.ui.setStatus(_instance.statusArea,'Could not delete place:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
 		} else {
-			WELOCALLY.ui.setStatus(_instance.statusArea,'Your place has been deleted!', 'wl_message', false);
+			WELOCALLY.ui.setStatus(_instance.statusArea,'Your place has been deleted!', 'wl_admin_message', false);
 			jQuery('#wl_placemgr_place_'+event.data.index).hide();
 			jQuery('#wl_placemgr_place_'+event.data.index).html('Deleted.');
 			jQuery('#wl_placemgr_place_'+event.data.index).show('slow');

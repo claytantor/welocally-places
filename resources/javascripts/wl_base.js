@@ -164,7 +164,10 @@ if (!window.WELOCALLY) {
 			    return text.replace(urlRegex, function(url) {
 			        return '<a href="' + url + '">' + url + '</a>';
 			    });
-			},			
+			},	
+			isNumber: function(n) {
+				  return !isNaN(parseFloat(n)) && isFinite(n);
+			},
 			getParameter: function ( queryString, parameterName ) {
 				   // Add "=" to the parameter name (i.e. parameterName=value)
 				   var parameterName = parameterName + "=";

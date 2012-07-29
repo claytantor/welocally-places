@@ -33,12 +33,13 @@
 }
 
 #wl_places_mutli_selectable { 
-	list-style-type: none; margin: 0; padding: 0; display: inline; 
+	list-style-type: none; margin: 0; padding: 0; display: inline; line-height: 1.0em;
 }
 #wl_places_mutli_selectable .ui-selecting { background: #FEFEFE; }
 #wl_places_mutli_selectable .ui-selected { background: #e2e2e2;  }
 #wl_places_mutli_selectable ol {  display: inline; }
 #wl_places_mutli_selectable li { 
+	
 	margin-right: 3px; 
 	margin-bottom: 3px; 
 	text-align:left;
@@ -112,6 +113,7 @@
 	-webkit-border-radius: 4px;
    	-moz-border-radius: 4px;
    	border-radius: 4px;  
+   	line-height: 0.8em;
  }
 .wl_places_multi_infobox li { 
 	list-style-type:none; 

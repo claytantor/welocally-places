@@ -32,7 +32,7 @@
 }
 
 #wl_places_mutli_selectable { 
-	list-style-type: none; margin: 0; padding: 0; display: inline; 
+	list-style-type: none; margin: 0; padding: 0; display: inline; line-height: 1.0em;
 }
 #wl_places_mutli_selectable .ui-selecting { background: #FEFEFE; }
 #wl_places_mutli_selectable .ui-selected { background: #e2e2e2;  }

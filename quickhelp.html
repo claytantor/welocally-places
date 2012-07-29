@@ -6,7 +6,6 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Welocally Places Core Quick Help</title>
 	<meta name="author" content="Welocally">
-	<link rel="stylesheet" href="css/wl_pager_admin.css" media="all">	
 	<style>
 	body { text-align: center; font-family: sans-serif; }
 	.wrap { margin: 0 auto; width: 850px; text-align: left; }
@@ -19,8 +18,8 @@
 	<div class="header section">
 		<div class="header-title">Welocally Places Core For Wordpress Quick Help</div>
 		<div class="header-subtitle">Quick Help Guide</div>
-		<div>version 1.2.22</div>				
-		<div>Last Updated May 21, 2012</div>		
+		<div>version 1.2.23</div>				
+		<div>Last Updated July 21, 2012</div>		
 	</div>
 <h1>Welocally Places Core For Wordpress Guide</h1>
 <a title="welocally places wordpress" href="http://wordpress.org/extend/plugins/welocally-places/">Welocally Places Plugin</a> for wordpress is intended to help site authors link real places to their content quickly, and then help their readers find those places quickly. This document is intended to help the blog owner or wordpress developer install, configure and use the plugin. It is structured by the administrative and user components associated with the plugin.
@@ -67,7 +66,11 @@ If you are upgrading and an install this manually make sure to re-activate the p
 Throughoutthe plugin there are basic components that are used in multiple places, for example the Map Info Box, is used in the same way in the Map Widget, The Category Map and in the Single Post info pages.
 <h4>The Place Tag</h4>
 The place tag is the foundation of welocally places and it is what allows the plugin to actually lookup and link the place to the post or page that you are authoring. Welocally places tags each have a unique ID that allows it to look up the information about that place and make a map. This tag looks something like this:
-<p style="text-align: center;"><img class="aligncenter size-full wp-image-843" style="margin-top: 5px;" title="tag01" src="http://welocally.com/wp-content/uploads/2012/02/tag01.png" alt="" width="600" height="31" /></p>
+<p style="text-align: center;">
+<pre>
+[welocally id="WL_32tKX3QLhkAEVXjL5uHyPF_40.707990_-74.013659@1299784598"/]
+</pre>
+</p>
 
 <h4>Places Map Widget</h4>
 The Places Map Widget is a custom widget that is installed with the plugin. Every time you add a place to a post the Places Map widget will show it, as well as all the other places you have posted, on a single map. It can be used in any theme sidebar on the site. It will attempt to show related places to the category page or post that your user has navigated to, that is it automatically filters places on the map based on context.
@@ -78,26 +81,160 @@ It acts identically like the Category Tag Map by making a map with selectable ma
 The category map allows your users to filter the posts associated with specific categories on a single map, just like the Map Widget. This is helpful if you want to segment different places by type and show them to your readers on a page. making a directory? Just insert the tag "Shopping" or "Bars &amp; Pubs" on a page and you have a simple map for a shopping guide of all the places you have written about.
 <div style="clear: both;">&nbsp;</div>
 <p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/07/Screen-Shot-2012-04-09-at-4.06.56-PM.png"><img class="aligncenter size-full wp-image-1029" style="margin-top: 10px;" title="Screen Shot 2012-04-09 at 4.06.56 PM" src="http://welocally.com/wp-content/uploads/2011/07/Screen-Shot-2012-04-09-at-4.06.56-PM.png" alt="" width="207" height="354" /></a></p>
-<p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2012/04/Screen-Shot-2012-04-09-at-5.37.34-PM.png"><img class="aligncenter size-full wp-image-1064" title="Screen Shot 2012-04-09 at 5.37.34 PM" src="http://welocally.com/wp-content/uploads/2012/04/Screen-Shot-2012-04-09-at-5.37.34-PM.png" alt="" width="354" height="24" /></a></p>
+
+<pre style="text-align: center;">
+[welocally category="Bars &amp; Pubs"/]
+</pre>
+
 For example; if you had a pizza blog you might assign The Ugly Duck Pizza with the "Thin Cust" and "Rustic Wood Oven" categories. When your reader was looking for the pizzas of the New York Style only the pizza restaurants that had thin crust pizzas would show as ordered markers, and it would link the places back to the posts where you wrote about them. When a user selects a specific post excerpt, an info box identifying that place on the map will appear.
 <h3 style="clear: both; margin-top: 10px;">Associating A Place to A Post</h3>
 All place to post associations (aka "linking") are done by either looking or generating place tags. To use an existing place the place search wizard is used which is a simple step based process that easily guides you through keyword search and geocoding. If a place does not exist you can easily add it.
 <h3>Adding New Places - Add Place Meta Box</h3>
 While there are are very many places in our database it is possible that a very cool place you want to use is not there. In that case please add it to the database. When you do try to use the real name of the place and the full address, if your not sure use the name most people call it. Pressing the <strong>tab key</strong> will take you to the next field.
 <p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-04-10-at-12.55.12-PM.png"><img class="aligncenter size-full wp-image-1087" title="Screen Shot 2012-04-10 at 12.55.12 PM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-04-10-at-12.55.12-PM.png" alt="" width="502" height="78" /></a></p>
-<p style="text-align: left;">Now you will want to enter the real address for the place you want to add. Its important to give as full an adress as you can because driving directions and the location is determined by this. If you dont give enough information you will see a message like this:</p>
+<p style="text-align: left;">Now you will want to enter the real address for the place you want to add. 
+Its important to give as full an adress as you can because driving directions and the location is determined by this. 
+If you dont give enough information you will see a message like this:</p>
 <p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-04-10-at-12.56.07-PM.png"><img class="aligncenter size-full wp-image-1088" title="Screen Shot 2012-04-10 at 12.56.07 PM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-04-10-at-12.56.07-PM.png" alt="" width="489" height="127" /></a></p>
-<p style="text-align: left;">Once you have entered enough information the location of the new place will be geocoded for you, and you will be prompted to enter the optional fields for the place, Phone number and Website. <em><strong>While we dont require these fields we strongly recommend that you add them.</strong></em> If you can find them, it grows your site's reputation as a local referrer to have as much rich information about the places you are writing about as possible.</p>
+<p style="text-align: left;">Once you have entered enough information the location of the new place will be geocoded for you, 
+and you will be prompted to enter the optional fields for the place, Phone number and Website. <em><strong>While we dont 
+require these fields we strongly recommend that you add them.</strong></em> If you can find them, it grows your site's 
+reputation as a local referrer to have as much rich information about the places you are writing about as possible.</p>
 <p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-12-at-11.52.06-AM.png"><img class="aligncenter size-full wp-image-1262" title="Screen Shot 2012-05-12 at 11.52.06 AM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-12-at-11.52.06-AM.png" alt="" width="440" height="333" /></a></p>
 <p style="text-align: left;">Now you are ready to add the place, just press the "Add Place" button and it will be added to our database and will become searchable. You can then select the new tag for the place you created then copy and paste it into your post.</p>
 <p style="text-align: center;"><a href="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-12-at-11.52.38-AM.png"><img class="aligncenter size-full wp-image-1263" title="Screen Shot 2012-05-12 at 11.52.38 AM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-12-at-11.52.38-AM.png" alt="" width="482" height="43" /></a></p>
+<h4>Custom Locations</h4>
+<p style="text-align: left;">
+Some place locations, especially those outside of Canada, US and Western Europe, commonly can have required address components 
+missing. The geocoder and places manager requires that some level of detail be given regarding the address or commonly places will
+overlap each other because the exact location is not specific enough. To deal with this problem the ability to override the 
+geocoder has been provided.
+</p>
+<p style="text-align: center;"><img class="aligncenter size-full" src="http://welocally.com/wp-content/uploads/2012/07/Screen-Shot-2012-07-28-at-3.25.58-PM.png" /></p>
+<p style="text-align: left;">
+Once you provide the exact location for the address it will save the address to be <em>whatever you put in the address field</em> so make sure the information you put there is accurate. There
+are a number of websites that can provide then LATLNG for any place on a map. <a href="http://itouchmap.com/latlong.html" target="_new">ITOUCHMAP</a> is a pretty good one.</p>
+
+
+
 
 <h4>Custom Post Types</h4>
 <p>Many wordpress themes such as <a href="http://themeforest.net/item/swagmag-wordpress-magazinereview-theme/1576310">SwagMag - WordPress Magazine/Review Theme</a> use the concept of custom post types to manage an maintain posts. Welocally Places supports one or many custom post types, but you must use the post type name in the database for it to work properly. <strong>Multiple custom post types are supported byt they must be comma delimitated no spaces.</strong></p>
-<p><a href="http://welocally.com/wp-content/uploads/2011/09/tag_custom_post.png"><img class="aligncenter size-full wp-image-1323" title="tag_custom_post" src="http://welocally.com/wp-content/uploads/2011/09/tag_custom_post.png" alt="" width="500" height="30" /></a></p>
 <p style="text-align: left;">You can configure the widget to use custom post types in the same way using the options.</p>
 <p style="text-align: center;"><img class="aligncenter size-full wp-image-1324" title="Screen Shot 2012-05-23 at 7.13.51 PM" src="http://welocally.com/wp-content/uploads/2011/09/Screen-Shot-2012-05-23-at-7.13.51-PM.png" alt="" width="618" height="344" /></p>
+<pre style="text-align: center;">
+[welocally category="Asian" post_type="os_restaurants"/]
+</pre>
 
+<h3>Location Based Searches</h3>
+<p>
+Location based searches is the ability to search places via a shortcode and the location and distance using a shortcode. This 
+approach uses the <a href="http://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a> to determine the places that 
+fall inside of a search radius. Thi approach is really helpful for creating neighborhood guides where you would like to limit the 
+distance that places will be shown in. 
+</p>
+
+<h4>Basic Location Searches</h4>
+<p>
+Just like all the multi maps, places on the multi maps need to link 
+</p>
+<p style="text-align: center;"><img class="aligncenter size-full" src="http://welocally.com/wp-content/uploads/2012/07/location_search.png" /></p>
+
+<pre style="text-align: center;">
+[welocally distance="10.0" location="37.8079682_-122.2673957"/]
+</pre>
+
+<h4>Catgeory Filters</h4>
+<p>
+Category filters can be used for location searches <strong>of posts that have a category</strong>. Other custom post types do not have a 
+catgeory so this wont apply to pages that you embed places on. It is helpful though if you are inserting places on pages. 
+</p>
+<p style="text-align: center;"><img class="aligncenter size-full" src="http://welocally.com/wp-content/uploads/2012/07/map_radius2_rest.png" /></p>
+
+<pre style="text-align: center;">
+[welocally distance="10.0" location="37.8079682_-122.2673957" catgeory="Restaurant"/]
+</pre>
+
+<h4>Custom Post Types</h4>
+<p>
+Just like all the multi maps, places on the multi maps need to link to a post, 
+but that doesnt need to be the standard "post" type, which is the default. It can also be a custom 
+post type such as "page" or in the case of an anced theme the name of post type needed for a specific 
+section of the site.
+<br>
+</p>
+<pre>
+[welocally distance="10.0" location="37.8079682_-122.2673957" post_type="page"/]
+</pre>
+<h2>Themes and Customization</h2>
+<h3>Included Themes</h3>
+Included with the plugin are five ready made themes that can be used with the plugin. Use them as they are or edit them 
+using the customization guide below.
+<h3>Creating Custom Themes</h3>
+It is possible to customize the themes available to you, as well as create entirely new themes. The plugin will recognize all the folders under the PLUGIN_DIR/welocally-places/themes 
+directory and automatically add it to the dropdown list of available themes like this...
+<p style="text-align: center;"><img class="aligncenter size-full" src="http://welocally.com/wp-content/uploads/2012/07/Screen-Shot-2012-07-28-at-3.42.28-PM.png" /></p>
+
+
+A theme is ordered in the following way
+<div>
+<ul>
+	<li>welocally-places</li>
+		<ul>
+			<li>themes</li>
+			<ul>
+				<li>welocally</li>
+				<li>froggy</li>
+				<li>sky</li>
+				<li>piefight</li>
+				<li>placehound</li>
+				<li>mycustomtheme - Directory is the name of the new theme you want to create</li>
+				<ul>
+					<li>ie - you can put versions of the css that are IE specific here</li>
+					<li>images - specific images related to the styling for this theme</li>
+					<ul>
+						<li>icon_driving.png</li>
+						<li>icon_post.png</li>
+						<li>icon_web.png</li>
+						<li>marker_all_base.png</li>
+					</ul>
+					<li>mapstyle.json - GMAPs JSON styling for all the maps on the site. See <a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html" target="_new">Google Maps v3 Styling Wizard</a></li>
+					<li>wl_places_multi.css - The styling for the categeory and location widgets (non MAP)</li>
+					<li>wl_places_place.css - The styling for the single place card widget (non MAP)</li>
+					<li>wl_places.css - Shared styling attributes.</li>
+				</ul>
+			</ul>
+		</ul>	
+</ul>
+</div>
+<h4>Place Styling</h4>
+<p>
+	Every aspect of the place map is stylable through css, primarily with the file <span class="code"><a href="themes/froggy/wl_places_place.css" target="_new">wl_places_place.css</a></span>,
+	with the exception of the map itself which is styled by using json styles from 
+	<a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html" target="_new">Google Map Styles Wizard</a>,
+	and <a target="_new" href="themes/froggy/images/marker_all_base.png">the markers</a> image (See Multi Widget Configuration).
+</p>
+<div>
+<script src="https://gist.github.com/2394637.js?file=froggy_styling_place.css"></script>
+</div>
+<p>
+	The path to <a target="_new" href="themes/froggy/images/marker_all_base.png">the markers</a> index image, photoshop files included for each theme in examples directory.
+</p>
+
+<h4>Multiplace Map Styling</h4>
+<p>
+	Every aspect of the multi place map is stylable through css, primarily with the file <span class="code"><a href="themes/froggy/wl_places_multi.css" target="_new">wl_places_multi.css</a></span>,
+	with the exception of the map itself which is configured by using json styles from 
+	<a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html" target="_new">Google Map Styles Wizard</a>
+	and the <a target="_new" href="themes/froggy/images/marker_all_base.png">the markers</a> image (See Multi Widget Configuration).
+</p>
+<div>
+<script src="https://gist.github.com/2394637.js?file=froggy_styling_places.css"></script>
+</div>
+<p>
+	The path to <a target="_new" href="themes/froggy/images/marker_all_base.png">the markers</a> index image, photoshop 
+	files included for each theme in examples directory.
+</p>	
 
 <h2>Administration</h2>
 Options allow you to control the plugin, and we have created a custom option. We have a custom sidebar options tab, so in setting up welocally places just select the side tab item.

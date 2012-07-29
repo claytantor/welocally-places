@@ -194,18 +194,25 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 
 		}
 		
-		public function handleWelocallyPlacesShortcode($attrs,$content = null) {
-			
+		public function handleWelocallyPlacesShortcode($attrs,$content = null) {			
 			global $post;
 			
 			extract(shortcode_atts(array (
 				'categories' => null,
 				'category' => null,
 				'id' => null,
+				'titlelink' => null,
 				'distance' => null,
 				'location' => null,				
 				'post_type'=> null				
-			), $attrs));			
+			), $attrs));
+			
+			if(!isset($post_type))
+			  $post_type = 'post';
+					
+			$tl = filter_var($titlelink, FILTER_VALIDATE_BOOLEAN);				
+			if(!isset($titlelink))
+				$tl = true;			
 			
 			//strip paragragh tags if exists this is required
 			if ( '</p>' == substr( $content, 0, 4 )
@@ -232,25 +239,42 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				} else {
 					return false;
 				}					
+			} else if(isset($categories) || isset($category)){
+				
+				//REFACTOR
+				//right now only one is supported
+				$catsSlug = array();						
+				if(!empty($categories)) 
+					$catsSlug = explode(",", $categories);
+				else if(!empty($category))
+					$catsSlug = explode(",", $category);
+				
+				if(!empty($catsSlug)) {
+					$string = preg_replace('/&(?!amp;)/', '&amp;', $catsSlug[0]);
+					$string = preg_replace('/#038;/', '', $string);
+			
+					$term = get_term_by('name',$string,'category');
+					$term_id = $term->term_id;
+				} else {
+					$term_id = null;
+				}	
+											
+				return $this->getCategoryMapMarkup($term_id, null, null, 25, $post_type, $distance, $location, $tl);		
+					
+				
+			} else if(
+				!isset($categories) 
+				&& !isset($category)
+				&& isset($location)){
+					
+				if(!isset($post_type))
+					$post_type = 'post';
+				
+				return $this->getLocationMapMarkup(null, null, 25, $post_type, $distance, $location, $tl);		
+						
 			}
 			
-			//right now only one is supported
-			$catsSlug = array();						
-			if(!empty($categories)) 
-				$catsSlug = explode(",", $categories);
-			else if(!empty($category))
-				$catsSlug = explode(",", $category);
-				
-			$string = preg_replace('/&(?!amp;)/', '&amp;', $catsSlug[0]);
-			$string = preg_replace('/#038;/', '', $string);
-		
-			$term = get_term_by('name',$string,'category');
-			if(!isset($post_type))
-				$post_type = 'post';
-				
-			//$cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post', $radius, $location
-			return $this->getCategoryMapMarkup($term->term_id, null, null, 25, $post_type, $distance, $location);		
-
+	
 		}
 		
 		
@@ -628,9 +652,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * this takes the category name, consider consolidating getplacesnew and this
 		 * 10.0, '37.8261015_-122.20913'
 		 */
-		public function getPlaces($cat=null, $maxElements=25, $filter=true, $post_type='post', $distance=10.0, $location='37.8068958_-122.2693737') {
-			
-			
+		public function getPlaces($cat=null, $maxElements=25, $filter=true, $post_type='post', $distance, $location, $titlelink=true) {
+						
 			global $post;			
 						
 			static $uid = 0;
@@ -652,25 +675,29 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				}
 			}
 			
-			//37.8261015_-122.2091333
-			$nv = explode('_',$location);
-			$loc = array('lat'=>$nv[0],'lng' =>$nv[1]);
 			
 			/*
 			 * this approach needs to be refactored 
 			 */
-			if(isset( $distance ) && isset( $location ) && $cat != $this->placeCategory()){
+			syslog(LOG_WARNING,'titlelink:'.$titlelink);
+			
+			if(isset( $distance ) && isset( $location ) && ( !empty($cat) && $cat != $this->placeCategory())){
+
 				$posts = $this->geoSearchWithCategory('km', 25, $cat, $post_type, $distance, $location);				
-			} else if(isset( $distance ) && isset( $location ) && $cat == $this->placeCategory()){
-				$posts = $this->geoSearch('km', 25, $post_type, $distance, $location);				
+			} else if(isset( $distance ) && isset( $location ) && ($cat == $this->placeCategory() || empty($cat))){
+				$posts = $this->geoSearchPosts('km', 25, $post_type, $distance, $location);				
 			} else {
 				$posts = $this->getPlacePostsInCategory($cat, $post_type);
 			}
 					
 			$t = new StdClass();
 			$t->uid = ++$uid;
-			$t->category = get_category($cat);
-			$t->catId = $t->category->cat_ID;
+			
+			if(!empty($cat)){
+				$t->category = get_category($cat);
+				$t->catId = $t->category->cat_ID;
+			}
+			
 			$t->posts = $posts;
 			$t->places = array();
 			
@@ -686,7 +713,8 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 					
 					//determin if we are filtering
 					if(!$filter || !in_array($place->_id, $pids)){
-						if($options['infobox_title_link']=='on'){
+										
+						if($options['infobox_title_link']=='on' && $titlelink){
 	   						$place->properties->titlelink=get_permalink( $postlocal->ID ) ;	
 	   					} 
 						
@@ -708,16 +736,98 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 			return $t;
 		}
 
+		public function getLocationMapMarkup($template=null, $showIfEmpty=null, $maxElements=25, $post_type='post', $distance=10.0, $location='37.8068958_-122.2693737', $titlelink=true) {
+		
+			//public function geoSearchPosts($units='km', $max=10, $post_type='post', $dist=10.0, $location='37.8068958_-122.2693737')
+			$posts = $this->geoSearchPosts('km', $maxElements,  $post_type, $distance, $location);
+				
+			$t = new StdClass();
+
+			
+			$t->posts = $posts;
+			$t->places = array();
+			
+			$pids = array();
+			
+			$options = $this->getOptions();
+
+			foreach ($t->posts as $postlocal) {
+				$post_places = $this->getPostPlaces($postlocal->ID);
+
+				foreach ($post_places as $place) {
+					
+					
+					//determin if we are filtering
+					if(!in_array($place->_id, $pids)){
+
+						if($options['infobox_title_link']=='on' && $titlelink){
+	   						$place->properties->titlelink=get_permalink( $postlocal->ID ) ;	
+	   					} 
+						
+						$place->post = $postlocal;		
+						unset($place->post->post_content);								
+						array_push($t->places, $place);
+						array_push($pids, $place->_id);						
+					}					
+
+				}
+				
+				//max
+				if(count($t->places)>$maxElements){
+					$t->places = array_slice($t->places, 0, $maxElements);
+					break;
+				}
+			}	
+				
+													
+			//setup options
+			$options = $this->getOptions();
+			
+			$marker_image_path = WP_PLUGIN_URL.'/welocally-places/resources/images/marker_all_base.png' ;
+						 
+			$endpoint = 'https://api.welocally.com';
+			if(isset($options[ 'api_endpoint' ]) && $options[ 'api_endpoint' ] !=''){
+				$endpoint = $options[ 'api_endpoint' ];
+			} 
+            
+            ob_start();
+            
+            //we do this so we can provide different style overrides for different template views 
+            //while keeping the same controller
+            if(count($t->places)>0){
+            	if(!isset($template)){
+	            	include(dirname(__FILE__) . '/views/category-map-content-template.php');
+	            } else {
+	            	include($template);
+	            }    
+            } 
+                  
+            $html = ob_get_contents();
+            ob_end_clean();
+
+            $t = null;
+
+			return $html;
+		
+		}
+
+
 		/**
 		 * Builds a category map for a given category.
 		 * @param int|object $cat the category object or category ID (optional). defaults to the query category (if any).
 		 * @return string the category map HTML (javascript, etc.) ready to be embedded in the website. 10.0, '37.8261015_-122.20913'
 		 */
-		public function getCategoryMapMarkup($cat=null, $template=null, $showIfEmpty=null, $maxElements=25, $post_type='post', $distance=10.0, $location='37.8068958_-122.2693737') {
-			
-	
-			$t = $this->getPlaces($cat, $maxElements, true, $post_type, $distance, $location);
-
+		public function getCategoryMapMarkup(
+			$cat=null, 
+			$template=null, 
+			$showIfEmpty=null, 
+			$maxElements=25, 
+			$post_type='post', 
+			$distance, 
+			$location,
+			$titlelink=true) {	
+				
+			$t = $this->getPlaces($cat, $maxElements, true, $post_type, $distance, $location, $titlelink);
 							
 			//setup options
 			$options = $this->getOptions();
@@ -1161,7 +1271,7 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * 
 		 * 1 LAT/LNG = 111KM = 68.9722023 mi
 		 */
-		public function geoSearch($units='km', $max=10, $post_type='post', $dist=10.0, $location='37.8068958_-122.2693737'){
+		public function geoSearchPosts($units='km', $max=10, $post_type='post', $dist=10.0, $location='37.8068958_-122.2693737'){
 			global $wpdb,$wlPlaces;
 						
 			//units
@@ -1312,8 +1422,13 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 		 * @return array 
 		 */
 		public function getPlacePostsInCategory($categoryId, $post_type='post') {
+			
 			global $wpdb, $wlPlaces;
 			$wlPlaces->setOptions();
+			
+			if(empty($post_type) || !isset($post_type) || $post_type =='')
+				$post_type ='post';
+
 			
 			$post_type = explode(",",$post_type);
 

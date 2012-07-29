@@ -69,7 +69,10 @@ if( !class_exists( 'WelocallyPlacesMap_Widget' ) ) {
 					dirname( __FILE__ ).'/views/welocally-places-map-widget-display.php',
 					true, 
 					25, 
-					$post_type);	
+					$post_type,
+					null,
+					null,
+					true);	
 				
 			}	
 		

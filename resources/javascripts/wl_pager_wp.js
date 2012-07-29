@@ -276,7 +276,7 @@ WELOCALLY_WpPager.prototype.load = function(page) {
 	  data: req,
 	  beforeSend: function(jqXHR){
 		_instance.jqxhr = jqXHR;
-		_instance.setStatus(_instance.statusArea,'Loading...', 'wl_message', false);
+		_instance.setStatus(_instance.statusArea,'Loading...', 'wl_admin_message', false);
 	  },
 	  error : function(jqXHR, textStatus, errorThrown) {
 		if(textStatus != 'abort'){
@@ -284,7 +284,7 @@ WELOCALLY_WpPager.prototype.load = function(page) {
 		}		
 	  },		  
 	  success : function(res, textStatus, jqXHR) {
-		  _instance.setStatus(_instance.statusArea,'', 'wl_message', false);
+		  _instance.setStatus(_instance.statusArea,'', 'wl_admin_message', false);
 		  jQuery(_instance.wrapper).find('.wl_pager_content').html(res);
 	  }
 	});
