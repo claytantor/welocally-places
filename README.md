@@ -1,14 +1,16 @@
-=== Welocally Places Core ===
+Welocally Places Core
+===========================
 Contributors: claytantor 
 Tags: hyperlocal, geocoding, places, maps, foodie, travel, real estate, business directories
 Requires at least: 3.3.1 with jQuery 1.6.1 or greater
 Tested up to: 3.3.2
 Stable tag: trunk
-License: GPL v2 (GNU General Public License v2)
+License: 
 
 The Welocally Places Core plugin lets easily associate places with rich maps and place info with your wordpress content. 
 
-== Description ==
+Description
+===========================
 
 Welocally Places For WordPress makes it simple to attach real places to your content effectively making your blog a hyper-local property in minutes. With rich maps and location geocoding you can add stylish and interactive maps that help your readers know where you are talking about. Associating a place with your post is as easy as searching for a keyword, pointing and clicking. Primary features include:
 
@@ -21,16 +23,18 @@ Welocally Places For WordPress makes it simple to attach real places to your con
 * Category based map tags help you make directories quickly
 * Support for custom post types
 
-Product Overview: http://welocally.com/?page_id=2
-Product Help: http://welocally.com/?page_id=104
+[Product Overview](http://welocally.com/?page_id=2)
+[Product Help] (http://welocally.com/?page_id=104)
  
-== Installation ==
+Installation
+===========================
 
 1. Upload the `welocally-places` folder to the `/wp-content/plugins/` directory or install directly through the plugin installer.
 2. Activate the plugin through the 'Plugins' menu in WordPress or by using the link provided by the plugin installer.
 3. Make sure to subscribe, there is a free trail period that lets you determine if our product meets your needs.
 
-== Frequently Asked Questions ==
+Frequently Asked Questions
+===========================
 Q:Can I use Welocally Places for a blog hosted on wordpress.com?
 A:No you can not. WordPress.com hosted blogs do not allow you to install plugins. Hosting your own blog gives you flexibility and allows you to monetize in new ways, so just take it to the next step and host your own blog. Consumer Rankings did a review of low priced hosting providers for WordPress. Check it out.
 
@@ -123,9 +127,6 @@ A: It should work, it has not been tested. Please give us feedback about your ex
 == Upgrade Notice ==
 If you are upgrading and an install this manually make sure to re-activate the plugin, activation does important database updates. 
 
-== Screenshots ==
-1. Welocally Places offers a simple way to embed rich place information such as address, phone number, website and driving directions into your post. We also provide interactive map widgets to engage your readers with the places you have written about.
 
-2. Add any place map or category of places as an interactive map to your site with simple shortcodes.
 
 

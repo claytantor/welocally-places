@@ -1,3 +1,20 @@
+<?php
+ /*
+	Copyright 2012 clay graham, welocally & RateCred Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+?>
 <h1>Welocally Places Core For Wordpress Guide</h1>
 <a title="welocally places wordpress" href="http://wordpress.org/extend/plugins/welocally-places/">Welocally Places Plugin</a> for wordpress is intended to help site authors link real places to their content quickly, and then help their readers find those places quickly. This document is intended to help the blog owner or wordpress developer install, configure and use the plugin. It is structured by the administrative and user components associated with the plugin.
 
