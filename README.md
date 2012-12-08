@@ -1,11 +1,12 @@
 Welocally Places Core
 ===========================
+version 1.2.23
 Contributors: claytantor 
 Tags: hyperlocal, geocoding, places, maps, foodie, travel, real estate, business directories
 Requires at least: 3.3.1 with jQuery 1.6.1 or greater
 Tested up to: 3.3.2
 Stable tag: trunk
-License: 
+License: Apache Software License v2
 
 The Welocally Places Core plugin lets easily associate places with rich maps and place info with your wordpress content. 
 
@@ -54,8 +55,12 @@ Q:Is your plugin supported internationally?
 A: It should work, it has not been tested. Please give us feedback about your experiences if you use it internationally.
 
 
-== Changelog ==
+Changelog
+===========================
+Issues fixed sins previous release.
+
 1.2.22
+----------
 222	Add activation notice if missing 1.2.22 fields	
 221	jQuery UI override	
 220	Change Name To Welocally Places Core	
@@ -68,16 +73,19 @@ A: It should work, it has not been tested. Please give us feedback about your ex
 206	Places manager breaks on null place	
 
 1.2.21
+----------
 203	Update documentation to include proper version requirements
 202	JQuery Load Native for 3.3.1
 
 1.2.20
+----------
 201	Test localhost setup
 200	Add Place in Places Manager	
 199	De walrus Aalsmeerderdijk 452 1436 BM Aalsmeerderbrug
 198	Clear all floats on tag and widget templates
 
 1.2.19
+----------
 196	Remove Registration Requirement	
 195	Remove any CURL Concepts	
 194 Pagination	
@@ -89,6 +97,7 @@ A: It should work, it has not been tested. Please give us feedback about your ex
 185	Category and fields showing on add place.
 
 1.1.18
+----------
 56: Welocally Namespace Javascript Refactoring
 87: Widgetize Place Finder
 100: Refactor wp_postmeta to remove obsolete concepts
@@ -105,9 +114,11 @@ A: It should work, it has not been tested. Please give us feedback about your ex
 174: Catgerory map widget should be context aware
 
 1.1.17
+----------
 147 "Excerpts not working"
 
 1.1.16
+----------
 99	Places DB Tool In Options
 94	Place Finder for Pages
 71	Share Tag Support
@@ -124,7 +135,8 @@ A: It should work, it has not been tested. Please give us feedback about your ex
 10	Theme Support for Delicate 
 3	Integrate New Add Place Workflow
 
-== Upgrade Notice ==
+Upgrade Notice
+===========================
 If you are upgrading and an install this manually make sure to re-activate the plugin, activation does important database updates. 
 
 
