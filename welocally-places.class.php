@@ -1173,17 +1173,6 @@ if (!class_exists('WelocallyPlaces')) {
 				$postId = $parts[0];
 				$placeId = $parts[1];
 
-				/*
-				 * select 
-					  wp_wl_places_posts.id as wp_wl_places_posts_id,
-					  wp_wl_places.id as wp_wl_places_id,
-					  wp_wl_places_posts.post_id,
-					  wp_wl_places.wl_id 
-					from wp_wl_places_posts,wp_wl_places 
-					where wp_wl_places.id=wp_wl_places_posts.place_id
-					and wp_wl_places_posts.post_id=104
-					and wp_wl_places.wl_id='WL_sacf2k1jqe5lsbgr9fsre2_58.299649_-134.407658@1329495792'; 
-				 */
 				//if you can figure out how to do this with one quesry pleas
 				//be my guest					
 				$query = "SELECT {$wpdb->prefix}wl_places.id place_id, {$wpdb->prefix}wl_places_posts.id places_post_id " .
@@ -1217,8 +1206,6 @@ if (!class_exists('WelocallyPlaces')) {
 		/**
 		 * location = the location for the search using haversine
 		 * radius = radius of search
-		 * 
-		 * mean radius of 6,366.56 km (Å3,956 mi).
 		 * 
 		 * 1 LAT/LNG = 111KM = 68.9722023 mi
 		 */
@@ -1314,9 +1301,7 @@ if (!class_exists('WelocallyPlaces')) {
 		/**
 		 * location = the location for the search using haversine
 		 * radius = radius of search
-		 * 
-		 * mean radius of 6,366.56 km (Å3,956 mi).
-		 * 
+		 *
 		 * 1 LAT/LNG = 111KM = 68.9722023 mi
 		 */
 		public function geoSearchPosts($units = 'km', $max = 10, $post_type = 'post', $dist = 10.0, $location = '37.8068958_-122.2693737') {
@@ -1587,3 +1572,4 @@ if (!class_exists('WelocallyPlaces')) {
 	$wlPlaces = new WelocallyPlaces();
 }
 ?>
+
