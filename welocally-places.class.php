@@ -128,8 +128,17 @@ if ( !class_exists( 'WelocallyPlaces' ) ) {
 				wp_enqueue_script('google-maps' , 'https://maps.google.com/maps/api/js?sensor=false' , false , '3');							
 			}	
 			
-			wp_enqueue_script( 'jquery' ); 
-            wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
+			wp_enqueue_script( 'jquery' );
+			
+			/*
+			 * had problems when we did not include a version of jquery ui but now 3.5 
+			 * installs are breaking
+			 */
+			//wp_enqueue_script('jquery-ui-all' , 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js');
+            
+            
+			wp_enqueue_script( 'jquery-ui-core' );
+			
                       								
 			//welocally
 			wp_enqueue_script('wl_base_script', WP_PLUGIN_URL.'/welocally-places/resources/javascripts/wl_base.js', array('jquery'), WelocallyPlaces::VERSION);
